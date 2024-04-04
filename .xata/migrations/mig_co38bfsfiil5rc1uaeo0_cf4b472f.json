@@ -1,0 +1,16 @@
+{
+  "id": "mig_co38bfsfiil5rc1uaeo0",
+  "parentID": "mig_co38b96pe2mbada2tt1g",
+  "checksum": "1:cf4b472f63a019217ac9251542404fd475e49e7c50bafaf1e56b9867b9872690",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "name",
+          "type": "text"
+        },
+        "table": "Company"
+      }
+    }
+  ]
+}

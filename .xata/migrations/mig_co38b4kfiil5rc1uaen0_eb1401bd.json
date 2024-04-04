@@ -1,0 +1,16 @@
+{
+  "id": "mig_co38b4kfiil5rc1uaen0",
+  "parentID": "mig_co38b14fiil5rc1uaem0",
+  "checksum": "1:eb1401bda08b3752927789dfc8f0319f3ea028fd592d84c6b9deccb22c343d14",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "wallet_address",
+          "type": "string"
+        },
+        "table": "Customer"
+      }
+    }
+  ]
+}

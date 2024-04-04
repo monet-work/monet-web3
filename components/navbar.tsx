@@ -6,14 +6,16 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "@/components/ui/dropdown-menu";
-import { metamaskConfig } from "thirdweb/react";
 import { Button } from "./ui/button";
 import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
+import { createWallet } from "thirdweb/wallets";
+import useThirdWebStore from "@/store/thirdwebStore";
 
 const Navbar = () => {
+  const thirdwebStore = useThirdWebStore();
   return (
     <nav className="h-[70px] sticky top-0 bg-primary w-full z-50">
       <div className="flex justify-between items-center h-full px-4">
@@ -44,17 +46,12 @@ const Navbar = () => {
           </div>
           <ConnectButton
             client={client}
-            appMetadata={{
-              name: "Monet Points",
-              description:
-                "Monet Points is a decentralized application for managing points.",
-              url: "https://monet.work",
-            }}
-            wallets={[metamaskConfig({ recommended: true })]}
-            connectButton={{
-              label: "Connect Wallet",
+            wallets={[createWallet("io.metamask")]}
+            onConnect={async (wallet) => {
+              thirdwebStore.setWalletAccount(wallet.getAccount()!);
             }}
           />
+          ;
         </div>
       </div>
     </nav>

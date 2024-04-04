@@ -1,0 +1,16 @@
+{
+  "id": "mig_co38b96pe2mbada2tt1g",
+  "parentID": "mig_co38b4kfiil5rc1uaen0",
+  "checksum": "1:da756b1cc8e42697fbc1c53ebc57c111c1601ca73e8bddd5c228b31bd9f49cb4",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "points",
+          "type": "float"
+        },
+        "table": "Customer"
+      }
+    }
+  ]
+}

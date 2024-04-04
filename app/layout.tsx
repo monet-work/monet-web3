@@ -4,13 +4,18 @@ import "./globals.css";
 import { ThirdwebProvider } from "@/app/thirdweb";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Monet Points",
-  description: "Monet Points is a decentralized application for managing points.",
+  description:
+    "Monet Points is a decentralized application for managing points.",
 };
+
+const queryClient = useQueryClient();
 
 export default function RootLayout({
   children,
@@ -20,11 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={inter.className}>
-        <ThirdwebProvider>
-          <Navbar />
-          {children}
-          <Footer/>
-        </ThirdwebProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThirdwebProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </ThirdwebProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
       </body>
     </html>
   );

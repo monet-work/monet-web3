@@ -1,0 +1,12 @@
+{
+  "id": "mig_co38afsfiil5rc1uaek0",
+  "parentID": "mig_co38aecfiil5rc1uaeig",
+  "checksum": "1:21e579530c7982952e736ba2c49923b214299fd9cca3c2fcfe3a19f5f2c51692",
+  "operations": [
+    {
+      "addTable": {
+        "table": "Customer"
+      }
+    }
+  ]
+}
