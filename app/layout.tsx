@@ -5,6 +5,7 @@ import { ThirdwebProvider } from "@/app/thirdweb";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,7 +14,6 @@ export const metadata: Metadata = {
   description:
     "Monet Points is a decentralized application for managing points.",
 };
-
 
 export default function RootLayout({
   children,
@@ -30,6 +30,7 @@ export default function RootLayout({
             <Footer />
           </ThirdwebProvider>
         </ReactQueryProvider>
+        <Toaster />
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { THIRDWEB_CONFIG } from "@/app/config/thirdweb-config";
-import useThirdWebStore from "@/store/thirdwebStore";
+import useThirdWebStore from "@/store/customerStore";
 
 import {Abi} from 'abitype';
 
