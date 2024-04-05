@@ -3,10 +3,14 @@ import { create } from "zustand";
 
 type Store = {
   customer: Customer | null;
-  setCustomer: (customer: Customer) => void;
+  onChainPoints: string | null; //elp tokens
+  setCustomer: (customer: Customer | null) => void;
+  setOnChainPoints: (points: string) => void;
 }
 
 export const useCustomerStore = create<Store>((set) => ({
   customer: null,
   setCustomer: (customer) => set({ customer }),
+  onChainPoints: null,
+  setOnChainPoints: (points) => set({ onChainPoints: points }),
 }));
