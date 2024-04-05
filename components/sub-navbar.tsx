@@ -17,7 +17,7 @@ const SubNavbar = () => {
               </span>
             </span>
             <span>
-              On-Chain: <span className="font-bold text-white">0 $ELP</span>
+              On-Chain: <span className="font-bold text-white">{customerStore?.onChainPoints || 0} $ELP</span>
             </span>
           </div>
         </div>
