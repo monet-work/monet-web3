@@ -52,13 +52,13 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
         <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
           {title}
         </p>
-
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           {description}
           <span className="font-bold">{points}</span> points
         </p>
       </div>
       <Button
+        className="mb-4"
         onClick={() => handleCollectPoints(points)}
         loading={loading}
       >

@@ -5,30 +5,14 @@ import { Wallet, createWallet } from "thirdweb/wallets";
 import { useMutation } from "@tanstack/react-query";
 import { createCustomer } from "@/lib/api-requests";
 import { useCustomerStore } from "@/store/customerStore";
-import { useSendTransaction } from "thirdweb/react";
-import { prepareContractCall, resolveMethod, toWei } from "thirdweb";
-import { Button } from "./ui/button";
 
 const Navbar = () => {
   const customerStore = useCustomerStore();
-  const { mutate: sendRedeemPointsTransaction, isError } = useSendTransaction();
 
-  const redeemPointsTransaction = async () => {
-    const transaction = await prepareContractCall({ 
-      contract: elpContract, 
-      method: 'OrderYourTokens', 
-      params: [0.1]
-    });
-    await sendRedeemPointsTransaction(transaction as any);
-  }
 
   const createCustomerMutation = useMutation({
     mutationFn: createCustomer
   });
-
-  const handleRedeemPoints = async() => {
-    await redeemPointsTransaction();
-  }
 
 
   const handleConnectWallet = async (wallet: Wallet) => {
@@ -66,7 +50,7 @@ const Navbar = () => {
             wallets={[createWallet("io.metamask")]}
             onConnect={handleConnectWallet}
           />
-          <Button onClick={handleRedeemPoints}>Redeem</Button>
+          
         </div>
       </div>
     </nav>
