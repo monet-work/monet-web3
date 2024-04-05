@@ -15,5 +15,17 @@ export async function GET(request: Request) {
     return new Response("Customer not found", { status: 404 });
   }
   return new Response(JSON.stringify(customer), { status: 200 });
-  return new Response("Hello World", { status: 200 });
+}
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  if(!body) {
+    return new Response("Invalid request", { status: 400 });
+  }
+  if(!body.walletAddress) {
+    return new Response("Invalid wallet address", { status: 400 });
+  }
+  const client = getXataClient();
+  const customer = await client.db.Customer.create(body);
+  return new Response(JSON.stringify(customer), { status: 200 });
 }

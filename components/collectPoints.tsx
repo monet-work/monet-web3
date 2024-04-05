@@ -1,6 +1,6 @@
 "use client";
 
-import { useActiveAccount, useActiveWallet } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 import PointCard from "./pointCard";
 import { BackgroundGradient } from "./ui/background-gradient";
 
@@ -30,6 +30,7 @@ const pointsData = [
 const CollectPoints = () => {
   const account = useActiveAccount();
   const walletAddress = account?.address;
+  console.log(walletAddress, 'wd')
 
   return (
     <div>

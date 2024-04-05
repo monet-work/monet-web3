@@ -20,6 +20,10 @@ export const getCustomer = async ({
   });
 };
 
+export const createCustomer = async (data: { walletAddress: string }) => {
+  return axios.post<Customer>("/api/customer", data);
+};
+
 export const collectPoints = async ({
   walletAddress,
   points,

@@ -5,6 +5,7 @@ import { useCustomerStore } from "@/store/customerStore";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { collectPoints } from "@/lib/api-requests";
+import { useActiveAccount } from "thirdweb/react";
 
 type Props = {
   title: string;
@@ -14,6 +15,8 @@ type Props = {
 
 const PointCard: React.FC<Props> = ({ points, title, description }) => {
   const customerStore = useCustomerStore();
+  const account = useActiveAccount();
+  const walletAddress = account?.address;
   const collectPointsMutation = useMutation({
     mutationFn: collectPoints,
   });
@@ -22,13 +25,17 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
   const handleCollectPoints = async (points: number) => {
     setLoading(true);
 
+    if(!walletAddress) return;
+
     collectPointsMutation.mutate(
       {
-        walletAddress: customerStore.customer?.walletAddress || "",
+        walletAddress: walletAddress || "",
         points: Number(points),
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          // update points in store and invaliate cache
+          customerStore.setCustomer(data.data);
           toast("Points collected successfully!");
           setLoading(false);
         },
@@ -53,7 +60,7 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
       </div>
       <Button
         className="mt-4"
-        onClick={() => handleCollectPoints(1)}
+        onClick={() => handleCollectPoints(points)}
         loading={loading}
       >
         Collect
