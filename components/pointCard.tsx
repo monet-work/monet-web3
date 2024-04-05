@@ -47,8 +47,8 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
     );
   };
   return (
-    <BackgroundGradient className="rounded-[22px] max-w-sm py-2 px-8 bg-white dark:bg-zinc-900">
-      <div className="h-20">
+    <BackgroundGradient className="rounded-[22px] max-w-sm py-2 px-8 bg-white dark:bg-zinc-900 h-full">
+      <div className="min-h-40">
         <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
           {title}
         </p>
@@ -59,7 +59,6 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
         </p>
       </div>
       <Button
-        className="mt-4"
         onClick={() => handleCollectPoints(points)}
         loading={loading}
       >

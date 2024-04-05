@@ -30,7 +30,6 @@ const pointsData = [
 const CollectPoints = () => {
   const account = useActiveAccount();
   const walletAddress = account?.address;
-  console.log(walletAddress, 'wd')
 
   return (
     <div>
@@ -42,7 +41,7 @@ const CollectPoints = () => {
       </p>
 
       {walletAddress ? (
-        <div className="grid grid-cols-2 gap-4 mt-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-16">
           {pointsData.map((point) => (
             <PointCard
               key={point.title}

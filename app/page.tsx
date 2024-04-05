@@ -21,8 +21,8 @@ export default function Home() {
             particleColor="#FFFFFF"
           />
         </div>
-        <h1 className="md:text-7xl text-3xl lg:text-6xl font-bold text-center text-white relative z-20">
-          Unleashing points like never before!
+        <h1 className="md:text-6xl text-2xl lg:text-6xl md:max-w-2xl font-bold text-center text-white relative z-20">
+          Unleashing points like <br/><span className="text-teal-400">never before!</span>
         </h1>
 
         <Button
@@ -34,7 +34,7 @@ export default function Home() {
       </div>
 
       <section
-        className="h-[50rem] dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center"
+        className="py-16 px-4 dark:bg-black bg-white  dark:bg-grid-white/[0.2] bg-grid-black/[0.2] relative flex items-center justify-center"
         id="collect-points"
       >
         <div className="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-black bg-white [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)]"></div>
