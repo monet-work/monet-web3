@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { useActiveWallet } from "thirdweb/react";
 import { useCustomerStore } from "@/store/customerStore";
 import Auth from "@/components/auth";
+import SubNavbar from "@/components/sub-navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
           <ThirdwebProvider>
             <Auth />
             <Navbar />
+            <SubNavbar />
             {children}
             <Footer />
           </ThirdwebProvider>

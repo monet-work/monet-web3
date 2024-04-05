@@ -1,15 +1,6 @@
 "use client";
 
 import { ConnectButton, client } from "@/app/thirdweb";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "./ui/button";
-import {
-  DropdownMenuItem,
-} from "@radix-ui/react-dropdown-menu";
 import { Wallet, createWallet } from "thirdweb/wallets";
 import { useMutation } from "@tanstack/react-query";
 import { createCustomer } from "@/lib/api-requests";
@@ -24,8 +15,6 @@ const Navbar = () => {
 
 
   const handleConnectWallet = async (wallet: Wallet) => {
-    //check if customer exists. If not then create customer
-    // if customer exists then set customer in store
     const walletAddress = wallet.getAccount()?.address;
     if (!walletAddress) return;
     const customer = customerStore.customer;
@@ -55,26 +44,6 @@ const Navbar = () => {
           </a>
         </div>
         <div className="flex items-center gap-8">
-          <div className="text-primary-foreground">
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <div>
-                  <label>Your Points</label>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="p-8">
-                <DropdownMenuItem>
-                  Off-Chain: <span className="font-bold">{customerStore?.customer?.points || 0}</span>
-                  <div>
-                    <p>On-Chain: <span className="font-bold">0 $ELP</span></p>
-                  </div>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Button className="mt-4">Redeem Points</Button>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
           <ConnectButton
             client={client}
             wallets={[createWallet("io.metamask")]}
