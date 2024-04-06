@@ -2,7 +2,7 @@
 
 import { elpContractABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
-import { mumbai } from "thirdweb/chains";
+import { baseSepolia } from "thirdweb/chains";
 
 const clientId = process.env.NEXT_PUBLIC_TEMPLATE_CLIENT_ID;
 
@@ -21,7 +21,7 @@ export const elpContract = getContract({
   // the client you have created via `createThirdwebClient()`
   client,
   // the chain the contract is deployed on
-  chain: mumbai,
+  chain: baseSepolia,
   // the contract's address
   address: elpContractAddress,
   // OPTIONAL: the contract's abi

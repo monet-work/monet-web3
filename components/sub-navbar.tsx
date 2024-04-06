@@ -2,34 +2,53 @@
 
 import { elpContract } from "@/app/thirdweb";
 import { useCustomerStore } from "@/store/customerStore";
-import { prepareContractCall, toWei } from "thirdweb";
+import { estimateGas, prepareContractCall, simulateTransaction, toEther, toWei } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
+import { use, useEffect } from "react";
+import { toast } from "sonner";
 
 const transferFee = toWei("0.001");
 
 const SubNavbar = () => {
   const {
+    data: sendTransactionData,
     mutate: sendRedeemPointsTransaction,
     isError,
     isPending,
+    isSuccess,
     error,
   } = useSendTransaction();
+  
 
-  const redeemPointsTransaction = async () => {
+  const handleRedeemPoints = async () => {
     const transaction = await prepareContractCall({
       contract: elpContract,
       method: "OrderYourTokens",
       value: transferFee,
       params: []
     });
-    const res = await sendRedeemPointsTransaction(transaction as any);
-  };
-
-  const handleRedeemPoints = async () => {
-    await redeemPointsTransaction();
+      await sendRedeemPointsTransaction(transaction as any);
   };
   const customerStore = useCustomerStore();
+
+  useEffect(() => {
+    if(isError){
+      toast.message('Transaction failed', {
+        description: error?.message,
+      })
+    }
+  }, [isError])
+
+  useEffect(() => {
+    if(isSuccess){
+      toast.message('Transaction successful', {
+        description: 'Your points have been redeemed successfully. It will be reflected in your wallet soon.',
+      })
+    }
+  } , [isSuccess])
+
+
   return (
     <>
       {customerStore.customer ? (
