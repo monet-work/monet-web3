@@ -34,3 +34,7 @@ export const collectPoints = async ({
 export const getPoints = async (walletAddress: string) => {
   return axios.get<Customer>("/api/points", { params: { walletAddress } });
 };
+
+export const redeemPoints = async (walletAddress: string) => {
+  return axios.post<Customer>("/api/redeem", { walletAddress });
+};

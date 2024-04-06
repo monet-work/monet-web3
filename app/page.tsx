@@ -1,9 +1,6 @@
 import CollectPoints from "@/components/collectPoints";
-import { BackgroundGradient } from "@/components/ui/background-gradient";
 import { Button } from "@/components/ui/button";
 import { SparklesCore } from "@/components/ui/sparkles";
-import { collectPoints } from "@/lib/api-requests";
-import { useMutation } from "@tanstack/react-query";
 
 
 export default function Home() {
