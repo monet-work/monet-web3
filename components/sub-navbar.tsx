@@ -2,18 +2,26 @@
 
 import { elpContract } from "@/app/thirdweb";
 import { useCustomerStore } from "@/store/customerStore";
-import { prepareContractCall } from "thirdweb";
+import { prepareContractCall, toWei } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
 
+const transferFee = toWei("0.001");
+
 const SubNavbar = () => {
-  const { mutate: sendRedeemPointsTransaction, isError, isPending, error } = useSendTransaction();
+  const {
+    mutate: sendRedeemPointsTransaction,
+    isError,
+    isPending,
+    error,
+  } = useSendTransaction();
 
   const redeemPointsTransaction = async () => {
     const transaction = await prepareContractCall({
       contract: elpContract,
       method: "OrderYourTokens",
-      params: [0.1],
+      value: transferFee,
+      params: []
     });
     const res = await sendRedeemPointsTransaction(transaction as any);
   };
