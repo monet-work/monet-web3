@@ -6,13 +6,8 @@ import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
-import { getCustomer } from "@/lib/api-requests";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useActiveWallet } from "thirdweb/react";
-import { useCustomerStore } from "@/store/customerStore";
-import Auth from "@/components/auth";
 import SubNavbar from "@/components/sub-navbar";
+import AuthWrapper from "@/components/auth-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,11 +27,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReactQueryProvider>
           <ThirdwebProvider>
-            <Auth />
-            <Navbar />
-            <SubNavbar />
-            {children}
-            <Footer />
+            <AuthWrapper>
+              <Navbar />
+              <SubNavbar />
+              {children}
+              <Footer />
+            </AuthWrapper>
           </ThirdwebProvider>
         </ReactQueryProvider>
         <Toaster />

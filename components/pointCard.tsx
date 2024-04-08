@@ -8,12 +8,13 @@ import { collectPoints } from "@/lib/api-requests";
 import { useActiveAccount } from "thirdweb/react";
 
 type Props = {
+  key: 'post-tweet' | 'write-blog-post' | 'review-google' | 'youtube-video';
   title: string;
   description: string;
   points: number;
 };
 
-const PointCard: React.FC<Props> = ({ points, title, description }) => {
+const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
   const customerStore = useCustomerStore();
   const account = useActiveAccount();
   const walletAddress = account?.address;
@@ -22,7 +23,7 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleCollectPoints = async (points: number) => {
+  const handleCollectPoints = async (key: Props['key'], points: number) => {
     setLoading(true);
 
     if(!walletAddress) return;
@@ -36,7 +37,9 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
         onSuccess: (data) => {
           // update points in store and invaliate cache
           customerStore.setCustomer(data.data);
-          toast("Points collected successfully!");
+          toast.message(successMessageBasedOnKey(key), {
+            description: `You have successfully collected ${points} points!`,
+          })
           setLoading(false);
         },
         onError: () => {
@@ -46,6 +49,22 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
       }
     );
   };
+
+  const successMessageBasedOnKey = (key: Props['key']) => {
+    switch(title){
+      case 'post-tweet':
+        return 'Tweet posted successfully!';
+      case 'write-blog-post':
+        return 'Blog post written successfully!';
+      case 'review-google':
+        return 'Google review posted successfully!';
+      case 'youtube-video':
+        return 'YouTube video created successfully!';
+      default:
+        return 'Points collected successfully!';
+    }
+  }
+
   return (
     <BackgroundGradient className="rounded-[22px] max-w-sm py-2 px-8 bg-white dark:bg-zinc-900 h-full">
       <div className="min-h-40">
@@ -59,7 +78,7 @@ const PointCard: React.FC<Props> = ({ points, title, description }) => {
       </div>
       <Button
         className="mb-4"
-        onClick={() => handleCollectPoints(points)}
+        onClick={() => handleCollectPoints(key, points)}
         loading={loading}
       >
         Collect

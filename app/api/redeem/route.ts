@@ -1,6 +1,6 @@
 import { getXataClient } from "@/xata";
 import { NextRequest } from "next/server";
-import { createThirdwebClient, prepareContractCall, resolveMethod, sendTransaction, toUnits } from "thirdweb";
+import { createThirdwebClient, prepareContractCall, readContract, resolveMethod, sendTransaction, toUnits } from "thirdweb";
 import { privateKeyAccount } from "thirdweb/wallets";
 import { elpContract } from "../lib/utils";
 
@@ -43,6 +43,14 @@ export async function POST(request: NextRequest) {
     return new Response("Private key not found!", { status: 404 });
   }
 
+  // fetch the decimals
+
+  const decimalsData = await readContract({ 
+    contract: elpContract, 
+    method: 'decimals', 
+    params: [] 
+  })
+
   // connect with the ELP contract and call the distribute tokens function
 
   const companyWallet = privateKeyAccount({
@@ -56,7 +64,7 @@ export async function POST(request: NextRequest) {
   const transaction = await prepareContractCall({ 
     contract: elpContract, 
     method: 'transferTokensByDistributor', 
-    params: [walletAddress, toUnits(String(userPoints), 18)] 
+    params: [walletAddress, toUnits(String(userPoints), decimalsData)] // use function decimals from contract to get the decimals
   });
 
   console.log("Transaction: ", transaction)

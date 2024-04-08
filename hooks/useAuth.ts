@@ -1,18 +1,21 @@
-"use client";
-
+import { elpContract } from "@/app/thirdweb";
 import { getCustomer } from "@/lib/api-requests";
 import { useCustomerStore } from "@/store/customerStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useActiveWallet } from "thirdweb/react";
-import { resolveMethod, toTokens } from "thirdweb";
-import { useReadContract } from "thirdweb/react";
-import { elpContract } from "@/app/thirdweb";
+import { toTokens } from "thirdweb";
+import { useActiveWallet, useReadContract } from "thirdweb/react";
 
-const Auth = () => {
+const useAuth = () => {
   const wallet = useActiveWallet();
   const walletAddress = wallet?.getAccount()?.address;
   const customerStore = useCustomerStore();
+
+  const { data: decimalsData, isLoading: isLoadingDecimals } = useReadContract({
+    contract: elpContract,
+    method: "decimals",
+    params: [],
+  });
 
   const { data: onChainBalanceData, isLoading: isLoadingOnChainPoints } =
     useReadContract({
@@ -56,14 +59,11 @@ const Auth = () => {
   }, [customerData]);
 
   useEffect(() => {
-    if (onChainBalanceData) {
-      const points = toTokens(onChainBalanceData, 18);
-      console.log("points on chain", points);
+    if (onChainBalanceData && decimalsData) {
+      const points = toTokens(onChainBalanceData, decimalsData);
       customerStore.setOnChainPoints(points);
     }
-  }, [onChainBalanceData]);
-
-  return <></>;
+  }, [onChainBalanceData, decimalsData]);
 };
 
-export default Auth;
+export default useAuth;

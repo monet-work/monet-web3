@@ -1,4 +1,4 @@
-import CollectPoints from "@/components/collectPoints";
+import CollectPoints from "@/components/collect-points";
 import { Button } from "@/components/ui/button";
 import { SparklesCore } from "@/components/ui/sparkles";
 
