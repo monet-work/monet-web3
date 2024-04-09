@@ -3,10 +3,7 @@
 import { elpContract } from "@/app/thirdweb";
 import { useCustomerStore } from "@/store/customerStore";
 import { useGlitch } from "react-powerglitch";
-import {
-  prepareContractCall,
-  toWei,
-} from "thirdweb";
+import { prepareContractCall, toWei } from "thirdweb";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
@@ -17,7 +14,6 @@ import { redeemPoints } from "@/lib/api-requests";
 const transferFee = toWei("0.001");
 
 const SubNavbar = () => {
-
   const glitch = useGlitch({
     playMode: "hover",
     createContainers: true,
@@ -105,7 +101,9 @@ const SubNavbar = () => {
           });
 
           // reloading the page as a temporary fix to update the on chain points. Ideally, thirdweb events needs to be listened and acted upon
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
         },
         onError: (error) => {
           console.error(error);
