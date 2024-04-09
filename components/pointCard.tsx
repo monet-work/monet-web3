@@ -8,13 +8,13 @@ import { collectPoints } from "@/lib/api-requests";
 import { useActiveAccount } from "thirdweb/react";
 
 type Props = {
-  key: 'post-tweet' | 'write-blog-post' | 'review-google' | 'youtube-video';
+  id: 'post-tweet' | 'write-blog-post' | 'review-google' | 'youtube-video';
   title: string;
   description: string;
   points: number;
 };
 
-const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
+const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
   const customerStore = useCustomerStore();
   const account = useActiveAccount();
   const walletAddress = account?.address;
@@ -23,7 +23,7 @@ const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleCollectPoints = async (key: Props['key'], points: number) => {
+  const handleCollectPoints = async (id: Props['id'], points: number) => {
     setLoading(true);
 
     if(!walletAddress) return;
@@ -37,7 +37,7 @@ const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
         onSuccess: (data) => {
           // update points in store and invaliate cache
           customerStore.setCustomer(data.data);
-          toast.message(successMessageBasedOnKey(key), {
+          toast.message(successMessageBasedOnKey(id), {
             description: `You have successfully collected ${points} points!`,
           })
           setLoading(false);
@@ -50,7 +50,7 @@ const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
     );
   };
 
-  const successMessageBasedOnKey = (key: Props['key']) => {
+  const successMessageBasedOnKey = (key: Props['id']) => {
     switch(title){
       case 'post-tweet':
         return 'Tweet posted successfully!';
@@ -78,7 +78,7 @@ const PointCard: React.FC<Props> = ({ key, points, title, description }) => {
       </div>
       <Button
         className="mb-4"
-        onClick={() => handleCollectPoints(key, points)}
+        onClick={() => handleCollectPoints(id, points)}
         loading={loading}
       >
         Collect

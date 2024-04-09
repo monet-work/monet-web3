@@ -7,7 +7,7 @@ import {
   prepareContractCall,
   toWei,
 } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -57,6 +57,9 @@ const SubNavbar = () => {
     mutationFn: redeemPoints,
   });
 
+  const account = useActiveAccount();
+  const walletAddress = account?.address;
+
   const handleRedeemPoints = async () => {
     const transaction = await prepareContractCall({
       contract: elpContract,
@@ -87,14 +90,13 @@ const SubNavbar = () => {
 
   useEffect(() => {
     if (sendTransactionData) {
-      const userWalletAddress = customerStore?.customer?.walletAddress;
-      if (!userWalletAddress) {
+      if (!walletAddress) {
         toast.message("Wallet address not found", {
           description: "Please connect your wallet to redeem points",
         });
         return;
       }
-      redeemPointsMutationFn.mutate(userWalletAddress, {
+      redeemPointsMutationFn.mutate(walletAddress, {
         onSuccess: (res) => {
           customerStore.setCustomer(res.data);
           toast.message("Points redeemed successfully", {

@@ -1,15 +1,19 @@
 import { elpContract } from "@/app/thirdweb";
-import { getCustomer } from "@/lib/api-requests";
+import { createCustomer, getCustomer } from "@/lib/api-requests";
 import { useCustomerStore } from "@/store/customerStore";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { toTokens } from "thirdweb";
-import { useActiveWallet, useReadContract } from "thirdweb/react";
+import { useActiveAccount, useReadContract } from "thirdweb/react";
 
 const useAuth = () => {
-  const wallet = useActiveWallet();
-  const walletAddress = wallet?.getAccount()?.address;
+  const account = useActiveAccount();
+  const walletAddress = account?.address;
   const customerStore = useCustomerStore();
+
+  const createCustomerMutation = useMutation({
+    mutationFn: createCustomer,
+  });
 
   const { data: decimalsData, isLoading: isLoadingDecimals } = useReadContract({
     contract: elpContract,
@@ -23,12 +27,6 @@ const useAuth = () => {
       method: "balanceOf",
       params: [walletAddress!],
     });
-
-  wallet?.subscribe("disconnect", () => {
-    //not working at the moment
-    console.log("disconnect event");
-    customerStore.setCustomer(null);
-  });
 
   const {
     data: customerData,
@@ -49,14 +47,44 @@ const useAuth = () => {
 
   useEffect(() => {
     if (!walletAddress) return;
+    // fetch customer data
     refetch();
   }, [walletAddress]);
 
   useEffect(() => {
-    if (customerData) {
-      customerStore.setCustomer(customerData.data);
+    const customer = customerData?.data;
+    if (customer) {
+      customerStore.setCustomer(customer);
     }
   }, [customerData]);
+
+  useEffect(() => {
+    const customer = customerData?.data;
+    if (!walletAddress) return;
+
+    if (!customer) {
+      createCustomerMutation.mutate(
+        {
+          walletAddress: walletAddress!,
+        },
+        {
+          onSuccess: (data) => {
+            customerStore.setCustomer(data.data);
+          },
+          onError: (err) => {
+            console.error(err, "Error while creating customer");
+          },
+        }
+      );
+    }
+  }, [customerData]);
+
+  useEffect(() => {
+    if (!account) {
+      // acts as a log out
+      customerStore.setCustomer(null);
+    }
+  }, [account]);
 
   useEffect(() => {
     if (onChainBalanceData && decimalsData) {

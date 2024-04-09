@@ -10,25 +10,25 @@ const pointsData: Point[] = [
     title: "Post a tweet! (1 points)",
     description: "Post a tweet about us and earn 1 points",
     points: 1,
-    key: "post-tweet",
+    id: "post-tweet",
   },
   {
     title: "Write a blog post! (5 points)",
     description: "Write a blog post about us and earn 5 points",
     points: 5,
-    key: "write-blog-post",
+    id: "write-blog-post",
   },
   {
     title: "Review us on Google! (10 points)",
     description: "Review us on Google and earn 10 points",
     points: 10,
-    key: "review-google",
+    id: "review-google",
   },
   {
     title: "Create a YouTube video! (20 points)",
     description: "Write a blog post about us and earn 20 points",
     points: 20,
-    key: "youtube-video",
+    id: "youtube-video",
   },
 ];
 
@@ -49,7 +49,8 @@ const CollectPoints = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-16">
           {pointsData.map((point) => (
             <PointCard
-              key={point.key}
+              key={point.id}
+              id={point.id}
               title={point.title}
               description={point.description}
               points={point.points}
