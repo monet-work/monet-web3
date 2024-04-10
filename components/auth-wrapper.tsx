@@ -11,7 +11,6 @@ type Props = {
 const AuthWrapper: React.FC<Props> = ({ children }) => {
   useAuth();
   const { eventsData } = useThirdwebEvents();
-  console.log("event watched", eventsData);
 
   useEffect(() => {
 

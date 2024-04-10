@@ -21,23 +21,23 @@ const useAuth = () => {
     params: [],
   });
 
-  const { data: onChainBalanceData, isLoading: isLoadingOnChainPoints } =
+  const { data: onChainBalanceData, isLoading: isLoadingOnChainPoints, refetch: refetchOnChainPoints } =
     useReadContract({
       contract: elpContract,
       method: "balanceOf",
       params: [walletAddress!],
-    });
+    },);
 
   const {
     data: customerData,
     isLoading,
     error,
-    refetch,
+    refetch: refetchCustomerData,
   } = useQuery({
     queryKey: ["customer", walletAddress],
     queryFn: async () => {
       const data = await getCustomer({
-        walletAddress: walletAddress || "",
+        walletAddress: walletAddress!,
       });
       return data;
     },
@@ -48,7 +48,8 @@ const useAuth = () => {
   useEffect(() => {
     if (!walletAddress) return;
     // fetch customer data
-    refetch();
+    refetchCustomerData();
+    refetchOnChainPoints();
   }, [walletAddress]);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const useAuth = () => {
     if (customer) {
       customerStore.setCustomer(customer);
     }
-  }, [customerData]);
+  }, [customerData, walletAddress]);
 
   useEffect(() => {
     const customer = customerData?.data;
@@ -77,7 +78,7 @@ const useAuth = () => {
         }
       );
     }
-  }, [customerData]);
+  }, [customerData, walletAddress]);
 
   useEffect(() => {
     if (!account) {
