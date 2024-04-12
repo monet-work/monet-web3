@@ -41,7 +41,7 @@ const SubNavbar = () => {
   });
 
   const {
-    data: sendTransactionData,
+    data: redeemPointsData,
     mutate: sendRedeemPointsTransaction,
     isError,
     isPending,
@@ -63,7 +63,7 @@ const SubNavbar = () => {
       value: transferFee,
       params: [],
     });
-    await sendRedeemPointsTransaction(transaction as any);
+    sendRedeemPointsTransaction(transaction as any);
   };
   const customerStore = useCustomerStore();
 
@@ -85,7 +85,7 @@ const SubNavbar = () => {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (sendTransactionData) {
+    if (redeemPointsData) {
       if (!walletAddress) {
         toast.message("Wallet address not found", {
           description: "Please connect your wallet to redeem points",
@@ -113,10 +113,10 @@ const SubNavbar = () => {
         },
       });
     }
-  }, [sendTransactionData]);
+  }, [redeemPointsData]);
 
   return (
-    <>
+    <div>
       {customerStore.customer ? (
         <div className="sticky top-[70px] z-30 px-8 py-2 bg-teal-700 text-white flex justify-end">
           <div className="flex gap-4 text-slate-200 text-sm items-center">
@@ -148,7 +148,7 @@ const SubNavbar = () => {
           </div>
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

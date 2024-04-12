@@ -1,8 +1,6 @@
 "use client";
 
 import useAuth from "@/hooks/useAuth";
-import useThirdwebEvents from "@/hooks/useThirdwebEvents";
-import { useEffect } from "react";
 
 type Props = {
   children: React.ReactNode;
@@ -10,14 +8,8 @@ type Props = {
 
 const AuthWrapper: React.FC<Props> = ({ children }) => {
   useAuth();
-  const { eventsData } = useThirdwebEvents();
 
-  useEffect(() => {
-
-
-  }, [eventsData])
-
-  return <>{children}</>;
+  return <div>{children}</div>;
 };
 
 export default AuthWrapper;
