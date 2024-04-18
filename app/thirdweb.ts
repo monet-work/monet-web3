@@ -1,6 +1,6 @@
 "use client";
 
-import { elpContractABI } from "@/models/abi";
+import { elpContractABI, elpMarketplaceContractABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 
@@ -11,6 +11,7 @@ if (!clientId) {
 }
 
 const elpContractAddress = process.env.NEXT_PUBLIC_ELP_CONTRACT || "";
+const elpMarketplaceContractAddress = process.env.NEXT_PUBLIC_ELP_MARKETPLACE_CONTRACT || "";
 
 export const client = createThirdwebClient({
   clientId: clientId,
@@ -26,4 +27,11 @@ export const elpContract = getContract({
   address: elpContractAddress,
   // OPTIONAL: the contract's abi
   abi: elpContractABI
+});
+
+export const elpMarketplaceContract = getContract({
+  client,
+  chain: baseSepolia,
+  address: elpMarketplaceContractAddress,
+  abi: elpMarketplaceContractABI
 });
