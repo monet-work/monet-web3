@@ -1,9 +1,9 @@
 "use client";
 
-import { Listing } from "@/models/listing";
+import { Listing, ListingStatus } from "@/models/listing";
 import ListingCard from "./listing-card";
 import { useSendTransaction } from "thirdweb/react";
-import { prepareContractCall, toWei } from "thirdweb";
+import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
 import { elpMarketplaceContract } from "@/app/thirdweb";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -39,7 +39,14 @@ const ListingContainer: React.FC<Props> = ({
       params: [BigInt(listingId)],
       value: toWei(amount),
     });
-    await sendBuyTransaction(transaction as any);
+    await sendBuyTransaction(transaction as PreparedTransaction, {
+      onSuccess: () => {
+        onListingUpdated && onListingUpdated();
+      },
+      onError: () => {
+        console.log("Error buying");
+      },
+    });
 
     console.log(transaction, "transaction");
   };
@@ -49,36 +56,26 @@ const ListingContainer: React.FC<Props> = ({
       method: "cancelListing",
       params: [BigInt(listingId)],
     });
-    await sendCancelTransaction(transaction as any);
+    await sendCancelTransaction(transaction as PreparedTransaction, {
+      onSuccess: () => {
+        onListingUpdated && onListingUpdated();
+      },
+      onError: () => {
+        console.log("Error cancelling");
+      },
+    
+    });
 
     console.log(transaction, "transaction");
   };
-
-  useEffect(() => {
-    if (isBuySuccess) {
-      toast("Listing bought successfully!");
-      onListingUpdated && onListingUpdated();
-    }
-    if (isBuyError) {
-      toast("Failed to buy listing, please try again!");
-    }
-  }, [isBuyError, isBuySuccess]);
-
-  useEffect(() => {
-    if (isCancelSuccess) {
-      toast("Listing cancelled successfully!");
-      onListingUpdated && onListingUpdated();
-    }
-    if (isCancelError) {
-      toast("Failed to cancel listing, please try again!");
-    }
-  }, [isCancelError, isCancelSuccess]);
 
   const allowBuy = (listing: Listing) =>
     !!activeWalletAddress && listing.address !== activeWalletAddress;
 
   const allowCancel = (listing: Listing) =>
-    !!activeWalletAddress && listing.address === activeWalletAddress;
+    !!activeWalletAddress &&
+    listing.address === activeWalletAddress &&
+    listing.status === ListingStatus.LIVE;
 
   return (
     <div className="my-4">

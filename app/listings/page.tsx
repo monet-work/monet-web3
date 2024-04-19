@@ -10,14 +10,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useActiveAccount, useReadContract } from "thirdweb/react";
-import { elpMarketplaceContract } from "../thirdweb";
+import {
+  useActiveAccount,
+  useReadContract,
+  useSendTransaction,
+} from "thirdweb/react";
+import { elpContract, elpMarketplaceContract } from "../thirdweb";
 import { useEffect, useState } from "react";
 import { Listing, ListingStatus } from "@/models/listing";
-import { toEther, toTokens, toUnits } from "thirdweb";
+import {
+  PreparedTransaction,
+  prepareContractCall,
+  toEther,
+  toTokens,
+  toUnits,
+  toWei,
+} from "thirdweb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import useThirdwebEvents from "@/hooks/useThirdwebEvents";
+import ApproveListing from "@/components/approveListing";
+import { toast } from "sonner";
+
+type DRAFT_LISTING_STATE = "DORMANT" | "APPROVING" | "CREATING";
 
 const ListingsPage: React.FC = () => {
   const account = useActiveAccount();
@@ -34,8 +49,71 @@ const ListingsPage: React.FC = () => {
   });
 
   const [listings, setListings] = useState<Listing[] | undefined>([]);
+  const [draftListing, setDraftListing] = useState<
+    | {
+        value: string;
+        amount: string;
+      }
+    | undefined
+  >(undefined);
+  const [draftListingState, setDraftListingState] =
+    useState<DRAFT_LISTING_STATE>("DORMANT");
 
-  const { eventsFromMarketplaceContract } = useThirdwebEvents();
+  const {
+    mutate: sendApproveTransaction,
+    isPending: isApprovalPending,
+    isError: isErrorApproving,
+  } = useSendTransaction();
+
+  const {
+    mutate: sendCreateListingTransaction,
+    isPending: isCreateListingPending,
+    isError: isErrorCreateListing,
+  } = useSendTransaction();
+
+  const performApproval = async (address: string, quantity: string) => {
+    const transaction = await prepareContractCall({
+      contract: elpContract,
+      method: "approve",
+      params: [address, toUnits(quantity, 4)],
+    });
+    await sendApproveTransaction(transaction as PreparedTransaction, {
+      onSuccess: () => {
+        console.log("Approved");
+        setDraftListingState("CREATING");
+      },
+      onError: () => {
+        console.log("Error approving");
+      },
+    });
+  };
+
+  const performCreateListing = async (quantity: string, amount: string) => {
+    const transaction = await prepareContractCall({
+      contract: elpMarketplaceContract,
+      method: "createListing",
+      params: [toUnits(quantity, 4), toWei(amount)],
+    });
+
+    await sendCreateListingTransaction(transaction as PreparedTransaction, {
+      onSuccess: () => {
+        console.log("Listing Created");
+        toast.message("Listing Created", {
+          description: "Your listing has been created successfully",
+        });
+        setDraftListing(undefined);
+        setDraftListingState("DORMANT");
+      },
+      onError: () => {
+        console.log("Error while creating listing");
+        toast.message("Error while creating listing", {
+          description: "Please try again",
+        });
+      },
+    });
+  };
+
+  const { eventsFromMarketplaceContract } = useThirdwebEvents(); //not working yet
 
   useEffect(() => {
     console.log(eventsFromMarketplaceContract, "eventsData");
@@ -82,6 +160,25 @@ const ListingsPage: React.FC = () => {
     (listing) => listing.status === ListingStatus.CANCELLED
   );
 
+  const handleCreateListing = async (values: {
+    quantity: string;
+    amount: string;
+  }) => {
+    setDraftListing({
+      value: values.quantity,
+      amount: values.amount,
+    });
+    setDraftListingState("APPROVING");
+    await performApproval(elpMarketplaceContract.address, values.quantity);
+  };
+
+  const handleConfirmListing = async (values: {
+    quantity: string;
+    amount: string;
+  }) => {
+    await performCreateListing(values.quantity, values.amount);
+  };
+
   return (
     <main className="bg-black min-h-screen py-8">
       <div className="container">
@@ -92,10 +189,34 @@ const ListingsPage: React.FC = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create Listing</DialogTitle>
+                {/* <DialogTitle>Create Listing</DialogTitle> */}
               </DialogHeader>
               <div>
-                <ListingForm />
+                {draftListingState === "DORMANT" && (
+                  <ListingForm onSubmitForm={handleCreateListing} />
+                )}
+                {draftListingState === "APPROVING" && <ApproveListing />}
+
+                {draftListingState === "CREATING" && (
+                  <div>
+                    <p>
+                      Creating a listing of {draftListing?.value} ELP points at
+                      a price of {draftListing?.amount} Eth
+                    </p>
+                    <Button
+                      onClick={() => {
+                        if (!draftListing?.value || !draftListing?.amount)
+                          return;
+                        performCreateListing(
+                          draftListing?.value,
+                          draftListing?.amount
+                        );
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </div>
+                )}
               </div>
             </DialogContent>
           </Dialog>

@@ -14,12 +14,16 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
+type Props = {
+  onSubmitForm: (values: z.infer<typeof formSchema>) => void;
+};
+
 const formSchema = z.object({
   quantity: z.string(),
   amount: z.string(),
 });
 
-const ListingForm = () => {
+const ListingForm: React.FC<Props> = ({ onSubmitForm }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,7 +33,7 @@ const ListingForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    onSubmitForm(values);
   };
 
   return (
@@ -39,22 +43,26 @@ const ListingForm = () => {
           control={form.control}
           name="quantity"
           render={({ field }) => (
-            <>
-              <FormItem>
-                <FormLabel>Quantity</FormLabel>
-                <FormControl>
-                  <Input placeholder="enter quantity" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input placeholder="enter amount" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </>
+            <FormItem>
+              <FormLabel>Quantity</FormLabel>
+              <FormControl>
+                <Input placeholder="enter quantity of tokens" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Amount</FormLabel>
+              <FormControl>
+                <Input placeholder="enter amount in Eth" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <Button type="submit">Create Listing</Button>

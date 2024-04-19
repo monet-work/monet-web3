@@ -3,7 +3,7 @@
 import { elpContract } from "@/app/thirdweb";
 import { useCustomerStore } from "@/store/customerStore";
 import { useGlitch } from "react-powerglitch";
-import { prepareContractCall, toWei } from "thirdweb";
+import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
@@ -63,26 +63,23 @@ const SubNavbar = () => {
       value: transferFee,
       params: [],
     });
-    sendRedeemPointsTransaction(transaction as any);
+    sendRedeemPointsTransaction(transaction as PreparedTransaction, {
+      onSuccess: () => {
+        toast.message("Transaction successful", {
+          description:
+            "Your points have been redeemed successfully. It will be reflected in your wallet soon.",
+        });
+      },
+      onError: (error) => {
+        console.error(error);
+        toast.message("Transaction failed", {
+          description: error?.message,
+        });
+      },
+    
+    });
   };
   const customerStore = useCustomerStore();
-
-  useEffect(() => {
-    if (isError) {
-      toast.message("Transaction failed", {
-        description: error?.message,
-      });
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      toast.message("Transaction successful", {
-        description:
-          "Your points have been redeemed successfully. It will be reflected in your wallet soon.",
-      });
-    }
-  }, [isSuccess]);
 
   useEffect(() => {
     if (redeemPointsData) {
