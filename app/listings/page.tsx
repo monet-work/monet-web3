@@ -1,32 +1,125 @@
+"use client";
+
 import ListingForm from "@/components/forms/listing-form";
 import ListingContainer from "@/components/listing-container";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useActiveAccount, useReadContract } from "thirdweb/react";
+import { elpMarketplaceContract } from "../thirdweb";
+import { useEffect, useState } from "react";
+import { Listing, ListingStatus } from "@/models/listing";
+import { toEther } from "thirdweb";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const ListingsPage: React.FC = () => {
+  const account = useActiveAccount();
+  const currentUserWalletAddress = account?.address;
+
+  const { data: listingsData, isLoading: isLoadingListings } = useReadContract({
+    contract: elpMarketplaceContract,
+    method: "getListings",
+    params: [],
+  });
+
+  const [listings, setListings] = useState<Listing[] | undefined>([]);
+
+  useEffect(() => {
+    const formattedListings = listingsData?.map(
+      (listing: any, index: number) => {
+        return {
+          id: index.toString(),
+          address: listing.seller,
+          quantity: toEther(listing.quantity),
+          amount: toEther(listing.totalPrice),
+          status: listing.listingStatus,
+        };
+      }
+    );
+    setListings(formattedListings);
+
+    if (formattedListings) {
+      console.log("formattedListings", formattedListings);
+    }
+  }, [listingsData]);
+
+  const publicListings = listings?.filter(
+    (listing) =>
+      listing.status === ListingStatus.LIVE &&
+      listing.address !== currentUserWalletAddress
+  );
+
+  const userListings = listings?.filter(
+    (listing) => listing.address === currentUserWalletAddress
+  );
+
+  const liveUserListings = userListings?.filter(
+    (listing) => listing.status === ListingStatus.LIVE
+  );
+
+  const boughtUserListings = userListings?.filter(
+    (listing) => listing.status === ListingStatus.BOUGHT
+  );
+
+  const cancelledUserListings = userListings?.filter(
+    (listing) => listing.status === ListingStatus.CANCELLED
+  );
+
   return (
     <main className="bg-black min-h-screen py-8">
       <div className="container">
         {/* Show public listings */}
-        <section>
+        <section className="py-8">
           <h3 className="text-2xl md:text-4xl text-white">Public Listings</h3>
 
-          <ListingContainer listings={[]} />
+          {isLoadingListings && (
+            <div className="text-white">
+              <p>Loading Listings...</p>
+              <Skeleton className="h-12 w-[200px] mt-4" />
+            </div>
+          )}
+          {!isLoadingListings && (
+            <ListingContainer
+              listings={publicListings || []}
+              activeWalletAddress={currentUserWalletAddress}
+            />
+          )}
         </section>
 
         {/* Show user listings */}
-        <section>
+        <section className="py-8">
           <h3 className="text-2xl md:text-4xl text-white">My Listings</h3>
 
-          <ListingContainer listings={[]} />
+          {isLoadingListings && (
+            <div className="text-white">
+              <p>Loading Listings...</p>
+              <Skeleton className="h-12 w-[200px] mt-4" />
+            </div>
+          )}
+          {!isLoadingListings && (
+            <Tabs defaultValue="active" className="text-white mt-8">
+              <TabsList className="flex gap-4">
+                <TabsTrigger value="active">Active</TabsTrigger>
+                <TabsTrigger value="sold">Sold</TabsTrigger>
+                <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+              </TabsList>
+              <TabsContent value="active">
+                <ListingContainer listings={liveUserListings || []} />
+              </TabsContent>
+              <TabsContent value="sold">
+                <ListingContainer listings={boughtUserListings || []} />
+              </TabsContent>
+              <TabsContent value="cancelled">
+                <ListingContainer listings={cancelledUserListings || []} />
+              </TabsContent>
+            </Tabs>
+          )}
 
           <div className="mt-4">
             <Dialog>

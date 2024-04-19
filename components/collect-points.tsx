@@ -1,7 +1,7 @@
 "use client";
 
 import { useActiveAccount } from "thirdweb/react";
-import PointCard from "./pointCard";
+import PointCard from "./point-card";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Point } from "@/models/point";
 
