@@ -48,6 +48,7 @@ const ListingsPage: React.FC = () => {
     params: [],
   });
 
+  const [showDialog, setShowDialog] = useState(false);
   const [listings, setListings] = useState<Listing[] | undefined>([]);
   const [draftListing, setDraftListing] = useState<
     | {
@@ -103,6 +104,7 @@ const ListingsPage: React.FC = () => {
         });
         setDraftListing(undefined);
         setDraftListingState("DORMANT");
+        setShowDialog(false);
       },
       onError: () => {
         console.log("Error while creating listing");
@@ -183,14 +185,16 @@ const ListingsPage: React.FC = () => {
     <main className="bg-black min-h-screen py-8">
       <div className="container">
         <div className="flex justify-end">
-          <Dialog>
+          <Dialog open={showDialog} onOpenChange={setShowDialog}>
             <DialogTrigger asChild>
               <Button variant={"outline"}>Create a listing</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader>
-                {/* <DialogTitle>Create Listing</DialogTitle> */}
-              </DialogHeader>
+              {draftListingState === "DORMANT" && (
+                <DialogHeader>
+                  <DialogTitle>Create Listing</DialogTitle>
+                </DialogHeader>
+              )}
               <div>
                 {draftListingState === "DORMANT" && (
                   <ListingForm onSubmitForm={handleCreateListing} />
@@ -204,14 +208,14 @@ const ListingsPage: React.FC = () => {
                       a price of {draftListing?.amount} Eth
                     </p>
                     <Button
-                      onClick={() => {
-                        if (!draftListing?.value || !draftListing?.amount)
-                          return;
-                        performCreateListing(
-                          draftListing?.value,
-                          draftListing?.amount
-                        );
-                      }}
+                      className="mt-4 mx-auto"
+                      onClick={() =>
+                        draftListing &&
+                        handleConfirmListing({
+                          quantity: draftListing.value,
+                          amount: draftListing.amount,
+                        })
+                      }
                     >
                       Confirm
                     </Button>
