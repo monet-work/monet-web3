@@ -1,4 +1,4 @@
-import { elpContract } from "@/app/thirdweb";
+import { elpContract, elpMarketplaceContract } from "@/app/thirdweb";
 import { prepareEvent } from "thirdweb";
 import { useContractEvents } from "thirdweb/react";
 
@@ -7,12 +7,22 @@ const useThirdwebEvents = () => {
     signature: "event transferred(address user,uint256 value)",
   });
 
-  const { data: eventsData } = useContractEvents({
+  const preparedTradeExecutedEvent = prepareEvent({
+    signature:
+      "event TradeExecuted(uint256 id, address user, uint256 quantity, uint256 value)",
+  });
+
+  const { data: eventsFromElpContract } = useContractEvents({
     contract: elpContract,
     events: [prepareTransferredEvent],
   });
 
-  return { eventsData };
+  const { data: eventsFromMarketplaceContract } = useContractEvents({
+    contract: elpMarketplaceContract,
+    events: [preparedTradeExecutedEvent],
+  });
+
+  return { eventsFromElpContract, eventsFromMarketplaceContract };
 };
 
 export default useThirdwebEvents;

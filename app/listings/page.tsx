@@ -14,15 +14,20 @@ import { useActiveAccount, useReadContract } from "thirdweb/react";
 import { elpMarketplaceContract } from "../thirdweb";
 import { useEffect, useState } from "react";
 import { Listing, ListingStatus } from "@/models/listing";
-import { toEther } from "thirdweb";
+import { toEther, toTokens, toUnits } from "thirdweb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import useThirdwebEvents from "@/hooks/useThirdwebEvents";
 
 const ListingsPage: React.FC = () => {
   const account = useActiveAccount();
   const currentUserWalletAddress = account?.address;
 
-  const { data: listingsData, isLoading: isLoadingListings } = useReadContract({
+  const {
+    data: listingsData,
+    isLoading: isLoadingListings,
+    refetch: refetchListingsData,
+  } = useReadContract({
     contract: elpMarketplaceContract,
     method: "getListings",
     params: [],
@@ -30,13 +35,19 @@ const ListingsPage: React.FC = () => {
 
   const [listings, setListings] = useState<Listing[] | undefined>([]);
 
+  const { eventsFromMarketplaceContract } = useThirdwebEvents();
+
+  useEffect(() => {
+    console.log(eventsFromMarketplaceContract, "eventsData");
+  }, [eventsFromMarketplaceContract]);
+
   useEffect(() => {
     const formattedListings = listingsData?.map(
       (listing: any, index: number) => {
         return {
           id: index.toString(),
           address: listing.seller,
-          quantity: toEther(listing.quantity),
+          quantity: toTokens(listing.quantity, 4).toString(),
           amount: toEther(listing.totalPrice),
           status: listing.listingStatus,
         };
@@ -74,6 +85,21 @@ const ListingsPage: React.FC = () => {
   return (
     <main className="bg-black min-h-screen py-8">
       <div className="container">
+        <div className="flex justify-end">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant={"outline"}>Create a listing</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Listing</DialogTitle>
+              </DialogHeader>
+              <div>
+                <ListingForm />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
         {/* Show public listings */}
         <section className="py-8">
           <h3 className="text-2xl md:text-4xl text-white">Public Listings</h3>
@@ -88,6 +114,7 @@ const ListingsPage: React.FC = () => {
             <ListingContainer
               listings={publicListings || []}
               activeWalletAddress={currentUserWalletAddress}
+              onListingUpdated={() => refetchListingsData()}
             />
           )}
         </section>
@@ -110,32 +137,26 @@ const ListingsPage: React.FC = () => {
                 <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
               </TabsList>
               <TabsContent value="active">
-                <ListingContainer listings={liveUserListings || []} />
+                <ListingContainer
+                  listings={liveUserListings || []}
+                  activeWalletAddress={currentUserWalletAddress}
+                  onListingUpdated={() => refetchListingsData()}
+                />
               </TabsContent>
               <TabsContent value="sold">
-                <ListingContainer listings={boughtUserListings || []} />
+                <ListingContainer
+                  listings={boughtUserListings || []}
+                  activeWalletAddress={currentUserWalletAddress}
+                />
               </TabsContent>
               <TabsContent value="cancelled">
-                <ListingContainer listings={cancelledUserListings || []} />
+                <ListingContainer
+                  listings={cancelledUserListings || []}
+                  activeWalletAddress={currentUserWalletAddress}
+                />
               </TabsContent>
             </Tabs>
           )}
-
-          <div className="mt-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant={"outline"}>Create a listing</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create Listing</DialogTitle>
-                </DialogHeader>
-                <div>
-                  <ListingForm />
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
         </section>
       </div>
     </main>

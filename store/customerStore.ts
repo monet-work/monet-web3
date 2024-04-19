@@ -3,7 +3,7 @@ import { create } from "zustand";
 
 type Store = {
   customer: Customer | null;
-  onChainPoints: string | null; //elp tokens
+  onChainPoints: string | null;
   setCustomer: (customer: Customer | null) => void;
   setOnChainPoints: (points: string) => void;
 }
