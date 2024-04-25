@@ -29,8 +29,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import useThirdwebEvents from "@/hooks/useThirdwebEvents";
-import ApproveListing from "@/components/approveListing";
+import LoadingMessage from "@/components/loading-message";
 import { toast } from "sonner";
+import WalletConnectWrapper from "@/components/wallet-connect-wrapper";
 
 type DRAFT_LISTING_STATE = "DORMANT" | "APPROVING" | "CREATING";
 
@@ -199,7 +200,7 @@ const ListingsPage: React.FC = () => {
                 {draftListingState === "DORMANT" && (
                   <ListingForm onSubmitForm={handleCreateListing} />
                 )}
-                {draftListingState === "APPROVING" && <ApproveListing />}
+                {draftListingState === "APPROVING" && <LoadingMessage message="Approving the marketplace to sell points" />}
 
                 {draftListingState === "CREATING" && (
                   <div>
@@ -245,44 +246,46 @@ const ListingsPage: React.FC = () => {
         </section>
 
         {/* Show user listings */}
-        <section className="py-8">
-          <h3 className="text-2xl md:text-4xl text-white">My Listings</h3>
+        <WalletConnectWrapper>
+          <section className="py-8">
+            <h3 className="text-2xl md:text-4xl text-white">My Listings</h3>
 
-          {isLoadingListings && (
-            <div className="text-white">
-              <p>Loading Listings...</p>
-              <Skeleton className="h-12 w-[200px] mt-4" />
-            </div>
-          )}
-          {!isLoadingListings && (
-            <Tabs defaultValue="active" className="text-white mt-8">
-              <TabsList className="flex gap-4">
-                <TabsTrigger value="active">Active</TabsTrigger>
-                <TabsTrigger value="sold">Sold</TabsTrigger>
-                <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
-              </TabsList>
-              <TabsContent value="active">
-                <ListingContainer
-                  listings={liveUserListings || []}
-                  activeWalletAddress={currentUserWalletAddress}
-                  onListingUpdated={() => refetchListingsData()}
-                />
-              </TabsContent>
-              <TabsContent value="sold">
-                <ListingContainer
-                  listings={boughtUserListings || []}
-                  activeWalletAddress={currentUserWalletAddress}
-                />
-              </TabsContent>
-              <TabsContent value="cancelled">
-                <ListingContainer
-                  listings={cancelledUserListings || []}
-                  activeWalletAddress={currentUserWalletAddress}
-                />
-              </TabsContent>
-            </Tabs>
-          )}
-        </section>
+            {isLoadingListings && (
+              <div className="text-white">
+                <p>Loading Listings...</p>
+                <Skeleton className="h-12 w-[200px] mt-4" />
+              </div>
+            )}
+            {!isLoadingListings && (
+              <Tabs defaultValue="active" className="text-white mt-8">
+                <TabsList className="flex gap-4">
+                  <TabsTrigger value="active">Active</TabsTrigger>
+                  <TabsTrigger value="sold">Sold</TabsTrigger>
+                  <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
+                </TabsList>
+                <TabsContent value="active">
+                  <ListingContainer
+                    listings={liveUserListings || []}
+                    activeWalletAddress={currentUserWalletAddress}
+                    onListingUpdated={() => refetchListingsData()}
+                  />
+                </TabsContent>
+                <TabsContent value="sold">
+                  <ListingContainer
+                    listings={boughtUserListings || []}
+                    activeWalletAddress={currentUserWalletAddress}
+                  />
+                </TabsContent>
+                <TabsContent value="cancelled">
+                  <ListingContainer
+                    listings={cancelledUserListings || []}
+                    activeWalletAddress={currentUserWalletAddress}
+                  />
+                </TabsContent>
+              </Tabs>
+            )}
+          </section>
+        </WalletConnectWrapper>
       </div>
     </main>
   );

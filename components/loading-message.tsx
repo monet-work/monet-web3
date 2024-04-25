@@ -1,7 +1,11 @@
-const ApproveListing = () => {
+type Props = {
+  message?: string;
+}
+
+const LoadingMessage:React.FC<Props> = ({message}) => {
   return (
     <div className="text-center">
-      <p>Approving the marketplace to sell points</p>
+      <p>{message} || Loading...</p>
 
       <svg
         className="animate-spin h-16 w-16 text-black mt-4 mx-auto"
@@ -27,4 +31,4 @@ const ApproveListing = () => {
   );
 };
 
-export default ApproveListing;
+export default LoadingMessage;
