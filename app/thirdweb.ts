@@ -1,6 +1,7 @@
 "use client";
 
-import { elpContractABI, elpMarketplaceContractABI } from "@/models/abi";
+import { CONTRACTS } from "@/lib/contracts";
+import { airdropContractABI, eigenLayerPointsContractABI, eigenLayerTokenContractABI, elpMarketplaceContractABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 
@@ -10,8 +11,6 @@ if (!clientId) {
   throw new Error("No client ID provided");
 }
 
-const elpContractAddress = process.env.NEXT_PUBLIC_ELP_CONTRACT || "";
-const elpMarketplaceContractAddress = process.env.NEXT_PUBLIC_ELP_MARKETPLACE_CONTRACT || "";
 
 export const client = createThirdwebClient({
   clientId: clientId,
@@ -24,14 +23,28 @@ export const elpContract = getContract({
   // the chain the contract is deployed on
   chain: baseSepolia,
   // the contract's address
-  address: elpContractAddress,
+  address: CONTRACTS.ELP_CONTRACT,
   // OPTIONAL: the contract's abi
-  abi: elpContractABI
+  abi: eigenLayerPointsContractABI
 });
 
 export const elpMarketplaceContract = getContract({
   client,
   chain: baseSepolia,
-  address: elpMarketplaceContractAddress,
+  address: CONTRACTS.ELP_MARKETPLACE_CONTRACT,
   abi: elpMarketplaceContractABI
+});
+
+export const airdropContract = getContract({
+  client,
+  chain: baseSepolia,
+  address: CONTRACTS.AIRDROP_CONTRACT,
+  abi: airdropContractABI
+});
+
+export const eigenLayerTokenContract = getContract({
+  client,
+  chain: baseSepolia,
+  address: CONTRACTS.EIGENLAYER_TOKEN_CONTRACT,
+  abi: eigenLayerTokenContractABI
 });

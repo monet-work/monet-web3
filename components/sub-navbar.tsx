@@ -3,13 +3,25 @@
 import { elpContract } from "@/app/thirdweb";
 import { useCustomerStore } from "@/store/customerStore";
 import { useGlitch } from "react-powerglitch";
-import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import {
+  PreparedTransaction,
+  prepareContractCall,
+  toEther,
+  toTokens,
+  toWei,
+  watchContractEvents,
+} from "thirdweb";
+import {
+  useActiveAccount,
+  useContractEvents,
+  useSendTransaction,
+} from "thirdweb/react";
 import { Button } from "./ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { redeemPoints } from "@/lib/api-requests";
+import useThirdwebEvents from "@/hooks/useThirdwebEvents";
 
 const transferFee = toWei("0.001");
 
@@ -39,6 +51,8 @@ const SubNavbar = () => {
     },
     pulse: false,
   });
+
+  const [pointsTransferred, setPointsTransferred] = useState(false);
 
   const {
     data: redeemPointsData,
@@ -76,10 +90,10 @@ const SubNavbar = () => {
           description: error?.message,
         });
       },
-    
     });
   };
   const customerStore = useCustomerStore();
+  const { eventsFromElpContract } = useThirdwebEvents();
 
   useEffect(() => {
     if (redeemPointsData) {
@@ -96,11 +110,6 @@ const SubNavbar = () => {
             description:
               "Your on-chain points have been redeemed successfully. It will be reflected in your wallet soon.",
           });
-
-          // reloading the page as a temporary fix to update the on chain points. Ideally, thirdweb events needs to be listened and acted upon
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
         },
         onError: (error) => {
           console.error(error);
@@ -111,6 +120,16 @@ const SubNavbar = () => {
       });
     }
   }, [redeemPointsData]);
+
+  const elpContractEvents = useContractEvents({
+    contract: elpContract,
+    watch: true,
+    strict: true,
+  });
+
+  useEffect(() => {
+    console.log(elpContractEvents.data, "elpContractEvents");
+  }, [elpContractEvents.data]);
 
   return (
     <div>
@@ -133,14 +152,16 @@ const SubNavbar = () => {
               </span>
             </div>
             {Number(customerStore?.customer?.points) > 0 ? (
-              <Button
-                onClick={handleRedeemPoints}
-                className="text-sm bg-teal-900"
-                loading={isPending}
-                ref={glitch.ref}
-              >
-                Redeem
-              </Button>
+              <div>
+                <Button
+                  onClick={handleRedeemPoints}
+                  className="text-sm bg-teal-900"
+                  loading={isPending}
+                  ref={glitch.ref}
+                >
+                  Redeem
+                </Button>
+              </div>
             ) : null}
           </div>
         </div>

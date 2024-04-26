@@ -5,7 +5,7 @@ type Props = {
 const LoadingMessage:React.FC<Props> = ({message}) => {
   return (
     <div className="text-center">
-      <p>{message} || Loading...</p>
+      <p>{message || `loading...`}</p>
 
       <svg
         className="animate-spin h-16 w-16 text-black mt-4 mx-auto"

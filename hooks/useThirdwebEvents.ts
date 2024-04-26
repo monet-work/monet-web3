@@ -1,5 +1,5 @@
 import { elpContract, elpMarketplaceContract } from "@/app/thirdweb";
-import { prepareEvent } from "thirdweb";
+import { prepareEvent, watchContractEvents } from "thirdweb";
 import { useContractEvents } from "thirdweb/react";
 
 const useThirdwebEvents = () => {

@@ -2,7 +2,7 @@ import { getXataClient } from "@/xata";
 import { NextRequest } from "next/server";
 import { createThirdwebClient, prepareContractCall, readContract, resolveMethod, sendTransaction, toUnits } from "thirdweb";
 import { privateKeyAccount } from "thirdweb/wallets";
-import { elpContract } from "../lib/utils";
+import { eigenLayerPointsContract as elpContract } from "../lib/utils";
 
 
 if(!process.env.THIRDWEB_SECRET_KEY){
