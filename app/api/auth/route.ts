@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
 
     // fetch data from xata
     const client = getXataClient();
-    const loggedInUser = await client.db.Customer.filter({ walletAddress: walletAddress }).getFirst();
+    const loggedInUser = await client.db.User.filter({ walletAddress: walletAddress }).getFirst();
     if(!loggedInUser) {
         return new Response("User not found", { status: 404 });
     }
