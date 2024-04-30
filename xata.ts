@@ -13,8 +13,9 @@ const tables = [
       { name: "name", type: "text" },
       { name: "industry", type: "string" },
       { name: "foundedDate", type: "datetime" },
-      { name: "walletAddress", type: "string" },
       { name: "privateKey", type: "string" },
+      { name: "approved", type: "bool", defaultValue: "false" },
+      { name: "user", type: "link", link: { table: "User" } },
     ],
     revLinks: [{ column: "companyId", table: "Customer" }],
   },
@@ -22,12 +23,33 @@ const tables = [
     name: "Customer",
     columns: [
       { name: "name", type: "text" },
-      { name: "email", type: "email" },
-      { name: "phoneNumber", type: "string" },
-      { name: "walletAddress", type: "string" },
       { name: "points", type: "float" },
       { name: "companyId", type: "link", link: { table: "Company" } },
+      { name: "user", type: "link", link: { table: "User" } },
     ],
+  },
+  {
+    name: "User",
+    columns: [
+      { name: "name", type: "string" },
+      { name: "walletAddress", type: "string", unique: true },
+      { name: "role", type: "link", link: { table: "Role" } },
+      { name: "email", type: "email" },
+      { name: "privateKey", type: "string" },
+      { name: "phoneNumber", type: "float" },
+    ],
+    revLinks: [
+      { column: "user", table: "Company" },
+      { column: "user", table: "Customer" },
+    ],
+  },
+  {
+    name: "Role",
+    columns: [
+      { name: "name", type: "string" },
+      { name: "roleId", type: "int", notNull: true, defaultValue: "1" },
+    ],
+    revLinks: [{ column: "role", table: "User" }],
   },
 ] as const;
 
@@ -40,9 +62,17 @@ export type CompanyRecord = Company & XataRecord;
 export type Customer = InferredTypes["Customer"];
 export type CustomerRecord = Customer & XataRecord;
 
+export type User = InferredTypes["User"];
+export type UserRecord = User & XataRecord;
+
+export type Role = InferredTypes["Role"];
+export type RoleRecord = Role & XataRecord;
+
 export type DatabaseSchema = {
   Company: CompanyRecord;
   Customer: CustomerRecord;
+  User: UserRecord;
+  Role: RoleRecord;
 };
 
 const DatabaseClient = buildClient();

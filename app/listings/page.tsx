@@ -32,6 +32,7 @@ import useThirdwebEvents from "@/hooks/useThirdwebEvents";
 import LoadingMessage from "@/components/loading-message";
 import { toast } from "sonner";
 import WalletConnectWrapper from "@/components/wallet-connect-wrapper";
+import SubNavbar from "@/components/sub-navbar";
 
 type DRAFT_LISTING_STATE = "DORMANT" | "APPROVING" | "CREATING";
 
@@ -184,6 +185,8 @@ const ListingsPage: React.FC = () => {
 
   return (
     <main className="bg-black min-h-screen py-8">
+      <SubNavbar />
+
       <div className="container">
         <div className="flex justify-end">
           <Dialog open={showDialog} onOpenChange={setShowDialog}>

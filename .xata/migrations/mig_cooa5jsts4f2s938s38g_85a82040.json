@@ -1,0 +1,14 @@
+{
+  "id": "mig_cooa5jsts4f2s938s38g",
+  "parentID": "mig_cooa5hkts4f2s938s340",
+  "checksum": "1:85a82040a9700de221dfe13f3d697c1c4e547d762455c6c451a328db8cb0e314",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "user",
+        "oldName": "userId",
+        "table": "Customer"
+      }
+    }
+  ]
+}

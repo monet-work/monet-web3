@@ -29,7 +29,6 @@ export default function RootLayout({
           <ThirdwebProvider>
             <AuthWrapper>
               <Navbar />
-              <SubNavbar />
               {children}
               <Footer />
             </AuthWrapper>

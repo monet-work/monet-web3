@@ -1,9 +1,12 @@
 import CollectPoints from "@/components/collect-points";
 import Hero from "@/components/hero";
+import SubNavbar from "@/components/sub-navbar";
 
 export default function Home() {
   return (
     <main className="">
+      <SubNavbar />
+
       <Hero />
 
       <section

@@ -50,6 +50,7 @@ const config = {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          dark: "hsl(var(--accent-dark))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -59,6 +60,10 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        typography: {
+          white64: "hsla(var(--white)/ 64%)",
+          white: "hsl(var(--white))",
+        }
       },
       borderRadius: {
         lg: "var(--radius)",

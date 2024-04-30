@@ -22,12 +22,15 @@ export async function POST(request: NextRequest) {
   }
 
   // retrieve user
-  const user = await client.db.Customer.filter({ walletAddress }).getFirst();
+  const user = await client.db.User.filter({ walletAddress }).getFirst();
   if (!user) {
     return new Response("User not found", { status: 404 });
   }
 
-  const userPoints = user.points;
+  // retrieve customer
+  const customer = await client.db.Customer.filter({ user: user.id }).getFirst();
+
+  const customerPoints = customer?.points;
   // fetch the company private key linked to user. 
   // Currently the link is not there. So fetch the company private key from the database.
 
@@ -64,7 +67,7 @@ export async function POST(request: NextRequest) {
   const transaction = await prepareContractCall({ 
     contract: elpContract, 
     method: 'transferTokensByDistributor', 
-    params: [walletAddress, toUnits(String(userPoints), decimalsData)] // use function decimals from contract to get the decimals
+    params: [walletAddress, toUnits(String(customerPoints), decimalsData)] // use function decimals from contract to get the decimals
   });
 
   console.log("Transaction: ", transaction)
