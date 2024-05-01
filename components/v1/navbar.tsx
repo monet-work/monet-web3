@@ -11,10 +11,10 @@ const Navbar = () => {
           <a href="/" className="text-typography-white64 hover:text-typography-white">
             Monet
           </a>
-          <a href="listings" className="relative text-typography-white64 hover:text-typography-white">
+          <a href="/v1/listings" className="relative text-typography-white64 hover:text-typography-white">
             Marketplace
           </a>
-          <a href="airdrop" className="relative text-typography-white64 hover:text-typography-white">
+          <a href="/v1/airdrop" className="relative text-typography-white64 hover:text-typography-white">
             Airdrop
           </a>
           <a href="/v2" className="relative text-typography-white64 hover:text-typography-white">

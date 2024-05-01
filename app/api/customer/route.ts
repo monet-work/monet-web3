@@ -12,8 +12,19 @@ export async function GET(request: Request) {
   const user = await client.db.User.filter({
     walletAddress,
   }).getFirst();
+
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    const newUser = await client.db.User.create({
+      walletAddress,
+    });
+
+    // create customer
+    const customer = await client.db.Customer.create({
+      user: newUser,
+      points: 0,
+    });
+
+    return new Response(JSON.stringify(customer), { status: 200 });
   }
 
   const customer = await client.db.Customer.filter({
@@ -37,18 +48,9 @@ export async function POST(request: Request) {
     walletAddress: body.walletAddress,
   }).getFirst();
 
-  // fetch all roles
-  const roles = await client.db.Role.getAll();
-
-  const customerRole = roles.find((role) => role.roleId === ROLES.CUSTOMER);
-
-  if(!customerRole) {
-    return new Response("Role not found", { status: 404 });
-  }
-
   // if user not found then create user with role Customer
   if (!user) {
-    await client.db.User.create({ ...body, role: customerRole });
+    await client.db.User.create({ ...body });
   }
 
   // check if customer exists
