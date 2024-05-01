@@ -1,3 +1,4 @@
+import Navbar from "@/components/v2/navbar";
 
 type Props = {
   children: React.ReactNode;
@@ -6,6 +7,7 @@ type Props = {
 const V2Layout: React.FC<Props> = ({ children }) => {
   return (
     <>
+      <Navbar />
       {children}
     </>
   );

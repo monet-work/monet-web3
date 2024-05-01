@@ -21,7 +21,6 @@ const SubmitRequestPage = () => {
 
   return (
     <>
-      <Navbar />
       <main className="py-16 bg-black text-white min-h-screen">
         <section className="container pt-16">
           <Card className="max-w-md bg-slate-100 shadow-md mx-auto p-4">
