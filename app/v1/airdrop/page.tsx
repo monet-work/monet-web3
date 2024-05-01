@@ -8,7 +8,6 @@ const AirdropPage = () => {
 
   return (
     <main className="bg-black min-h-screen text-white">
-      <SubNavbar />
 
       <ClaimAirdrop />
     </main>

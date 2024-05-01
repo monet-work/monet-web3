@@ -185,7 +185,6 @@ const ListingsPage: React.FC = () => {
 
   return (
     <main className="bg-black min-h-screen py-8">
-      <SubNavbar />
 
       <div className="container">
         <div className="flex justify-end">
