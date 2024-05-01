@@ -63,6 +63,7 @@ const useAuth = () => {
     const customer = customerData?.data;
     if (!walletAddress) return;
 
+    console.log(customer, 'custsomer')
     if (!customer) {
       createCustomerMutation.mutate(
         {

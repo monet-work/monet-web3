@@ -1,0 +1,17 @@
+{
+  "id": "mig_coov4l776ivhs9c6smu0",
+  "parentID": "mig_coov4hn76ivhs9c6smt0",
+  "checksum": "1:6f083f090afb896c18eb60a120501fdae373ff67a372bc4e3bafa91e6f4ac4bc",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "isEmailApproved",
+          "type": "bool",
+          "defaultValue": "false"
+        },
+        "table": "User"
+      }
+    }
+  ]
+}

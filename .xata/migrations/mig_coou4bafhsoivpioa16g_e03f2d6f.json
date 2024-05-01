@@ -1,0 +1,13 @@
+{
+  "id": "mig_coou4bafhsoivpioa16g",
+  "parentID": "mig_coou3pe15cqh5q3m893g",
+  "checksum": "1:e03f2d6fa295a24902a1e9833b066c4d5ff090c835c2f22c6a1b3f44b27a689e",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "privateKey",
+        "table": "User"
+      }
+    }
+  ]
+}

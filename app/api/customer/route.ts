@@ -40,16 +40,15 @@ export async function POST(request: Request) {
   // fetch all roles
   const roles = await client.db.Role.getAll();
 
-  // fetch role with roleId General (1)
-  const generalRole = roles.find((role) => role.roleId === ROLES.GENERAL);
+  const customerRole = roles.find((role) => role.roleId === ROLES.CUSTOMER);
 
-  if(!generalRole) {
+  if(!customerRole) {
     return new Response("Role not found", { status: 404 });
   }
 
-  // if user not found then create user with role General
+  // if user not found then create user with role Customer
   if (!user) {
-    await client.db.User.create({ ...body, role: generalRole });
+    await client.db.User.create({ ...body, role: customerRole });
   }
 
   // check if customer exists
@@ -57,7 +56,6 @@ export async function POST(request: Request) {
     user: user?.id,
   }).getFirst();
 
-  // if customer not found then create customer with role General
   if (!customer) {
     await client.db.Customer.create({
       user: user,

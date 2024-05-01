@@ -3,6 +3,7 @@
 import { useActiveAccount } from "thirdweb/react";
 import { CardContainer, CardBody, CardItem } from "../ui/3d-card";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const videoUrl = "/videos/hero-bg.mp4";
 
@@ -40,9 +41,11 @@ const Hero = () => {
             </h1>
 
             {isWalletConnected ? (
-              <Button className="mt-8 bg-accent hover:bg-accent-dark text-lg h-12" onClick={handleRequest}>
+              <Link href="/v2/submit-request">
+                <Button className="mt-8 bg-accent hover:bg-accent-dark text-lg h-12">
                 Submit a request
               </Button>
+              </Link>
             ) : (
               <p className="text-typography-white64 mt-8 text-base font-normal">
                 Connect your wallet to submit a request

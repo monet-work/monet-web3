@@ -1,0 +1,13 @@
+{
+  "id": "mig_coobkke582uctlhn0fug",
+  "parentID": "mig_cooa5n3bom0poh6teib0",
+  "checksum": "1:49040a7c120f3ea2eadfa489c5d803fa53a8743e2c4bb0c0f920b07bc7a28423",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "privateKey",
+        "table": "Company"
+      }
+    }
+  ]
+}

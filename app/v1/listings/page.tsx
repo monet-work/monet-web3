@@ -15,7 +15,7 @@ import {
   useReadContract,
   useSendTransaction,
 } from "thirdweb/react";
-import { elpContract, elpMarketplaceContract } from "../thirdweb";
+import { elpContract, elpMarketplaceContract } from "../../thirdweb";
 import { useEffect, useState } from "react";
 import { Listing, ListingStatus } from "@/models/listing";
 import {

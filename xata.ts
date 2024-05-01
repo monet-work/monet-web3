@@ -13,9 +13,8 @@ const tables = [
       { name: "name", type: "text" },
       { name: "industry", type: "string" },
       { name: "foundedDate", type: "datetime" },
-      { name: "privateKey", type: "string" },
-      { name: "approved", type: "bool", defaultValue: "false" },
       { name: "user", type: "link", link: { table: "User" } },
+      { name: "approved", type: "bool", defaultValue: "false" },
     ],
     revLinks: [{ column: "companyId", table: "Customer" }],
   },
@@ -32,11 +31,12 @@ const tables = [
     name: "User",
     columns: [
       { name: "name", type: "string" },
-      { name: "walletAddress", type: "string", unique: true },
-      { name: "role", type: "link", link: { table: "Role" } },
       { name: "email", type: "email" },
-      { name: "privateKey", type: "string" },
       { name: "phoneNumber", type: "float" },
+      { name: "walletAddress", type: "string" },
+      { name: "isWalletApproved", type: "bool", defaultValue: "false" },
+      { name: "isEmailApproved", type: "bool", defaultValue: "false" },
+      { name: "role", type: "multiple" },
     ],
     revLinks: [
       { column: "user", table: "Company" },
@@ -49,7 +49,6 @@ const tables = [
       { name: "name", type: "string" },
       { name: "roleId", type: "int", notNull: true, defaultValue: "1" },
     ],
-    revLinks: [{ column: "role", table: "User" }],
   },
 ] as const;
 

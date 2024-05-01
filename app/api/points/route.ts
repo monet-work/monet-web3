@@ -19,13 +19,14 @@ export async function POST(request: NextRequest) {
   if (!user) {
     return new Response("User not found", { status: 404 });
   }
+
   // retrieve customer
   const customer = await client.db.Customer.filter({ user: user.id }).getFirst();
   if (!customer) {
     return new Response("Customer not found", { status: 404 });
   }
   // save user's points
-  await client.db.Customer.update(user.id, { points: customer.points + points });
+  await client.db.Customer.update(customer.id, { points: customer.points + points });
   // return the updated points
   return new Response(JSON.stringify({ points: customer.points + points }), {
     status: 200,

@@ -1,8 +1,15 @@
+import Navbar from "@/components/v2/navbar";
+
 const DashboardPage = () => {
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-black text-white">
+        <section className="container h-[400px] flex justify-center items-center">
+          <h1 className="text-4xl">Welcome to Dashboard</h1>
+        </section>
+      </main>
+    </>
   );
 };
 

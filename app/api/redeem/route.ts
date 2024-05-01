@@ -1,18 +1,26 @@
 import { getXataClient } from "@/xata";
 import { NextRequest } from "next/server";
-import { createThirdwebClient, prepareContractCall, readContract, resolveMethod, sendTransaction, toUnits } from "thirdweb";
-import { privateKeyAccount } from "thirdweb/wallets";
+import {
+  createThirdwebClient,
+  prepareContractCall,
+  readContract,
+  resolveMethod,
+  sendTransaction,
+  toUnits,
+} from "thirdweb";
+import { getWalletBalance, privateKeyAccount } from "thirdweb/wallets";
 import { eigenLayerPointsContract as elpContract } from "../lib/utils";
 
+const companyWalletPrivateKey = process.env.COMPANY_WALLET_PRIVATE_KEY;
 
-if(!process.env.THIRDWEB_SECRET_KEY){
-    throw new Error("THIRDWEB_SECRET_KEY not found!");
+if (!process.env.THIRDWEB_SECRET_KEY) {
+  throw new Error("THIRDWEB_SECRET_KEY not found!");
 }
 
 const client = getXataClient();
 const thirdWebClient = createThirdwebClient({
-    secretKey: process.env.THIRDWEB_SECRET_KEY,
-  });
+  secretKey: process.env.THIRDWEB_SECRET_KEY,
+});
 
 export async function POST(request: NextRequest) {
   const payload = await request.json();
@@ -28,31 +36,35 @@ export async function POST(request: NextRequest) {
   }
 
   // retrieve customer
-  const customer = await client.db.Customer.filter({ user: user.id }).getFirst();
+  const customer = await client.db.Customer.filter({
+    user: user.id,
+  }).getFirst();
 
-  const customerPoints = customer?.points;
-  // fetch the company private key linked to user. 
-  // Currently the link is not there. So fetch the company private key from the database.
-
-  const company = await client.db.Company.getFirst();
-
-  if(!company){
-    return new Response("Company not found!", { status: 404 });
+  if (!customer) {
+    return new Response("Customer not found!", { status: 404 });
   }
 
-  const companyPrivateKey = company?.privateKey;
+  const customerPoints = customer?.points;
 
-  if(!companyPrivateKey){
+  // const company = await client.db.Company.getFirst();
+
+  // if(!company){
+  //   return new Response("Company not found!", { status: 404 });
+  // }
+
+  const companyPrivateKey = companyWalletPrivateKey; // using a default key as of now
+
+  if (!companyPrivateKey) {
     return new Response("Private key not found!", { status: 404 });
   }
 
   // fetch the decimals
 
-  const decimalsData = await readContract({ 
-    contract: elpContract, 
-    method: 'decimals', 
-    params: [] 
-  })
+  const decimalsData = await readContract({
+    contract: elpContract,
+    method: "decimals",
+    params: [],
+  });
 
   // connect with the ELP contract and call the distribute tokens function
 
@@ -61,31 +73,24 @@ export async function POST(request: NextRequest) {
     privateKey: companyPrivateKey,
   });
 
-
   //prepare transaction
 
-  const transaction = await prepareContractCall({ 
-    contract: elpContract, 
-    method: 'transferTokensByDistributor', 
-    params: [walletAddress, toUnits(String(customerPoints), decimalsData)] // use function decimals from contract to get the decimals
+  const transaction = await prepareContractCall({
+    contract: elpContract,
+    method: "transferTokensByDistributor",
+    params: [walletAddress, toUnits(String(customerPoints), decimalsData)], // use function decimals from contract to get the decimals
   });
 
-  console.log("Transaction: ", transaction)
-
-
-  const { transactionHash } = await sendTransaction({ 
-    transaction, 
-    account: companyWallet 
-  })
-
-  console.log("Transaction hash: ", transactionHash);
-  
+  const { transactionHash } = await sendTransaction({
+    transaction,
+    account: companyWallet,
+  });
 
   // reset user's points
-  await client.db.Customer.update(user.id, { points: 0 });
+  await client.db.Customer.update(customer.id, { points: 0 });
+
   // return the updated points
-  return new Response(JSON.stringify({ user }), {
+  return new Response(JSON.stringify({ transactionHash }), {
     status: 200,
   });
-
 }
