@@ -5,7 +5,7 @@ import { ThirdwebProvider } from "@/app/thirdweb";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
-import AuthWrapper from "@/components/auth-wrapper";
+import AuthWrapper from "@/components/customer-auth-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 

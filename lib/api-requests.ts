@@ -14,12 +14,16 @@ export const getCompanies = async () => {
   return axios.get<Company[]>("/api/companies");
 };
 
+export const getCompanyByWalletAddress = async (walletAddress: string) => {
+  return axios.get<Company>("/api/company", { params: { walletAddress } });
+}
+
 export const createCompany = async (data: {
   name: string;
   email: string;
   walletAddress: string;
 }) => {
-  return axios.post<Company>("/api/companies", data);
+  return axios.post<Company>("/api/company", data);
 };
 
 export const approveCompany = async (walletAddress: string) => {

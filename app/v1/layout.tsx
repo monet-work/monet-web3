@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/v1/navbar";
 import SubNavbar from "@/components/sub-navbar";
-import AuthWrapper from "@/components/auth-wrapper";
+import CustomerAuthWrapper from "@/components/customer-auth-wrapper";
 
 
 export const metadata: Metadata = {
@@ -16,10 +16,10 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <AuthWrapper>
+    <CustomerAuthWrapper>
       <Navbar />
       <SubNavbar />
       {children}
-    </AuthWrapper>
+    </CustomerAuthWrapper>
   );
 }

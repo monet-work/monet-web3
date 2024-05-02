@@ -1,4 +1,3 @@
-import { ROLES } from "@/models/role";
 import { getXataClient } from "@/xata";
 
 export async function GET(request: Request) {

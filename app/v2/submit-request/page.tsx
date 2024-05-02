@@ -2,10 +2,11 @@
 
 import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Card } from "@/components/ui/card";
-import Navbar from "@/components/v2/navbar";
 import { createCompany } from "@/lib/api-requests";
+import { useCompanyStore } from "@/store/companyStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -15,9 +16,17 @@ const SubmitRequestPage = () => {
 
   const router = useRouter();
 
+  const companyStore = useCompanyStore();
+
   const submitRequestMutation = useMutation({
     mutationFn: createCompany,
   });
+
+  useEffect(() => {
+    if (companyStore.company) {
+      router.push("/v2/dashboard");
+    }
+  }, [companyStore.company]);
 
   return (
     <>
@@ -39,7 +48,8 @@ const SubmitRequestPage = () => {
                     email: data.email,
                   },
                   {
-                    onSuccess: () => {
+                    onSuccess: (response) => {
+                      companyStore.setCompany(response.data);
                       toast.success("Request submitted");
                       router.push("/v2/dashboard");
                     },

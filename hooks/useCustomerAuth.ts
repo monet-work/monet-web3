@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { toTokens } from "thirdweb";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 
-const useAuth = () => {
+const useCustomerAuth = () => {
   const account = useActiveAccount();
   const walletAddress = account?.address;
   const customerStore = useCustomerStore();
@@ -95,4 +95,4 @@ const useAuth = () => {
   }, [onChainBalanceData, decimalsData]);
 };
 
-export default useAuth;
+export default useCustomerAuth;
