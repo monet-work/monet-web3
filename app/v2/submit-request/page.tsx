@@ -57,6 +57,7 @@ const SubmitRequestPage = () => {
         onSuccess: (response) => {
           companyStore.setCompany(response.data);
           toast.success("Wallet verified");
+          router.push("/v2/dashboard");
         },
         onError: () => {
           toast.error("Failed to verify wallet");
