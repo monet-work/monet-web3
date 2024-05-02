@@ -1,4 +1,4 @@
-import { getCustomer } from "@/lib/api-requests";
+import { getCompanyByWalletAddress, getCustomer } from "@/lib/api-requests";
 import { useCompanyStore } from "@/store/companyStore";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -15,11 +15,9 @@ const useCompanyAuth = () => {
     error,
     refetch: refetchCompanyData,
   } = useQuery({
-    queryKey: ["customer", walletAddress],
+    queryKey: ["company", walletAddress],
     queryFn: async () => {
-      const data = await getCustomer({
-        walletAddress: walletAddress!,
-      });
+      const data = await getCompanyByWalletAddress(walletAddress!);
       return data;
     },
     retry: 1,

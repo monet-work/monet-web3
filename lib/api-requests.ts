@@ -16,7 +16,7 @@ export const getCompanies = async () => {
 
 export const getCompanyByWalletAddress = async (walletAddress: string) => {
   return axios.get<Company>("/api/company", { params: { walletAddress } });
-}
+};
 
 export const createCompany = async (data: {
   name: string;
@@ -34,15 +34,17 @@ export const rejectCompany = async (walletAddress: string) => {
   return axios.post<Company>("/api/companies/reject", { walletAddress });
 };
 
-export const requestCompanySignature = async (walletAddress: string) => {
-  return axios.post<{ message: string }>("/api/companies/signature/request", {
-    walletAddress,
-  });
+export const submitCompanyRequest = async (payload: {
+  name: string;
+  email: string;
+  walletAddress: string;
+}) => {
+  return axios.post<{message: string[]}>("/api/companies/request", payload);
 };
 
-export const verifyCompanySignature = async (data: {
+export const requestCompanyWalletVerfication = async (data: {
   walletAddress: string;
-  signature: string;
+  signature: `0x${string}`;
   message: string;
 }) => {
   return axios.post<Company>("/api/companies/signature/verify", data);
