@@ -1,4 +1,4 @@
-import { Company, Customer } from "@/xata";
+import { Company, Customer, User } from "@/xata";
 import axios from "axios";
 
 interface updatePointsVariables {
@@ -6,8 +6,24 @@ interface updatePointsVariables {
   points: number;
 }
 
-export const login = async (walletAddress: string) => {
-  return axios.post<Customer>("/api/auth", { walletAddress });
+export const authenticate = async (payload: {
+  accessToken: string;
+  walletAddress: string;
+}) => {
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: payload.accessToken,
+  };
+
+  return axios.post<{ user: User; accessToken: string }>(
+    "/api/auth",
+    { walletAddress: payload.walletAddress },
+    { headers }
+  );
+};
+
+export const login = async (data: { walletAddress: string }) => {
+  return axios.post<{ accessToken: string; user: User }>("/api/auth/login", data);
 };
 
 export const getCompanies = async () => {

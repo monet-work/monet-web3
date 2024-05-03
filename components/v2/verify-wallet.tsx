@@ -15,7 +15,7 @@ const VerifyWallet = () => {
   const [verificationMessage, setVerificationMessage] = useState<
     string[] | undefined
   >(undefined);
-  const [accessToken, setAccessToken] = useLocalStorage<string | undefined>(
+  const [accessToken, setAccessToken] = useLocalStorage(
     "accessToken",
     undefined
   );

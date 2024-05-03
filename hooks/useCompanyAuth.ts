@@ -1,61 +1,102 @@
-import { getCompanyByWalletAddress } from "@/lib/api-requests";
-import { useCompanyStore } from "@/store/companyStore";
-import { useQuery } from "@tanstack/react-query";
+import {
+  authenticate,
+  getCompanyByWalletAddress,
+  login,
+} from "@/lib/api-requests";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useActiveAccount } from "thirdweb/react";
+import {
+  useActiveAccount,
+  useActiveWallet,
+  useDisconnect,
+} from "thirdweb/react";
 import useLocalStorage from "./useLocalStorage";
+import { useUserStore } from "@/store/userStore";
 
 const useCompanyAuth = () => {
+  const disconnect = useDisconnect();
   const account = useActiveAccount();
   const walletAddress = account?.address;
-  const companyStore = useCompanyStore();
-  const router = useRouter();
-  const [accessToken, setAccessToken] = useLocalStorage<string | undefined>(
+  const wallet = useActiveWallet();
+  const userStore = useUserStore();
+  const [accessToken, setAccessToken] = useLocalStorage(
     "accessToken",
     undefined
   );
+  const router = useRouter();
 
-  useEffect(() => {
-    if (!accessToken) {
-      router.push("/v2");
-    }
-  }, [accessToken]);
+  const loginMutation = useMutation({
+    mutationFn: login,
+  });
 
-  const {
-    data: companyData,
-    isLoading,
-    error,
-    refetch: refetchCompanyData,
-  } = useQuery({
-    queryKey: ["company", walletAddress],
-    queryFn: async () => {
-      const data = await getCompanyByWalletAddress(walletAddress!);
-      return data;
-    },
-    retry: 1,
-    enabled: false,
+  const authMutation = useMutation({
+    mutationFn: authenticate,
   });
 
   useEffect(() => {
     if (!walletAddress) return;
-    // fetch company data
-    refetchCompanyData();
+    loginMutation.mutate(
+      {
+        walletAddress: walletAddress,
+      },
+      {
+        onSuccess: (response) => {
+          const { user, accessToken } = response.data;
+          userStore.setUser(user);
+          setAccessToken(accessToken);
+          if (user.isWalletApproved) {
+            router.push("/v2/dashboard");
+          }
+        },
+        onError: (error: any) => {
+          console.log("error", error);
+        },
+      }
+    );
   }, [walletAddress]);
 
   useEffect(() => {
-    const company = companyData?.data;
-    if (company) {
-      companyStore.setCompany(company);
-    }
-  }, [companyData, walletAddress]);
+    if (!accessToken || !walletAddress || !wallet) return;
+    authMutation.mutate(
+      {
+        walletAddress: walletAddress,
+        accessToken: accessToken,
+      },
+      {
+        onSuccess: (response) => {
+          const user = response.data.user;
+          userStore.setUser(user);
+        },
+        onError: (error: any) => {
+          setAccessToken(undefined);
+          disconnect.disconnect(wallet);
+          router.push("/v2");
+        },
+      }
+    );
+  }, [walletAddress, accessToken]);
 
   useEffect(() => {
     if (!account) {
-      // acts as a log out
-      companyStore.setCompany(null);
+      setAccessToken(undefined);
+      router.push("/v2");
     }
   }, [account]);
+
+  // useEffect(() => {
+  //   const user = authData?.data;
+  //   if (user) {
+  //     userStore.setUser(user);
+  //   }
+  // }, [authData, walletAddress]);
+
+  // useEffect(() => {
+  //   if (!account) {
+  //     // acts as a log out
+  //     userStore.setUser(null);
+  //   }
+  // }, [account]);
 };
 
 export default useCompanyAuth;
