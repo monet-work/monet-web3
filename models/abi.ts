@@ -655,12 +655,9 @@ export const monetPointsFactoryContractABI = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "_ownerAndDistributor",
-        type: "address",
-      },
-      { internalType: "uint256", name: "_allTokens", type: "uint256" },
+      { internalType: "address", name: "_owner", type: "address" },
+      { internalType: "address", name: "_distributor", type: "address" },
+      { internalType: "uint256", name: "_allPoints", type: "uint256" },
       { internalType: "uint8", name: "_decimalDigits", type: "uint8" },
       { internalType: "uint256", name: "_orderingFee", type: "uint256" },
       { internalType: "string", name: "_pointName", type: "string" },

@@ -3,16 +3,11 @@
 import { monetPointsFactoryContract } from "@/app/thirdweb";
 import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Card } from "@/components/ui/card";
-import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import {
-  PreparedTransaction,
-  prepareContractCall,
-  sendTransaction,
-} from "thirdweb";
+import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 
 const DashboardPage = () => {
@@ -34,7 +29,8 @@ const DashboardPage = () => {
   } = useSendTransaction();
 
   const createPointsCall = async (
-    ownerAndDistributor: string,
+    owner: string,
+    distributor: string,
     allTokens: bigint,
     decimalDigits: number,
     orderingFee: bigint,
@@ -45,7 +41,8 @@ const DashboardPage = () => {
       contract: monetPointsFactoryContract,
       method: "createPoint",
       params: [
-        ownerAndDistributor,
+        owner,
+        distributor,
         allTokens,
         decimalDigits,
         orderingFee,
@@ -76,6 +73,7 @@ const DashboardPage = () => {
 
           <Card className="p-4 mt-8 max-w-md w-2/3">
             <CompanyRequestForm
+              loading={isPending}
               onSubmitForm={(values) => {
                 const {
                   tokens,
@@ -85,13 +83,14 @@ const DashboardPage = () => {
                   pointSymbol,
                 } = values;
 
-                if(!companyWalletAddress) return;
+                if (!companyWalletAddress) return;
 
                 createPointsCall(
                   companyWalletAddress,
-                  BigInt(tokens),
+                  "0x73029Df592EC27FeDddE45a512B4c42ad35A3e7d",
+                  toWei(tokens),
                   Number(decimalDigits),
-                  BigInt(orderingFee),
+                  toWei(orderingFee),
                   pointName,
                   pointSymbol
                 );
