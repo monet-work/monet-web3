@@ -97,6 +97,8 @@ const useCompanyAuth = () => {
   //     userStore.setUser(null);
   //   }
   // }, [account]);
+
+  return { loading: loginMutation.isPending || authMutation.isPending };
 };
 
 export default useCompanyAuth;

@@ -22,6 +22,10 @@ type Props = {
 const formSchema = z.object({
   name: z.string(),
   email: z.string().email(),
+  pointName: z.string().min(3),
+  pointSymbol: z.string().min(3),
+  orderingFee: z.string().min(1),
+  decimalDigits: z.string().min(1),
 });
 
 const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
@@ -30,6 +34,10 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
     defaultValues: {
       name: "",
       email: "",
+      pointName: "",
+      pointSymbol: "",
+      orderingFee: "",
+      decimalDigits: "",
     },
   });
 
@@ -75,6 +83,79 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
             </FormItem>
           )}
         />
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="pointName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Point Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Point Name"
+                    {...field}
+                    className="bg-transparent"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="pointSymbol"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Point Symbol</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Point Symbol"
+                    {...field}
+                    className="bg-transparent"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="orderingFee"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Ordering Fee</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Ordering Fee"
+                    {...field}
+                    className="bg-transparent"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="decimalDigits"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Decimal Digits</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter Decimal Digits"
+                    {...field}
+                    className="bg-transparent"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
         <Button type="submit" loading={loading}>
           Submit Request
         </Button>

@@ -4,15 +4,14 @@ import { useActiveAccount, useConnect } from "thirdweb/react";
 import { CardContainer, CardBody, CardItem } from "../ui/3d-card";
 import { Button } from "../ui/button";
 import { connectWallet } from "@/app/thirdweb";
-import { useEffect } from "react";
-import { toast } from "sonner";
 import VerifyWallet from "./verify-wallet";
-import { Card } from "../ui/card";
+import useCompanyAuth from "@/hooks/useCompanyAuth";
 
 const videoUrl = "/videos/hero-bg.mp4";
 
 const Hero = () => {
   const { connect, isConnecting, error } = useConnect();
+  const { loading: isLoadingAuth } = useCompanyAuth();
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
 
@@ -21,10 +20,6 @@ const Hero = () => {
   const handleConnect = async () => {
     await connectWallet(connect);
   };
-
-  useEffect(() => {
-    toast.error(error?.message || "Wallet connection failed");
-  }, [error]);
 
   return (
     <section className="min-h-screen bg-background relative py-16">
@@ -58,7 +53,7 @@ const Hero = () => {
         </CardContainer>
       )}
 
-      {isWalletConnected && (
+      {isWalletConnected && !isLoadingAuth && (
         <div className="absolute z-10 top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2">
           <VerifyWallet />
         </div>
