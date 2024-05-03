@@ -1,5 +1,5 @@
 import { generateAccessToken } from "@/app/api/lib/utils";
-import { getXataClient } from "@/xata";
+import { User, getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
 
 const client = getXataClient();
@@ -31,37 +31,49 @@ export async function POST(request: Request) {
 
   if (isSignatureValid) {
     if (!user) {
-      return new Response("User not found", { status: 404 });
-    }
+      // create user
+      const { user, company } = await createUserAndCompany(walletAddress);
 
-    await client.db.User.update(user.id, {
-      isWalletApproved: true,
-    });
-
-    // generate access token
-    const accessToken = generateAccessToken(
-      { id: user.id, walletAddress },
-      "30d"
-    );
-    
-    const company = await client.db.Company.filter({
-      user: user.id,
-    }).getFirst();
-
-    if (!company) {
-      //create company
-      await client.db.Company.create({
-        user: user.id,
-      });
+      // generate access token
+      const accessToken = await generateAccessTokenForUser(user);
       return new Response(JSON.stringify({ accessToken }), {
         status: 200,
       });
     }
 
-    // await client.db.Company.update(company.id);
+    await approveUserWallet(user);
+
+    // generate access token
+    const accessToken = await generateAccessTokenForUser(user);
 
     return new Response(JSON.stringify({ accessToken }), {
       status: 200,
     });
   }
 }
+
+const createUserAndCompany = async (walletAddress: string) => {
+  const user = await client.db.User.create({
+    walletAddress,
+  });
+
+  const company = await client.db.Company.create({
+    user: user.id,
+  });
+
+  return { user, company };
+};
+
+const approveUserWallet = async (user: User) => {
+  await client.db.User.update(user.id, {
+    isWalletApproved: true,
+  });
+};
+
+const generateAccessTokenForUser = async (user: User) => {
+  const accessToken = generateAccessToken(
+    { id: user.id, walletAddress: user.walletAddress },
+    "30d"
+  );
+  return accessToken;
+};

@@ -26,6 +26,7 @@ const formSchema = z.object({
   pointSymbol: z.string().min(3),
   orderingFee: z.string().min(1),
   decimalDigits: z.string().min(1),
+  tokens: z.string().min(1),
 });
 
 const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
@@ -38,6 +39,7 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
       pointSymbol: "",
       orderingFee: "",
       decimalDigits: "",
+      tokens: "",
     },
   });
 
@@ -83,6 +85,25 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="tokens"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tokens</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Enter Tokens"
+                  {...field}
+                  className="bg-transparent"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex gap-4">
           <FormField
             control={form.control}
