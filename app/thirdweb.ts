@@ -6,6 +6,7 @@ import {
   eigenLayerPointsContractABI,
   eigenLayerTokenContractABI,
   elpMarketplaceContractABI,
+  monetPointsFactoryContractABI,
 } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
@@ -52,6 +53,13 @@ export const eigenLayerTokenContract = getContract({
   chain: baseSepolia,
   address: CONTRACTS.EIGENLAYER_TOKEN_CONTRACT,
   abi: eigenLayerTokenContractABI,
+});
+
+export const monetPointsFactoryContract = getContract({
+  client,
+  chain: baseSepolia,
+  address: CONTRACTS.MONET_POINTS_FACTORY_CONTRACT,
+  abi: monetPointsFactoryContractABI
 });
 
 export const connectWallet = async (

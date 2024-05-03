@@ -617,3 +617,80 @@ export const eigenLayerTokenContractABI = [
     type: "function",
   },
 ] as const;
+
+export const monetPointsFactoryContractABI = [
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "pointAddress",
+        type: "address",
+      },
+      { indexed: false, internalType: "string", name: "name", type: "string" },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "symbol",
+        type: "string",
+      },
+    ],
+    name: "PointCreated",
+    type: "event",
+  },
+  {
+    inputs: [],
+    name: "FactoryOwner",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_ownerAndDistributor",
+        type: "address",
+      },
+      { internalType: "uint256", name: "_allTokens", type: "uint256" },
+      { internalType: "uint8", name: "_decimalDigits", type: "uint8" },
+      { internalType: "uint256", name: "_orderingFee", type: "uint256" },
+      { internalType: "string", name: "_pointName", type: "string" },
+      { internalType: "string", name: "_pointSymbol", type: "string" },
+    ],
+    name: "createPoint",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getPoints",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "pointContractAddress",
+            type: "address",
+          },
+          { internalType: "string", name: "name", type: "string" },
+          { internalType: "string", name: "symbol", type: "string" },
+        ],
+        internalType: "struct MonetPointFactory.Point[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
