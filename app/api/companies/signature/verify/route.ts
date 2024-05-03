@@ -1,3 +1,4 @@
+import { generateAccessToken } from "@/app/api/lib/utils";
 import { getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
 
@@ -13,6 +14,13 @@ export async function POST(request: Request) {
     return new Response("Invalid request", { status: 400 });
   }
 
+  const user = await client.db.User.filter({ walletAddress }).getFirst();
+
+  // check if user exists and is already isWalletApproved
+  if (user?.isWalletApproved) {
+    return new Response("Wallet already verified", { status: 400 });
+  }
+
   // validate signature
 
   const isSignatureValid = await verifyEOASignature({
@@ -22,8 +30,6 @@ export async function POST(request: Request) {
   });
 
   if (isSignatureValid) {
-    const user = await client.db.User.filter({ walletAddress }).getFirst();
-
     if (!user) {
       return new Response("User not found", { status: 404 });
     }
@@ -32,6 +38,12 @@ export async function POST(request: Request) {
       isWalletApproved: true,
     });
 
+    // generate access token
+    const accessToken = generateAccessToken(
+      { id: user.id, walletAddress },
+      "30d"
+    );
+    
     const company = await client.db.Company.filter({
       user: user.id,
     }).getFirst();
@@ -41,11 +53,15 @@ export async function POST(request: Request) {
       await client.db.Company.create({
         user: user.id,
       });
-      return new Response(JSON.stringify(company), { status: 200 });
+      return new Response(JSON.stringify({ accessToken }), {
+        status: 200,
+      });
     }
 
     // await client.db.Company.update(company.id);
 
-    return new Response(JSON.stringify(company), { status: 200 });
+    return new Response(JSON.stringify({ accessToken }), {
+      status: 200,
+    });
   }
 }

@@ -2,6 +2,7 @@ import { eigenLayerPointsContractABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { generate } from "random-words";
+import jwt from "jsonwebtoken";
 
 const eigenLayerPointsContractAddress =
   process.env.EIGENLAYER_POINTS_CONTRACT || "";
@@ -29,3 +30,12 @@ export const generateRandomWords = (length: number) => {
   });
 };
 
+export const generateAccessToken = (payload: any, expiresInSeconds: string) => {
+  return jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: expiresInSeconds,
+  });
+};
+
+export const verifyAccessToken = (token: string) => {
+  return jwt.verify(token, process.env.JWT_SECRET!);
+};

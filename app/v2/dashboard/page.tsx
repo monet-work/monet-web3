@@ -8,11 +8,7 @@ const DashboardPage = () => {
   const companyStore = useCompanyStore();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!companyStore.company) {
-      router.push("/v2");
-    }
-  }, []);
+
   return (
     <>
       <main className="min-h-screen bg-black text-white">

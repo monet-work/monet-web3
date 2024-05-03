@@ -8,8 +8,8 @@ export async function POST(request: Request) {
   if (!body) {
     return new Response("Invalid request", { status: 400 });
   }
-  const { walletAddress, name, email } = body;
-  if (!walletAddress || !name || !email) {
+  const { walletAddress } = body;
+  if (!walletAddress) {
     return new Response("Invalid request", { status: 400 });
   }
 
