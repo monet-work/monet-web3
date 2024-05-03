@@ -7,13 +7,13 @@ import jwt from "jsonwebtoken";
 const eigenLayerPointsContractAddress =
   process.env.EIGENLAYER_POINTS_CONTRACT || "";
 
-const client = createThirdwebClient({
+export const thirdWebClient = createThirdwebClient({
   secretKey: process.env.THIRDWEB_SECRET_KEY!,
 });
 
 export const eigenLayerPointsContract = getContract({
   // the client you have created via `createThirdwebClient()`
-  client,
+  client: thirdWebClient,
   // the chain the contract is deployed on
   chain: baseSepolia,
   // the contract's address

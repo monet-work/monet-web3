@@ -3,7 +3,9 @@
 import { monetPointsFactoryContract } from "@/app/thirdweb";
 import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Card } from "@/components/ui/card";
+import { createCompanyContract } from "@/lib/api-requests";
 import { useUserStore } from "@/store/userStore";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -22,48 +24,9 @@ const DashboardPage = () => {
     }
   }, [userStore.user]);
 
-  const {
-    mutate: sendCreatePointsTransaction,
-    isPending,
-    isError,
-  } = useSendTransaction();
-
-  const createPointsCall = async (
-    owner: string,
-    distributor: string,
-    allTokens: bigint,
-    decimalDigits: number,
-    orderingFee: bigint,
-    pointName: string,
-    pointSymbol: string
-  ) => {
-    const transaction = await prepareContractCall({
-      contract: monetPointsFactoryContract,
-      method: "createPoint",
-      params: [
-        owner,
-        distributor,
-        allTokens,
-        decimalDigits,
-        orderingFee,
-        pointName,
-        pointSymbol,
-      ],
-    });
-
-    await sendCreatePointsTransaction(transaction as PreparedTransaction, {
-      onSuccess: () => {
-        toast.message("Points Created", {
-          description: "Your points have been created successfully",
-        });
-      },
-      onError: () => {
-        toast.message("Error while creating points", {
-          description: "Please try again",
-        });
-      },
-    });
-  };
+  const createCompanyContractMutation = useMutation({
+    mutationFn: createCompanyContract,
+  });
 
   return (
     <>
@@ -73,9 +36,11 @@ const DashboardPage = () => {
 
           <Card className="p-4 mt-8 max-w-md w-2/3">
             <CompanyRequestForm
-              loading={isPending}
+              loading={createCompanyContractMutation.isPending}
               onSubmitForm={(values) => {
                 const {
+                  email,
+                  name,
                   tokens,
                   decimalDigits,
                   orderingFee,
@@ -83,17 +48,31 @@ const DashboardPage = () => {
                   pointSymbol,
                 } = values;
 
-                if (!companyWalletAddress) return;
-
-                createPointsCall(
-                  companyWalletAddress,
-                  "0x73029Df592EC27FeDddE45a512B4c42ad35A3e7d",
-                  toWei(tokens),
-                  Number(decimalDigits),
-                  toWei(orderingFee),
-                  pointName,
-                  pointSymbol
+                createCompanyContractMutation.mutate(
+                  {
+                    companyName: name,
+                    email,
+                    allPoints: tokens,
+                    decimalDigits,
+                    orderingFee: orderingFee,
+                    pointsName: pointName,
+                    pointsSymbol: pointSymbol,
+                    walletAddress: companyWalletAddress!,
+                  },
+                  {
+                    onSuccess: (response) => {
+                      toast.success(response.data);
+                    },
+                    onError: (error: any) => {
+                      toast.error(
+                        error?.response?.data ||
+                          "Failed to create points contract"
+                      );
+                    },
+                  }
                 );
+
+                if (!companyWalletAddress) return;
               }}
             />
           </Card>

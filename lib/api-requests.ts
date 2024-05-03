@@ -23,7 +23,10 @@ export const authenticate = async (payload: {
 };
 
 export const login = async (data: { walletAddress: string }) => {
-  return axios.post<{ accessToken: string; user: User }>("/api/auth/login", data);
+  return axios.post<{ accessToken: string; user: User }>(
+    "/api/auth/login",
+    data
+  );
 };
 
 export const getCompanies = async () => {
@@ -54,6 +57,19 @@ export const submitCompanyRequest = async (payload: {
   walletAddress: string;
 }) => {
   return axios.post<{ message: string[] }>("/api/companies/request", payload);
+};
+
+export const createCompanyContract = async (payload: {
+  walletAddress: string;
+  companyName: string;
+  email: string;
+  pointsName: string;
+  pointsSymbol: string;
+  allPoints: string;
+  decimalDigits: string;
+  orderingFee: string;
+}) => {
+  return axios.post<string>("/api/companies/contract", payload);
 };
 
 export const requestCompanyWalletVerfication = async (data: {

@@ -4,11 +4,10 @@ import {
   createThirdwebClient,
   prepareContractCall,
   readContract,
-  resolveMethod,
   sendTransaction,
   toUnits,
 } from "thirdweb";
-import { getWalletBalance, privateKeyAccount } from "thirdweb/wallets";
+import { privateKeyAccount } from "thirdweb/wallets";
 import { eigenLayerPointsContract as elpContract } from "../lib/utils";
 
 const companyWalletPrivateKey = process.env.COMPANY_WALLET_PRIVATE_KEY;
