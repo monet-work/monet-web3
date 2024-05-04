@@ -73,19 +73,6 @@ export async function POST(request: Request) {
 
   //prepare transaction
 
-  console.log(
-    {
-      ownerWalletAddress,
-      walletAddress,
-      pointsName,
-      pointsSymbol,
-      allPoints,
-      decimalDigits,
-      orderingFee,
-    },
-    "params"
-  );
-
   const transaction = await prepareContractCall({
     contract: monetPointsFactoryContract,
     method: "createPoint",

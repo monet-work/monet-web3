@@ -8,7 +8,7 @@ const eigenLayerPointsContractAddress =
   process.env.EIGENLAYER_POINTS_CONTRACT || "";
 
 const monetPointsFactoryContractAddress =
-  process.env.MONET_POINTS_FACTORY_CONTRACT || "";
+  process.env.MONET_POINT_FACTORY_CONTRACT || "";
 
 export const thirdWebClient = createThirdwebClient({
   secretKey: process.env.THIRDWEB_SECRET_KEY!,
