@@ -4,8 +4,9 @@ import {
   createThirdwebClient,
   prepareContractCall,
   sendTransaction,
+  toWei,
 } from "thirdweb";
-import { monetPointsFactoryContract } from "@/app/thirdweb";
+import { monetPointsFactoryContract } from "../../lib/utils";
 
 const client = getXataClient();
 
@@ -72,10 +73,8 @@ export async function POST(request: Request) {
 
   //prepare transaction
 
-  const transaction = await prepareContractCall({
-    contract: monetPointsFactoryContract,
-    method: "createPoint",
-    params: [
+  console.log(
+    {
       ownerWalletAddress,
       walletAddress,
       pointsName,
@@ -83,6 +82,21 @@ export async function POST(request: Request) {
       allPoints,
       decimalDigits,
       orderingFee,
+    },
+    "params"
+  );
+
+  const transaction = await prepareContractCall({
+    contract: monetPointsFactoryContract,
+    method: "createPoint",
+    params: [
+      ownerWalletAddress,
+      walletAddress,
+      toWei(allPoints),
+      Number(decimalDigits),
+      toWei(orderingFee),
+      pointsName,
+      pointsSymbol,
     ],
   });
 

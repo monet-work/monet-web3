@@ -1,4 +1,4 @@
-import { eigenLayerPointsContractABI } from "@/models/abi";
+import { eigenLayerPointsContractABI, monetPointsFactoryContractABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { generate } from "random-words";
@@ -6,6 +6,9 @@ import jwt from "jsonwebtoken";
 
 const eigenLayerPointsContractAddress =
   process.env.EIGENLAYER_POINTS_CONTRACT || "";
+
+const monetPointsFactoryContractAddress =
+  process.env.MONET_POINTS_FACTORY_CONTRACT || "";
 
 export const thirdWebClient = createThirdwebClient({
   secretKey: process.env.THIRDWEB_SECRET_KEY!,
@@ -20,6 +23,13 @@ export const eigenLayerPointsContract = getContract({
   address: eigenLayerPointsContractAddress,
   // OPTIONAL: the contract's abi
   abi: eigenLayerPointsContractABI,
+});
+
+export const monetPointsFactoryContract = getContract({
+  client: thirdWebClient,
+  chain: baseSepolia,
+  address: monetPointsFactoryContractAddress,
+  abi: monetPointsFactoryContractABI,
 });
 
 export const generateRandomWords = (length: number) => {

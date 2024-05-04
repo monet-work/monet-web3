@@ -9,8 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 
 const DashboardPage = () => {
   const userStore = useUserStore();
