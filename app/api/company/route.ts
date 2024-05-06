@@ -14,25 +14,19 @@ export async function GET(request: Request) {
   }).getFirst();
 
   if (!user) {
-    const newUser = await client.db.User.create({
-      walletAddress,
-    });
-
-    const company = await client.db.Company.filter({
-      user: newUser.id,
-    }).select(["name", "user.*", "approved"]);
-
-    if (!company) {
-      return new Response("Company not found", { status: 404 });
-    }
-
-    return new Response(JSON.stringify(company), { status: 200 });
+    return new Response("User not found", { status: 404 });
   }
 
   const company = await client.db.Company.filter({
     user: user.id,
   })
-    .select(["name", "approved", "user.*"])
+    .select([
+      "name",
+      "approved",
+      "user.*",
+      "pointsContractAddress",
+      "pointsContractCreated",
+    ])
     .getFirst();
 
   if (!company) {

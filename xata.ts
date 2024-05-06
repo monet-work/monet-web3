@@ -15,6 +15,8 @@ const tables = [
       { name: "foundedDate", type: "datetime" },
       { name: "user", type: "link", link: { table: "User" } },
       { name: "approved", type: "bool", defaultValue: "false" },
+      { name: "pointsContractAddress", type: "string" },
+      { name: "pointsContractCreated", type: "bool" },
     ],
     revLinks: [{ column: "companyId", table: "Customer" }],
   },

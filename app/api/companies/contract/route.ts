@@ -92,5 +92,9 @@ export async function POST(request: Request) {
     account: ownerWallet,
   });
 
-  return new Response(JSON.stringify(transactionHash), { status: 200 });
+  // update company with pointsContractCreated to true
+  await client.db.Company.update(company.id, { pointsContractCreated: true });
+
+
+  return new Response(JSON.stringify(company), { status: 200 });
 }
