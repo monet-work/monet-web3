@@ -69,7 +69,7 @@ export const createCompanyContract = async (payload: {
   decimalDigits: string;
   orderingFee: string;
 }) => {
-  return axios.post<string>("/api/companies/contract", payload);
+  return axios.post<Company>("/api/companies/contract", payload);
 };
 
 export const requestCompanyWalletVerfication = async (data: {
@@ -77,7 +77,7 @@ export const requestCompanyWalletVerfication = async (data: {
   signature: `0x${string}`;
   message: string;
 }) => {
-  return axios.post<{ accessToken: string }>(
+  return axios.post<{ company: Company, accessToken: string }>(
     "/api/companies/signature/verify",
     data
   );

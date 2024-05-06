@@ -14,13 +14,6 @@ export async function POST(request: Request) {
     return new Response("Invalid request", { status: 400 });
   }
 
-  const user = await client.db.User.filter({ walletAddress }).getFirst();
-
-  // check if user exists and is already isWalletApproved
-  if (user?.isWalletApproved) {
-    return new Response("Wallet already verified", { status: 400 });
-  }
-
   // validate signature
 
   const isSignatureValid = await verifyEOASignature({
@@ -30,25 +23,34 @@ export async function POST(request: Request) {
   });
 
   if (isSignatureValid) {
-    if (!user) {
-      // create user
-      const { user, company } = await createUserAndCompany(walletAddress);
+    // create user
+    const { user, company } = await createUserAndCompany(walletAddress);
 
-      // generate access token
-      const accessToken = await generateAccessTokenForUser(user);
-      return new Response(JSON.stringify({ accessToken }), {
-        status: 200,
-      });
-    }
+    console.log("user", user, "company", company);
 
     await approveUserWallet(user);
 
     // generate access token
     const accessToken = await generateAccessTokenForUser(user);
 
-    return new Response(JSON.stringify({ accessToken }), {
-      status: 200,
-    });
+    const updatedCompany = await client.db.Company.filter({
+      user: user.id,
+    }).select([
+      "user.*",
+      "pointsContractAddress",
+      "pointsContractCreated",
+      "name",
+      "approved",
+    ]);
+
+    return new Response(
+      JSON.stringify({ company: updatedCompany, accessToken }),
+      {
+        status: 200,
+      }
+    );
+  } else {
+    return new Response("Invalid signature", { status: 400 });
   }
 }
 

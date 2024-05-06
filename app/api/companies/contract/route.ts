@@ -95,6 +95,9 @@ export async function POST(request: Request) {
   // update company with pointsContractCreated to true
   await client.db.Company.update(company.id, { pointsContractCreated: true });
 
+  const updatedCompany = await client.db.Company.filter({
+    user: user.id,
+  }).getFirst();
 
-  return new Response(JSON.stringify(company), { status: 200 });
+  return new Response(JSON.stringify(updatedCompany), { status: 200 });
 }

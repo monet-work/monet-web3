@@ -1,9 +1,7 @@
 "use client";
 
-import { monetPointsFactoryContract } from "@/app/thirdweb";
 import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import {
   createCompanyContract,
@@ -13,7 +11,7 @@ import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -23,6 +21,7 @@ const DashboardPage = () => {
   const router = useRouter();
   const activeAccount = useActiveAccount();
   const companyWalletAddress = activeAccount?.address;
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (!userStore.user?.isWalletApproved) {
@@ -46,13 +45,23 @@ const DashboardPage = () => {
   });
 
   useEffect(() => {
-    if (companyData) {
+    if (companyData?.data) {
       companyStore.setCompany(companyData.data);
     }
     if (isCompanyError) {
       router.push("/v2");
     }
-  }, [companyData, isCompanyLoading, isCompanyError]);
+  }, [companyData, companyStore.company]);
+
+  const currentCompany = companyStore?.company;
+
+  useEffect(() => {
+    if(currentCompany && currentCompany.pointsContractCreated){
+      setShowForm(false);
+    }else{
+      setShowForm(true);
+    }
+  }, [currentCompany]);
 
   return (
     <>
@@ -66,13 +75,11 @@ const DashboardPage = () => {
             </div>
           ) : null}
 
-          {companyStore.company &&
-          companyStore.company.pointsContractCreated ? (
+          {currentCompany && !showForm ? (
             <div>Your company contract has been created successfully</div>
           ) : null}
 
-          {companyStore.company &&
-          !companyStore.company.pointsContractCreated ? (
+          {currentCompany && showForm ? (
             <Card className="p-4 mt-8 max-w-md w-2/3">
               <CompanyRequestForm
                 loading={createCompanyContractMutation.isPending}
@@ -100,7 +107,9 @@ const DashboardPage = () => {
                     },
                     {
                       onSuccess: (response) => {
-                        toast.success(response.data);
+                        toast.success("Points contract created successfully");
+                        companyStore.setCompany(response.data);
+                        setShowForm(false);
                       },
                       onError: (error: any) => {
                         toast.error(

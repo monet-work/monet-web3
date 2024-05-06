@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 import { useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useCompanyStore } from "@/store/companyStore";
 
 const VerifyWallet = () => {
   const [verificationMessage, setVerificationMessage] = useState<
@@ -19,6 +20,8 @@ const VerifyWallet = () => {
     "accessToken",
     undefined
   );
+
+  const companyStore = useCompanyStore();
 
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
@@ -66,8 +69,10 @@ const VerifyWallet = () => {
       {
         onSuccess: (response) => {
           const accessToken = response.data.accessToken;
+          const company = response.data.company;
           setAccessToken(accessToken);
           toast.success("Wallet verified");
+          companyStore.setCompany(company);
           router.push("/v2/dashboard");
         },
         onError: (error: any) => {
