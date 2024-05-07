@@ -24,9 +24,9 @@ const formSchema = z.object({
   email: z.string().email(),
   pointName: z.string().min(3),
   pointSymbol: z.string().min(3),
-  orderingFee: z.string().min(1),
-  decimalDigits: z.string().min(1),
-  points: z.string().min(1),
+  orderingFee: z.string().min(1).regex(/^\d+(\.\d+)?$/),
+  decimalDigits: z.string().min(1).regex(/^\d+$/),
+  points: z.string().min(1).regex(/^\d+$/),
 });
 
 const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
@@ -146,7 +146,7 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
             name="orderingFee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Ordering Fee</FormLabel>
+                <FormLabel>Ordering Fee (In ETH)</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="Enter Ordering Fee"

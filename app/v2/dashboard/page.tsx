@@ -80,15 +80,16 @@ const DashboardPage = () => {
           {currentCompany && !isCompanyLoading && !showForm ? (
             <div className="mt-4">
               <PointContractInfo
-              address={currentCompany.pointContractAddress || ""}
-              name={currentCompany.pointName || ""}
-              symbol={currentCompany.pointSymbol || ""}
-            />
+                address={currentCompany.pointContractAddress || ""}
+                name={currentCompany.pointName || ""}
+                symbol={currentCompany.pointSymbol || ""}
+              />
             </div>
           ) : null}
 
           {currentCompany && showForm && !isCompanyLoading ? (
-            <Card className="p-4 mt-8 max-w-md w-2/3">
+           <div className="">
+             <Card className="p-4 mt-8 max-w-md w-2/3 mx-auto">
               <h3>Deploy your points contract</h3>
               <CompanyRequestForm
                 loading={createCompanyContractMutation.isPending}
@@ -134,6 +135,7 @@ const DashboardPage = () => {
                 }}
               />
             </Card>
+           </div>
           ) : null}
         </section>
       </main>

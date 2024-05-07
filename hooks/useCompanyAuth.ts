@@ -80,23 +80,11 @@ const useCompanyAuth = () => {
   useEffect(() => {
     if (!account) {
       setAccessToken(undefined);
+      localStorage.clear();
       router.push("/v2");
     }
   }, [account]);
 
-  // useEffect(() => {
-  //   const user = authData?.data;
-  //   if (user) {
-  //     userStore.setUser(user);
-  //   }
-  // }, [authData, walletAddress]);
-
-  // useEffect(() => {
-  //   if (!account) {
-  //     // acts as a log out
-  //     userStore.setUser(null);
-  //   }
-  // }, [account]);
 
   return { loading: loginMutation.isPending || authMutation.isPending };
 };

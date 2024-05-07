@@ -80,7 +80,7 @@ export async function POST(request: Request) {
     params: [
       walletAddress,
       distributorWalletAddress,
-      toWei(allPoints),
+      allPoints,
       Number(decimalDigits),
       toWei(orderingFee),
       pointsName,
