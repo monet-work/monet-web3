@@ -26,7 +26,7 @@ const formSchema = z.object({
   pointSymbol: z.string().min(3),
   orderingFee: z.string().min(1),
   decimalDigits: z.string().min(1),
-  tokens: z.string().min(1),
+  points: z.string().min(1),
 });
 
 const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
@@ -39,7 +39,7 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
       pointSymbol: "",
       orderingFee: "",
       decimalDigits: "",
-      tokens: "",
+      points: "",
     },
   });
 
@@ -55,10 +55,10 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel>Company Name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter Name"
+                  placeholder="Enter Company Name"
                   {...field}
                   className="bg-transparent"
                 />
@@ -75,7 +75,7 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter email"
+                  placeholder="Enter company email"
                   {...field}
                   type="email"
                   className="bg-transparent"
@@ -88,13 +88,13 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
 
         <FormField
           control={form.control}
-          name="tokens"
+          name="points"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tokens</FormLabel>
+              <FormLabel>Points</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter Tokens"
+                  placeholder="Enter total points in circulation"
                   {...field}
                   className="bg-transparent"
                 />

@@ -3,6 +3,7 @@
 import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
+import PointContractInfo from "@/components/v2/point-contract-info";
 import {
   createCompanyContract,
   getCompanyByWalletAddress,
@@ -56,18 +57,19 @@ const DashboardPage = () => {
   const currentCompany = companyStore?.company;
 
   useEffect(() => {
-    if(currentCompany && currentCompany.pointsContractCreated){
+    if (currentCompany && currentCompany.pointContractAddress) {
+      console.log(currentCompany, "current company");
       setShowForm(false);
-    }else{
+    } else {
       setShowForm(true);
     }
   }, [currentCompany]);
 
   return (
     <>
-      <main className="min-h-screen bg-black text-white">
-        <section className="container flex justify-center flex-col items-center">
-          <h1 className="text-2xl">Welcome to Dashboard</h1>
+      <main className="min-h-screen bg-black text-white py-4">
+        <section className="container">
+          <h1 className="text-lg text-slate-300">Dashboard</h1>
 
           {isCompanyLoading ? (
             <div className="flex justify-center items-center h-[400px]">
@@ -75,19 +77,26 @@ const DashboardPage = () => {
             </div>
           ) : null}
 
-          {currentCompany && !showForm ? (
-            <div>Your company contract has been created successfully</div>
+          {currentCompany && !isCompanyLoading && !showForm ? (
+            <div className="mt-4">
+              <PointContractInfo
+              address={currentCompany.pointContractAddress || ""}
+              name={currentCompany.pointName || ""}
+              symbol={currentCompany.pointSymbol || ""}
+            />
+            </div>
           ) : null}
 
-          {currentCompany && showForm ? (
+          {currentCompany && showForm && !isCompanyLoading ? (
             <Card className="p-4 mt-8 max-w-md w-2/3">
+              <h3>Deploy your points contract</h3>
               <CompanyRequestForm
                 loading={createCompanyContractMutation.isPending}
                 onSubmitForm={(values) => {
                   const {
                     email,
                     name,
-                    tokens,
+                    points,
                     decimalDigits,
                     orderingFee,
                     pointName,
@@ -98,7 +107,7 @@ const DashboardPage = () => {
                     {
                       companyName: name,
                       email,
-                      allPoints: tokens,
+                      allPoints: points,
                       decimalDigits,
                       orderingFee: orderingFee,
                       pointsName: pointName,
@@ -110,6 +119,7 @@ const DashboardPage = () => {
                         toast.success("Points contract created successfully");
                         companyStore.setCompany(response.data);
                         setShowForm(false);
+                        window.location.reload();
                       },
                       onError: (error: any) => {
                         toast.error(

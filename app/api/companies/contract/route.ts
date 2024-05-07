@@ -5,13 +5,14 @@ import {
   prepareContractCall,
   sendTransaction,
   toWei,
+  watchContractEvents,
 } from "thirdweb";
 import { monetPointsFactoryContract } from "../../lib/utils";
 
 const client = getXataClient();
 
-const ownerWalletAddress = "0x73029Df592EC27FeDddE45a512B4c42ad35A3e7d";
-const ownerWalletPrivateKey = process.env.COMPANY_WALLET_PRIVATE_KEY;
+const distributorWalletAddress = "0x73029Df592EC27FeDddE45a512B4c42ad35A3e7d";
+const distributorWalletPrivateKey = process.env.COMPANY_WALLET_PRIVATE_KEY;
 
 const thirdWebClient = createThirdwebClient({
   secretKey: process.env.THIRDWEB_SECRET_KEY!,
@@ -62,13 +63,13 @@ export async function POST(request: Request) {
   // approve the company
   await client.db.Company.update(company.id, { name: companyName });
 
-  if (!ownerWalletPrivateKey) {
+  if (!distributorWalletPrivateKey) {
     return new Response("Private key not found!", { status: 404 });
   }
 
   const ownerWallet = privateKeyAccount({
     client: thirdWebClient,
-    privateKey: ownerWalletPrivateKey,
+    privateKey: distributorWalletPrivateKey,
   });
 
   //prepare transaction
@@ -77,8 +78,8 @@ export async function POST(request: Request) {
     contract: monetPointsFactoryContract,
     method: "createPoint",
     params: [
-      ownerWalletAddress,
       walletAddress,
+      distributorWalletAddress,
       toWei(allPoints),
       Number(decimalDigits),
       toWei(orderingFee),
@@ -87,17 +88,53 @@ export async function POST(request: Request) {
     ],
   });
 
-  const { transactionHash } = await sendTransaction({
+  const result = await sendTransaction({
     transaction,
     account: ownerWallet,
   });
 
-  // update company with pointsContractCreated to true
-  await client.db.Company.update(company.id, { pointsContractCreated: true });
+  // wait for contract event
+  const eventPromise = new Promise((resolve, reject) => {
+    const unwatch = watchContractEvents({
+      contract: monetPointsFactoryContract,
+      onEvents: (events) => {
+        // Check if the expected event is emitted
+        const event = events.find(
+          (event) => event.eventName === "PointCreated"
+        );
+        if (event) {
+          unwatch(); // Stop watching for events
+          resolve(event); // Resolve the promise with the event
+        }
+      },
+    });
+  });
 
-  const updatedCompany = await client.db.Company.filter({
-    user: user.id,
-  }).getFirst();
+  try {
+    // Wait for the event or a timeout
+    const event = (await Promise.race([eventPromise, timeout(60000)])) as any; // Adjust timeout as needed
 
-  return new Response(JSON.stringify(updatedCompany), { status: 200 });
+    // update company with pointContractAddress
+    await client.db.Company.update(company.id, {
+      pointContractAddress: event?.args?.pointAddress,
+      pointName: event?.args?.name,
+      pointSymbol: event?.args?.symbol,
+    });
+
+    const updatedCompany = await client.db.Company.filter({
+      user: user.id,
+    }).getFirst();
+
+    return new Response(JSON.stringify(updatedCompany), { status: 200 });
+  } catch (error) {
+    // Handle timeout or any other errors
+    console.error("Error occurred while waiting for contract event:", error);
+    return new Response("An error occurred", { status: 500 });
+  }
+}
+
+function timeout(ms: number) {
+  return new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout")), ms)
+  );
 }

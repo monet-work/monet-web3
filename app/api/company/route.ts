@@ -24,8 +24,10 @@ export async function GET(request: Request) {
       "name",
       "approved",
       "user.*",
-      "pointsContractAddress",
-      "pointsContractCreated",
+      "pointContractAddress",
+      "pointName",
+      "pointSymbol",
+      "industry",
     ])
     .getFirst();
 

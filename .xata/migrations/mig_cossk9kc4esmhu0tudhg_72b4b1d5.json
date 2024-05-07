@@ -1,0 +1,14 @@
+{
+  "id": "mig_cossk9kc4esmhu0tudhg",
+  "parentID": "mig_cossj8sc4esmhu0tudgg",
+  "checksum": "1:72b4b1d5e40530bd6b24b4246d91be5296207c91221b21d7e6cd36c74c594fe5",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "pointContractAddress",
+        "oldName": "pointsContractAddress",
+        "table": "Company"
+      }
+    }
+  ]
+}

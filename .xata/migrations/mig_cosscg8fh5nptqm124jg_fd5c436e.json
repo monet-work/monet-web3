@@ -1,0 +1,19 @@
+{
+  "id": "mig_cosscg8fh5nptqm124jg",
+  "parentID": "mig_cossc30fh5nptqm124ig",
+  "checksum": "1:fd5c436ed99e0379c12d446ccb5a615132d7cc7b02254eb475834e13168f59b2",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "owner",
+          "type": "link",
+          "link": {
+            "table": "Customer"
+          }
+        },
+        "table": "Points"
+      }
+    }
+  ]
+}
