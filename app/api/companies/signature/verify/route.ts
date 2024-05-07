@@ -26,7 +26,6 @@ export async function POST(request: Request) {
     // create user
     const { user, company } = await createUserAndCompany(walletAddress);
 
-    console.log("user", user, "company", company);
 
     await approveUserWallet(user);
 
@@ -37,8 +36,7 @@ export async function POST(request: Request) {
       user: user.id,
     }).select([
       "user.*",
-      "pointsContractAddress",
-      "pointsContractCreated",
+      "pointContractAddress",
       "name",
       "approved",
     ]);
