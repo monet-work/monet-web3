@@ -43,6 +43,7 @@ const DashboardPage = () => {
     queryFn: () => {
       return getCompanyByWalletAddress(companyWalletAddress!);
     },
+    enabled: !!companyWalletAddress,
   });
 
   useEffect(() => {
@@ -88,54 +89,54 @@ const DashboardPage = () => {
           ) : null}
 
           {currentCompany && showForm && !isCompanyLoading ? (
-           <div className="">
-             <Card className="p-4 mt-8 max-w-md w-2/3 mx-auto">
-              <h3>Deploy your points contract</h3>
-              <CompanyRequestForm
-                loading={createCompanyContractMutation.isPending}
-                onSubmitForm={(values) => {
-                  const {
-                    email,
-                    name,
-                    points,
-                    decimalDigits,
-                    orderingFee,
-                    pointName,
-                    pointSymbol,
-                  } = values;
-
-                  createCompanyContractMutation.mutate(
-                    {
-                      companyName: name,
+            <div className="">
+              <Card className="p-4 mt-8 max-w-md w-2/3 mx-auto">
+                <h3>Deploy your points contract</h3>
+                <CompanyRequestForm
+                  loading={createCompanyContractMutation.isPending}
+                  onSubmitForm={(values) => {
+                    const {
                       email,
-                      allPoints: points,
+                      name,
+                      points,
                       decimalDigits,
-                      orderingFee: orderingFee,
-                      pointsName: pointName,
-                      pointsSymbol: pointSymbol,
-                      walletAddress: companyWalletAddress!,
-                    },
-                    {
-                      onSuccess: (response) => {
-                        toast.success("Points contract created successfully");
-                        companyStore.setCompany(response.data);
-                        setShowForm(false);
-                        window.location.reload();
-                      },
-                      onError: (error: any) => {
-                        toast.error(
-                          error?.response?.data ||
-                            "Failed to create points contract"
-                        );
-                      },
-                    }
-                  );
+                      orderingFee,
+                      pointName,
+                      pointSymbol,
+                    } = values;
 
-                  if (!companyWalletAddress) return;
-                }}
-              />
-            </Card>
-           </div>
+                    createCompanyContractMutation.mutate(
+                      {
+                        companyName: name,
+                        email,
+                        allPoints: points,
+                        decimalDigits,
+                        orderingFee: orderingFee,
+                        pointsName: pointName,
+                        pointsSymbol: pointSymbol,
+                        walletAddress: companyWalletAddress!,
+                      },
+                      {
+                        onSuccess: (response) => {
+                          toast.success("Points contract created successfully");
+                          companyStore.setCompany(response.data);
+                          setShowForm(false);
+                          window.location.reload();
+                        },
+                        onError: (error: any) => {
+                          toast.error(
+                            error?.response?.data ||
+                              "Failed to create points contract"
+                          );
+                        },
+                      }
+                    );
+
+                    if (!companyWalletAddress) return;
+                  }}
+                />
+              </Card>
+            </div>
           ) : null}
         </section>
       </main>

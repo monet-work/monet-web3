@@ -1,6 +1,5 @@
 import {
   authenticate,
-  getCompanyByWalletAddress,
   login,
 } from "@/lib/api-requests";
 import { useMutation, useQuery } from "@tanstack/react-query";
