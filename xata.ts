@@ -21,7 +21,7 @@ const tables = [
     ],
     revLinks: [
       { column: "companyId", table: "Customer" },
-      { column: "company", table: "Points" },
+      { column: "company", table: "Point" },
     ],
   },
   {
@@ -31,9 +31,8 @@ const tables = [
       { name: "points", type: "float" },
       { name: "companyId", type: "link", link: { table: "Company" } },
       { name: "user", type: "link", link: { table: "User" } },
-      { name: "offChainPoints", type: "link", link: { table: "Points" } },
+      { name: "offChainPoints", type: "link", link: { table: "Point" } },
     ],
-    revLinks: [{ column: "owner", table: "Points" }],
   },
   {
     name: "User",
@@ -49,6 +48,7 @@ const tables = [
     revLinks: [
       { column: "user", table: "Company" },
       { column: "user", table: "Customer" },
+      { column: "owner", table: "Point" },
     ],
   },
   {
@@ -59,10 +59,11 @@ const tables = [
     ],
   },
   {
-    name: "Points",
+    name: "Point",
     columns: [
-      { name: "owner", type: "link", link: { table: "Customer" } },
+      { name: "value", type: "int" },
       { name: "company", type: "link", link: { table: "Company" } },
+      { name: "owner", type: "link", link: { table: "User" } },
     ],
     revLinks: [{ column: "offChainPoints", table: "Customer" }],
   },
@@ -83,15 +84,15 @@ export type UserRecord = User & XataRecord;
 export type Role = InferredTypes["Role"];
 export type RoleRecord = Role & XataRecord;
 
-export type Points = InferredTypes["Points"];
-export type PointsRecord = Points & XataRecord;
+export type Point = InferredTypes["Point"];
+export type PointRecord = Point & XataRecord;
 
 export type DatabaseSchema = {
   Company: CompanyRecord;
   Customer: CustomerRecord;
   User: UserRecord;
   Role: RoleRecord;
-  Points: PointsRecord;
+  Point: PointRecord;
 };
 
 const DatabaseClient = buildClient();

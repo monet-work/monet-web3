@@ -101,11 +101,11 @@ export const collectPoints = async ({
   walletAddress,
   points,
 }: updatePointsVariables) => {
-  return axios.post<Customer>("/api/points", { walletAddress, points });
+  return axios.post<Customer>("/api/companies/points", { walletAddress, points });
 };
 
 export const getPoints = async (walletAddress: string) => {
-  return axios.get<Customer>("/api/points", { params: { walletAddress } });
+  return axios.get<Customer>("/api/companies/points", { params: { walletAddress } });
 };
 
 export const redeemPoints = async (walletAddress: string) => {

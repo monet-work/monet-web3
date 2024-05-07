@@ -1,18 +1,37 @@
 "use client";
 
+import FileSvgDraw from "@/components/file-svg-draw";
 import CompanyRequestForm from "@/components/forms/company-request-form";
-import { Card } from "@/components/ui/card";
+import { CardBody } from "@/components/ui/3d-card";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  FileInput,
+  FileUploader,
+  FileUploaderContent,
+  FileUploaderItem,
+} from "@/components/ui/file-uploader";
 import { Spinner } from "@/components/ui/spinner";
 import PointContractInfo from "@/components/v2/point-contract-info";
+import UserPointsTable from "@/components/v2/users-points-table";
 import {
   createCompanyContract,
   getCompanyByWalletAddress,
 } from "@/lib/api-requests";
+import { readExcelFile } from "@/lib/file-helper";
 import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Paperclip } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { DropzoneOptions } from "react-dropzone";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -23,6 +42,8 @@ const DashboardPage = () => {
   const activeAccount = useActiveAccount();
   const companyWalletAddress = activeAccount?.address;
   const [showForm, setShowForm] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [files, setFiles] = useState<File[] | null>(null);
 
   useEffect(() => {
     if (!userStore.user?.isWalletApproved) {
@@ -66,6 +87,34 @@ const DashboardPage = () => {
     }
   }, [currentCompany]);
 
+  useEffect(() => {
+    if (!files) return;
+    const chosenFile = files[0];
+    const processFile = async () => {
+      const data = await readExcelFile(chosenFile);
+      console.log(data);
+    };
+    processFile();
+  }, [files]);
+
+  const handleCustomerPointsUpload = () => {};
+
+  const handleDownloadTemplate = () => {
+    const url = "/docs/offchain-points-template.xlsx";
+    window.open(url, "_blank");
+  };
+
+  const dropZoneConfig: DropzoneOptions = {
+    maxFiles: 1,
+    maxSize: 1000000,
+    accept: {
+      "text/csv": [".csv"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
+    },
+  };
+
   return (
     <>
       <main className="min-h-screen bg-black text-white py-4">
@@ -85,6 +134,28 @@ const DashboardPage = () => {
                 name={currentCompany.pointName || ""}
                 symbol={currentCompany.pointSymbol || ""}
               />
+              <div className="mt-4">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between">
+                      <div>
+                        <CardTitle>Users Points</CardTitle>
+                        <CardDescription>
+                          You can view all your customers here and their points
+                        </CardDescription>
+                      </div>
+                      <div>
+                        <Button onClick={() => setShowUploadDialog(true)}>
+                          Upload
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardBody className="px-6 w-full">
+                    <UserPointsTable />
+                  </CardBody>
+                </Card>
+              </div>
             </div>
           ) : null}
 
@@ -139,6 +210,39 @@ const DashboardPage = () => {
             </div>
           ) : null}
         </section>
+
+        <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
+          <DialogContent className="bg-white">
+            <div className="text-center">
+              <FileUploader
+                value={files}
+                onValueChange={setFiles}
+                dropzoneOptions={dropZoneConfig}
+                className="relative bg-white rounded-lg p-2"
+              >
+                <FileInput className="outline-dashed outline-1 outline-white">
+                  <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
+                    <FileSvgDraw />
+                  </div>
+                </FileInput>
+                <FileUploaderContent>
+                  {files &&
+                    files.length > 0 &&
+                    files.map((file, i) => (
+                      <FileUploaderItem key={i} index={i}>
+                        <Paperclip className="h-4 w-4 stroke-current" />
+                        <span>{file.name}</span>
+                      </FileUploaderItem>
+                    ))}
+                </FileUploaderContent>
+              </FileUploader>
+
+              <Button className="mx-auto" onClick={handleDownloadTemplate}>
+                Download Template
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </main>
     </>
   );

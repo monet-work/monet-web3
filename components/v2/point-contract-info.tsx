@@ -1,7 +1,6 @@
-import { CardBody } from "../ui/3d-card";
-import { Button } from "../ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -17,20 +16,20 @@ type Props = {
 const PointContractInfo: React.FC<Props> = ({ address, name, symbol }) => {
   return (
     <div>
-      <Card className="sm:col-span-2" x-chunk="dashboard-05-chunk-0">
+      <Card className="sm:col-span-2 w-fit">
         <CardHeader className="pb-3">
           <CardTitle>Your Points Smart Contract</CardTitle>
-          <CardDescription className="text-balance leading-relaxed">
+          <CardDescription className="text-balance leading-relaxed max-w-sm lg:max-w-lg">
             Your points smart contract has been created successfully. You can
             use the contract address below to interact with your points
             contract.
           </CardDescription>
         </CardHeader>
-        <CardBody className="px-6 w-full">
+        <CardContent className="px-6 w-full h-auto">
           <div className="flex flex-col gap-2">
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               <span className="font-bold w-1/4">Contract Address:</span>
-              <span>{address}</span>
+              <span className="text-xs md:text-base">{address}</span>
             </div>
             <div className="flex gap-2">
               <span className="font-bold w-1/4">Point Name:</span>
@@ -41,10 +40,7 @@ const PointContractInfo: React.FC<Props> = ({ address, name, symbol }) => {
               <span>{symbol}</span>
             </div>
           </div>
-        </CardBody>
-        <CardFooter>
-          <Button>Upload user points data</Button>
-        </CardFooter>
+        </CardContent>
       </Card>
     </div>
   );

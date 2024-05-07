@@ -1,5 +1,5 @@
 import { Company } from "@/xata";
-import { columns } from "./company-columns";
+import { columns } from "./v2/table-columns/company-columns";
 import { DataTable } from "./data-table/data-table";
 
 type Props = {

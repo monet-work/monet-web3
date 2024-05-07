@@ -31,12 +31,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
+  noResultsMessage?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   loading,
+  noResultsMessage
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -122,7 +124,7 @@ export function DataTable<TData, TValue>({
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      {noResultsMessage || "No results found"}
                     </TableCell>
                   </TableRow>
                 )}

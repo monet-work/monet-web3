@@ -1,0 +1,16 @@
+{
+  "id": "mig_cot1ufci8sbc1v0pc6rg",
+  "parentID": "mig_cossk9kc4esmhu0tudhg",
+  "checksum": "1:8016ac8b2aaeb6d915e5623e2eb80071cb59c54bcb39f92ecb8e2ac475f9898d",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "value",
+          "type": "int"
+        },
+        "table": "Points"
+      }
+    }
+  ]
+}
