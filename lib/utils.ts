@@ -16,7 +16,7 @@ export const formatCustomerData = (
     return {
       name: item["Name"],
       wallet: item["Wallet Address"],
-      points: item["Points"],
+      value: item["Points"],
     };
   });
 };

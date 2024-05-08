@@ -24,9 +24,10 @@ export async function GET(request: Request) {
   }
 
   // retrieve points for the company
-  const points = await client.db.Point.filter({ company: company.id }).getAll();
+  const points = await client.db.Point.filter({ company: company.id })
+    .select(["value", "owner.walletAddress", "owner.name"])
+    .getAll();
   return new Response(JSON.stringify(points), { status: 200 });
-
 }
 
 export async function POST(request: NextRequest) {
@@ -43,12 +44,16 @@ export async function POST(request: NextRequest) {
   }
 
   // retrieve customer
-  const customer = await client.db.Customer.filter({ user: user.id }).getFirst();
+  const customer = await client.db.Customer.filter({
+    user: user.id,
+  }).getFirst();
   if (!customer) {
     return new Response("Customer not found", { status: 404 });
   }
   // save user's points
-  await client.db.Customer.update(customer.id, { points: customer.points + points });
+  await client.db.Customer.update(customer.id, {
+    points: customer.points + points,
+  });
   // return the updated points
   return new Response(JSON.stringify({ points: customer.points + points }), {
     status: 200,

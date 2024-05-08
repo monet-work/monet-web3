@@ -74,9 +74,14 @@ export const createCompanyContract = async (payload: {
 
 export const uploadCustomerData = async (payload: {
   walletAddress: string;
-  customerData: { name: string; wallet: string; points: number }[];
+  customerData: { name: string; wallet: string; value: number }[];
 }) => {
-  return axios.post<Point[]>("/api/companies/points/upload", payload);
+  return axios.post<
+    {
+      value: number;
+      owner: { walletAddress: string; name: string };
+    }[]
+  >("/api/companies/points/upload", payload);
 };
 
 export const requestCompanyWalletVerfication = async (data: {
@@ -124,9 +129,15 @@ export const redeemPoints = async (walletAddress: string) => {
   return axios.post<Customer>("/api/redeem", { walletAddress });
 };
 
-
-export const getPointsByCompanyWalletAddress = async (walletAddress: string) => {
-  return axios.get<Point[]>("/api/companies/points", {
+export const getPointsByCompanyWalletAddress = async (
+  walletAddress: string
+) => {
+  return axios.get<
+    {
+      value: number;
+      owner: { walletAddress: string; name: string };
+    }[]
+  >("/api/companies/points", {
     params: { walletAddress },
   });
-}
+};

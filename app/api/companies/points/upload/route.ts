@@ -67,7 +67,9 @@ export async function POST(request: Request) {
   );
 
   // fetch all points for the company
-  const points = await client.db.Point.filter({ company: company.id }).getAll();
+  const points = await client.db.Point.filter({ company: company.id })
+    .select(["value", "owner.name", "owner.walletAddress"])
+    .getAll();
 
   return new Response(JSON.stringify(points), { status: 200 });
 }

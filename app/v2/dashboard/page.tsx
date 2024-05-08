@@ -23,6 +23,7 @@ import UserPointsTable from "@/components/v2/users-points-table";
 import {
   createCompanyContract,
   getCompanyByWalletAddress,
+  getPointsByCompanyWalletAddress,
   uploadCustomerData,
 } from "@/lib/api-requests";
 import { readExcelFile } from "@/lib/file-helper";
@@ -47,8 +48,15 @@ const DashboardPage = () => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);
   const [customerData, setCustomerData] = useState<
-    { name: string; wallet: string; points: number }[] | null
+    { name: string; wallet: string; value: number }[] | null
   >(null);
+  const [userPointsData, setUserPointsData] = useState<
+    {
+      name: string;
+      wallet: string;
+      value: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     if (!userStore.user?.isWalletApproved) {
@@ -68,6 +76,18 @@ const DashboardPage = () => {
     queryKey: ["company", { walletAddress: companyWalletAddress }],
     queryFn: () => {
       return getCompanyByWalletAddress(companyWalletAddress!);
+    },
+    enabled: !!companyWalletAddress,
+  });
+
+  const {
+    data: pointsData,
+    isLoading: isPointsDataLoading,
+    isError: isPointsDataError,
+  } = useQuery({
+    queryKey: ["company/points", { walletAddress: companyWalletAddress }],
+    queryFn: () => {
+      return getPointsByCompanyWalletAddress(companyWalletAddress!);
     },
     enabled: !!companyWalletAddress,
   });
@@ -103,6 +123,18 @@ const DashboardPage = () => {
     processFile();
   }, [files]);
 
+  useEffect(() => {
+    if (!pointsData) return;
+    const formattedData = pointsData.data.map((item) => {
+      return {
+        name: item.owner.name,
+        wallet: item.owner.walletAddress,
+        value: String(item.value),
+      };
+    });
+    setUserPointsData(formattedData);
+  }, [customerData]);
+
   const uploadCustomerDataMutation = useMutation({
     mutationFn: uploadCustomerData,
   });
@@ -115,11 +147,19 @@ const DashboardPage = () => {
         customerData: customerData,
       },
       {
-        onSuccess: () => {
+        onSuccess: (response) => {
+          const formattedData = response.data.map((item: any) => {
+            return {
+              name: item.owner.name,
+              wallet: item.owner.walletAddress,
+              value: item.value,
+            };
+          });
           toast.success("Customer data uploaded successfully");
           setFiles(null);
           setCustomerData(null);
           setShowUploadDialog(false);
+          setUserPointsData(formattedData);
         },
         onError: (error: any) => {
           toast.error(
@@ -183,7 +223,7 @@ const DashboardPage = () => {
                     </div>
                   </CardHeader>
                   <CardBody className="px-6 w-full">
-                    <UserPointsTable />
+                    <UserPointsTable data={userPointsData} />
                   </CardBody>
                 </Card>
               </div>
