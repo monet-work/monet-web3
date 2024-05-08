@@ -1,4 +1,4 @@
-import CompanyAuthWrapper from "@/components/company-auth-wrapper";
+import AuthWrapper from "@/components/v2/auth-wrapper";
 import Navbar from "@/components/v2/navbar";
 
 type Props = {
@@ -7,10 +7,10 @@ type Props = {
 
 const V2Layout: React.FC<Props> = ({ children }) => {
   return (
-    <CompanyAuthWrapper>
+    <>
       <Navbar />
-      {children}
-    </CompanyAuthWrapper>
+      <AuthWrapper>{children}</AuthWrapper>
+    </>
   );
 };
 

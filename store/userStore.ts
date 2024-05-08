@@ -1,3 +1,4 @@
+import { USER_ROLE } from "@/app/api/v1/lib/role";
 import { User } from "@/xata";
 import { create } from "zustand";
 

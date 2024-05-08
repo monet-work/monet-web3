@@ -1,24 +1,22 @@
 "use client";
 
-import { useActiveAccount, useConnect } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 import { CardContainer, CardBody, CardItem } from "../ui/3d-card";
 import { Button } from "../ui/button";
 import { connectWallet } from "@/app/thirdweb";
 import VerifyWallet from "./verify-wallet";
-import useCompanyAuth from "@/hooks/useCompanyAuth";
+import { useRouter } from "next/navigation";
 
 const videoUrl = "/videos/hero-bg.mp4";
 
 const Hero = () => {
-  const { connect, isConnecting, error } = useConnect();
-  const { loading: isLoadingAuth } = useCompanyAuth();
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
-
+  const router = useRouter();
   const isWalletConnected = !!walletAddress;
 
   const handleConnect = async () => {
-    await connectWallet(connect);
+    router.push("/v2/login");
   };
 
   return (
@@ -44,7 +42,6 @@ const Hero = () => {
               <Button
                 className="mt-8 bg-accent hover:bg-accent-dark text-lg h-12"
                 onClick={handleConnect}
-                loading={isConnecting}
               >
                 Get started with your wallet
               </Button>
@@ -53,11 +50,11 @@ const Hero = () => {
         </CardContainer>
       )}
 
-      {isWalletConnected && !isLoadingAuth && (
+      {/* {isWalletConnected && !isLoadingAuth && (
         <div className="absolute z-10 top-1/2 transform -translate-y-1/2 left-1/2 -translate-x-1/2">
           <VerifyWallet />
         </div>
-      )}
+      )} */}
     </section>
   );
 };

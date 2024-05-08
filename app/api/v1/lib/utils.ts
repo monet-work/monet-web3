@@ -3,6 +3,7 @@ import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { generate } from "random-words";
 import jwt from "jsonwebtoken";
+import { User } from "@/xata";
 
 const eigenLayerPointsContractAddress =
   process.env.EIGENLAYER_POINTS_CONTRACT || "";
@@ -48,4 +49,13 @@ export const generateAccessToken = (payload: any, expiresInSeconds: string) => {
 
 export const verifyAccessToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET!);
+};
+
+
+export const generateAccessTokenForUser = async (user: User, roles: string[]) => {
+  const accessToken = generateAccessToken(
+    { id: user.id, walletAddress: user.walletAddress, roles: roles },
+    "30d"
+  );
+  return accessToken;
 };

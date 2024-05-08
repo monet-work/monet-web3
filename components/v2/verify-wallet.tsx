@@ -1,3 +1,5 @@
+'use client';
+
 import {
   submitCompanyRequest,
   requestCompanyWalletVerfication,
@@ -11,6 +13,7 @@ import { useActiveAccount } from "thirdweb/react";
 import { useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useCompanyStore } from "@/store/companyStore";
+import { useCustomerStore } from "@/store/customerStore";
 
 const VerifyWallet = () => {
   const [verificationMessage, setVerificationMessage] = useState<
@@ -21,7 +24,10 @@ const VerifyWallet = () => {
     undefined
   );
 
+  const [roleRequested, setRoleRequested] = useLocalStorage("roleRequested", "");
+
   const companyStore = useCompanyStore();
+  const customerStore = useCustomerStore();
 
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
@@ -65,15 +71,16 @@ const VerifyWallet = () => {
         walletAddress: walletAddress!,
         message: verificationMessage.join(" "),
         signature: walletSignature,
+        requestedRole: roleRequested
       },
       {
         onSuccess: (response) => {
           const accessToken = response.data.accessToken;
-          const company = response.data.company;
+          // const company = response.data.company;
           setAccessToken(accessToken);
           toast.success("Wallet verified");
-          companyStore.setCompany(company);
-          router.push("/v2/dashboard");
+          // companyStore.setCompany(company);
+          // router.push("/v2/dashboard");
         },
         onError: (error: any) => {
           console.log(error, "error");
@@ -90,8 +97,8 @@ const VerifyWallet = () => {
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold">Verify Wallet</h1>
             <p className="text-sm mt-2 max-w-sm">
-              We need to verify your wallet to start your onboarding and launch
-              your points contract.
+              We need to verify your wallet to provide you with access to our
+              platform. Please click the button below to verify your wallet.
             </p>
 
             <Button

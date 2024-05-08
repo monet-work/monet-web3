@@ -7,7 +7,7 @@ type Props = {
 };
 
 const CompanyAuthWrapper: React.FC<Props> = ({ children }) => {
-  const { loading } = useCompanyAuth();
+  // const { loading } = useCompanyAuth();
 
   return <div>{children}</div>;
 };

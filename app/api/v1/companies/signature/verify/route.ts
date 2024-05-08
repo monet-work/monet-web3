@@ -1,6 +1,7 @@
-import { generateAccessToken } from "@/app/api/v1/lib/utils";
+import { generateAccessToken, generateAccessTokenForUser } from "@/app/api/v1/lib/utils";
 import { User, getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
+import { USER_ROLE } from "../../../lib/role";
 
 const client = getXataClient();
 
@@ -9,9 +10,14 @@ export async function POST(request: Request) {
   if (!body) {
     return new Response("Invalid request", { status: 400 });
   }
-  const { walletAddress, signature, message } = body;
-  if (!walletAddress || !signature || !message) {
+  const { walletAddress, signature, message, requestedRole } = body;
+  if (!walletAddress || !signature || !message || !requestedRole) {
     return new Response("Invalid request", { status: 400 });
+  }
+
+  // check if role is valid
+  if (!Object.values(USER_ROLE).includes(requestedRole)) {
+    return new Response("Invalid role", { status: 400 });
   }
 
   // validate signature
@@ -23,46 +29,29 @@ export async function POST(request: Request) {
   });
 
   if (isSignatureValid) {
-    // create user
-    const { user, company } = await createUserAndCompany(walletAddress);
+    // create user and assign role
 
+    const user = await client.db.User.create({
+      walletAddress,
+      roles: [String(requestedRole)],
+    });
 
     await approveUserWallet(user);
 
     // generate access token
-    const accessToken = await generateAccessTokenForUser(user);
+    const accessToken = await generateAccessTokenForUser(user, [requestedRole]);
 
     const updatedCompany = await client.db.Company.filter({
       user: user.id,
-    }).select([
-      "user.*",
-      "pointContractAddress",
-      "name",
-      "approved",
-    ]);
+    }).select(["user.*", "pointContractAddress", "name", "approved"]);
 
-    return new Response(
-      JSON.stringify({ company: updatedCompany, accessToken }),
-      {
-        status: 200,
-      }
-    );
+    return new Response(JSON.stringify({ accessToken }), {
+      status: 200,
+    });
   } else {
     return new Response("Invalid signature", { status: 400 });
   }
 }
-
-const createUserAndCompany = async (walletAddress: string) => {
-  const user = await client.db.User.create({
-    walletAddress,
-  });
-
-  const company = await client.db.Company.create({
-    user: user.id,
-  });
-
-  return { user, company };
-};
 
 const approveUserWallet = async (user: User) => {
   await client.db.User.update(user.id, {
@@ -70,10 +59,3 @@ const approveUserWallet = async (user: User) => {
   });
 };
 
-const generateAccessTokenForUser = async (user: User) => {
-  const accessToken = generateAccessToken(
-    { id: user.id, walletAddress: user.walletAddress },
-    "30d"
-  );
-  return accessToken;
-};

@@ -1,3 +1,4 @@
+import { USER_ROLE } from "@/app/api/v1/lib/role";
 import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 
@@ -7,18 +8,13 @@ interface updatePointsVariables {
 }
 
 export const authenticate = async (payload: {
-  accessToken: string;
+  roleRequested: USER_ROLE;
   walletAddress: string;
 }) => {
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: payload.accessToken,
-  };
 
-  return axios.post<{ user: User; accessToken: string }>(
+  return axios.post<{ user: User; accessToken?: string }>(
     "/api/v1/auth",
-    { walletAddress: payload.walletAddress },
-    { headers }
+    { walletAddress: payload.walletAddress, roleRequested: payload.roleRequested },
   );
 };
 
@@ -88,6 +84,7 @@ export const requestCompanyWalletVerfication = async (data: {
   walletAddress: string;
   signature: `0x${string}`;
   message: string;
+  requestedRole: USER_ROLE;
 }) => {
   return axios.post<{ company: Company; accessToken: string }>(
     "/api/v1/companies/signature/verify",
