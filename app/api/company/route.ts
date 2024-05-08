@@ -55,7 +55,6 @@ export async function POST(request: Request) {
     return new Response("User already exists", { status: 400 });
   }
 
-  console.log("Creating user and company", user);
 
   // create user
   const newUser = await client.db.User.create({ email, walletAddress });

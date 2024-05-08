@@ -1,4 +1,4 @@
-import { Company, Customer, User } from "@/xata";
+import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 
 interface updatePointsVariables {
@@ -72,12 +72,19 @@ export const createCompanyContract = async (payload: {
   return axios.post<Company>("/api/companies/contract", payload);
 };
 
+export const uploadCustomerData = async (payload: {
+  walletAddress: string;
+  customerData: { name: string; wallet: string; points: number }[];
+}) => {
+  return axios.post<Point[]>("/api/companies/points/upload", payload);
+};
+
 export const requestCompanyWalletVerfication = async (data: {
   walletAddress: string;
   signature: `0x${string}`;
   message: string;
 }) => {
-  return axios.post<{ company: Company, accessToken: string }>(
+  return axios.post<{ company: Company; accessToken: string }>(
     "/api/companies/signature/verify",
     data
   );
@@ -101,13 +108,25 @@ export const collectPoints = async ({
   walletAddress,
   points,
 }: updatePointsVariables) => {
-  return axios.post<Customer>("/api/companies/points", { walletAddress, points });
+  return axios.post<Customer>("/api/companies/points", {
+    walletAddress,
+    points,
+  });
 };
 
 export const getPoints = async (walletAddress: string) => {
-  return axios.get<Customer>("/api/companies/points", { params: { walletAddress } });
+  return axios.get<Customer>("/api/companies/points", {
+    params: { walletAddress },
+  });
 };
 
 export const redeemPoints = async (walletAddress: string) => {
   return axios.post<Customer>("/api/redeem", { walletAddress });
 };
+
+
+export const getPointsByCompanyWalletAddress = async (walletAddress: string) => {
+  return axios.get<Point[]>("/api/companies/points", {
+    params: { walletAddress },
+  });
+}

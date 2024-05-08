@@ -3,8 +3,30 @@ import { NextRequest } from "next/server";
 
 const client = getXataClient();
 
-export async function GET() {
-  // fetch data from xata
+export async function GET(request: Request) {
+  // fetch points by company wallet address as query param
+  const url = new URL(request.url);
+  const walletAddress = url.searchParams.get("walletAddress");
+  if (!walletAddress) {
+    return new Response("Invalid wallet address", { status: 400 });
+  }
+
+  // retrieve user
+  const user = await client.db.User.filter({ walletAddress }).getFirst();
+  if (!user) {
+    return new Response("User not found", { status: 404 });
+  }
+
+  // retrieve company
+  const company = await client.db.Company.filter({ user: user.id }).getFirst();
+  if (!company) {
+    return new Response("Company not found", { status: 404 });
+  }
+
+  // retrieve points for the company
+  const points = await client.db.Point.filter({ company: company.id }).getAll();
+  return new Response(JSON.stringify(points), { status: 200 });
+
 }
 
 export async function POST(request: NextRequest) {

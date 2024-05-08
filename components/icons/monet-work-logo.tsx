@@ -59,7 +59,7 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
         x2="6.50124"
         y2="-1"
         transform="matrix(0.77364 0.633626 -0.615728 0.787958 7.84619 10.7)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke="current"
       ></line>
       <line
@@ -67,7 +67,7 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
         x2="8.72332"
         y2="-1"
         transform="matrix(0.8072 -0.590278 0.572195 0.820117 5.83398 27.4758)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke="current"
       ></line>
       <line
@@ -75,7 +75,7 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
         x2="11.9367"
         y2="-1"
         transform="matrix(0.50563 -0.862751 0.852084 0.523405 21.9287 14.0879)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke="current"
       ></line>
       <line
@@ -83,7 +83,7 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
         x2="8.79004"
         y2="-1"
         transform="matrix(0.572195 0.820117 -0.8072 0.590278 18.9111 24.3863)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke="current"
       ></line>
       <line
@@ -91,7 +91,7 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
         x2="9.56595"
         y2="-1"
         transform="matrix(0.946409 0.32297 -0.309596 0.950868 22.9351 20.2669)"
-        stroke-width="2"
+        strokeWidth="2"
         stroke="current"
       ></line>
     </svg>

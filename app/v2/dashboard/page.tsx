@@ -23,8 +23,10 @@ import UserPointsTable from "@/components/v2/users-points-table";
 import {
   createCompanyContract,
   getCompanyByWalletAddress,
+  uploadCustomerData,
 } from "@/lib/api-requests";
 import { readExcelFile } from "@/lib/file-helper";
+import { formatCustomerData } from "@/lib/utils";
 import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -44,6 +46,9 @@ const DashboardPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);
+  const [customerData, setCustomerData] = useState<
+    { name: string; wallet: string; points: number }[] | null
+  >(null);
 
   useEffect(() => {
     if (!userStore.user?.isWalletApproved) {
@@ -92,12 +97,38 @@ const DashboardPage = () => {
     const chosenFile = files[0];
     const processFile = async () => {
       const data = await readExcelFile(chosenFile);
-      console.log(data);
+      const formattedData = formatCustomerData(data as any);
+      setCustomerData(formattedData);
     };
     processFile();
   }, [files]);
 
-  const handleCustomerPointsUpload = () => {};
+  const uploadCustomerDataMutation = useMutation({
+    mutationFn: uploadCustomerData,
+  });
+
+  const handleCustomerPointsUpload = () => {
+    if (!customerData || !companyWalletAddress) return;
+    uploadCustomerDataMutation.mutate(
+      {
+        walletAddress: companyWalletAddress,
+        customerData: customerData,
+      },
+      {
+        onSuccess: () => {
+          toast.success("Customer data uploaded successfully");
+          setFiles(null);
+          setCustomerData(null);
+          setShowUploadDialog(false);
+        },
+        onError: (error: any) => {
+          toast.error(
+            error?.response?.data || "Failed to upload customer data"
+          );
+        },
+      }
+    );
+  };
 
   const handleDownloadTemplate = () => {
     const url = "/docs/offchain-points-template.xlsx";
@@ -214,11 +245,18 @@ const DashboardPage = () => {
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
           <DialogContent className="bg-white">
             <div className="text-center">
+              <Button
+                className="mx-auto"
+                onClick={handleDownloadTemplate}
+                variant={"link"}
+              >
+                Download Template
+              </Button>
               <FileUploader
                 value={files}
                 onValueChange={setFiles}
                 dropzoneOptions={dropZoneConfig}
-                className="relative bg-white rounded-lg p-2"
+                className="relative bg-white rounded-lg p-2 mt-4"
               >
                 <FileInput className="outline-dashed outline-1 outline-white">
                   <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
@@ -237,9 +275,15 @@ const DashboardPage = () => {
                 </FileUploaderContent>
               </FileUploader>
 
-              <Button className="mx-auto" onClick={handleDownloadTemplate}>
-                Download Template
-              </Button>
+              {files && files.length > 0 && (
+                <Button
+                  className="mt-4"
+                  onClick={handleCustomerPointsUpload}
+                  loading={uploadCustomerDataMutation.isPending}
+                >
+                  Upload
+                </Button>
+              )}
             </div>
           </DialogContent>
         </Dialog>
