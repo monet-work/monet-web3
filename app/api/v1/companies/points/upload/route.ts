@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       await client.db.Point.create({
         owner: user.id,
         company: company.id,
-        value: item.points,
+        value: item.value,
       });
     })
   );
