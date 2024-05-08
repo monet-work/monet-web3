@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   //iterate through the array and ensure each object has the required fields
   for (const item of customerData) {
-    if (!item.name || !item.wallet || !item.points) {
+    if (!item.name || !item.wallet || !item.value) {
       return new Response("Bad Request", { status: 400 });
     }
   }
