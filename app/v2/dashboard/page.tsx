@@ -105,7 +105,6 @@ const DashboardPage = () => {
 
   useEffect(() => {
     if (currentCompany && currentCompany.pointContractAddress) {
-      console.log(currentCompany, "current company");
       setShowForm(false);
     } else {
       setShowForm(true);
@@ -133,7 +132,7 @@ const DashboardPage = () => {
       };
     });
     setUserPointsData(formattedData);
-  }, [customerData]);
+  }, [pointsData]);
 
   const uploadCustomerDataMutation = useMutation({
     mutationFn: uploadCustomerData,

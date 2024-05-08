@@ -16,7 +16,7 @@ export const authenticate = async (payload: {
   };
 
   return axios.post<{ user: User; accessToken: string }>(
-    "/api/auth",
+    "/api/v1/auth",
     { walletAddress: payload.walletAddress },
     { headers }
   );
@@ -24,17 +24,17 @@ export const authenticate = async (payload: {
 
 export const login = async (data: { walletAddress: string }) => {
   return axios.post<{ accessToken: string; user: User }>(
-    "/api/auth/login",
+    "/api/v1/auth/login",
     data
   );
 };
 
 export const getCompanies = async () => {
-  return axios.get<Company[]>("/api/companies");
+  return axios.get<Company[]>("/api/v1/companies");
 };
 
 export const getCompanyByWalletAddress = async (walletAddress: string) => {
-  return axios.get<Company>("/api/company", { params: { walletAddress } });
+  return axios.get<Company>("/api/v1/company", { params: { walletAddress } });
 };
 
 export const createCompany = async (data: {
@@ -42,21 +42,21 @@ export const createCompany = async (data: {
   email: string;
   walletAddress: string;
 }) => {
-  return axios.post<Company>("/api/company", data);
+  return axios.post<Company>("/api/v1/company", data);
 };
 
 export const approveCompany = async (walletAddress: string) => {
-  return axios.post<Company>("/api/companies/approve", { walletAddress });
+  return axios.post<Company>("/api/v1/companies/approve", { walletAddress });
 };
 
 export const rejectCompany = async (walletAddress: string) => {
-  return axios.post<Company>("/api/companies/reject", { walletAddress });
+  return axios.post<Company>("/api/v1/companies/reject", { walletAddress });
 };
 
 export const submitCompanyRequest = async (payload: {
   walletAddress: string;
 }) => {
-  return axios.post<{ message: string[] }>("/api/companies/request", payload);
+  return axios.post<{ message: string[] }>("/api/v1/companies/request", payload);
 };
 
 export const createCompanyContract = async (payload: {
@@ -69,7 +69,7 @@ export const createCompanyContract = async (payload: {
   decimalDigits: string;
   orderingFee: string;
 }) => {
-  return axios.post<Company>("/api/companies/contract", payload);
+  return axios.post<Company>("/api/v1/companies/contract", payload);
 };
 
 export const uploadCustomerData = async (payload: {
@@ -81,7 +81,7 @@ export const uploadCustomerData = async (payload: {
       value: number;
       owner: { walletAddress: string; name: string };
     }[]
-  >("/api/companies/points/upload", payload);
+  >("/api/v1/companies/points/upload", payload);
 };
 
 export const requestCompanyWalletVerfication = async (data: {
@@ -90,7 +90,7 @@ export const requestCompanyWalletVerfication = async (data: {
   message: string;
 }) => {
   return axios.post<{ company: Company; accessToken: string }>(
-    "/api/companies/signature/verify",
+    "/api/v1/companies/signature/verify",
     data
   );
 };
@@ -100,33 +100,33 @@ export const getCustomer = async ({
 }: {
   walletAddress: string;
 }) => {
-  return await axios.get<Customer>("/api/customer", {
+  return await axios.get<Customer>("/api/v1/customer", {
     params: { walletAddress },
   });
 };
 
 export const createCustomer = async (data: { walletAddress: string }) => {
-  return axios.post<Customer>("/api/customer", data);
+  return axios.post<Customer>("/api/v1/customer", data);
 };
 
 export const collectPoints = async ({
   walletAddress,
   points,
 }: updatePointsVariables) => {
-  return axios.post<Customer>("/api/companies/points", {
+  return axios.post<Customer>("/api/v1/companies/points", {
     walletAddress,
     points,
   });
 };
 
 export const getPoints = async (walletAddress: string) => {
-  return axios.get<Customer>("/api/companies/points", {
+  return axios.get<Customer>("/api/v1/companies/points", {
     params: { walletAddress },
   });
 };
 
 export const redeemPoints = async (walletAddress: string) => {
-  return axios.post<Customer>("/api/redeem", { walletAddress });
+  return axios.post<Customer>("/api/v1/redeem", { walletAddress });
 };
 
 export const getPointsByCompanyWalletAddress = async (
@@ -137,7 +137,7 @@ export const getPointsByCompanyWalletAddress = async (
       value: number;
       owner: { walletAddress: string; name: string };
     }[]
-  >("/api/companies/points", {
+  >("/api/v1/companies/points", {
     params: { walletAddress },
   });
 };

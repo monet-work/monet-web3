@@ -1,4 +1,4 @@
-import { generateAccessToken } from "@/app/api/lib/utils";
+import { generateAccessToken } from "@/app/api/v1/lib/utils";
 import { User, getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
 
