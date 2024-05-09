@@ -1,4 +1,4 @@
-import { USER_ROLE } from "@/app/api/v1/lib/role";
+import { USER_ROLE } from "@/models/role";
 import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 
@@ -8,19 +8,27 @@ interface updatePointsVariables {
 }
 
 export const authenticate = async (payload: {
-  roleRequested: USER_ROLE;
   walletAddress: string;
+  accessToken: string;
 }) => {
-
+  const headers = {
+    Authorization: `Bearer ${payload.accessToken}`,
+  };
   return axios.post<{ user: User; accessToken?: string }>(
     "/api/v1/auth",
-    { walletAddress: payload.walletAddress, roleRequested: payload.roleRequested },
+    {
+      walletAddress: payload.walletAddress,
+    },
+    { headers }
   );
 };
 
-export const login = async (data: { walletAddress: string }) => {
+export const login = async (data: {
+  walletAddress: string;
+  requestedRole: typeof USER_ROLE;
+}) => {
   return axios.post<{ accessToken: string; user: User }>(
-    "/api/v1/auth/login",
+    "/api/v1/login",
     data
   );
 };
@@ -52,7 +60,10 @@ export const rejectCompany = async (walletAddress: string) => {
 export const submitCompanyRequest = async (payload: {
   walletAddress: string;
 }) => {
-  return axios.post<{ message: string[] }>("/api/v1/companies/request", payload);
+  return axios.post<{ message: string[] }>(
+    "/api/v1/companies/request",
+    payload
+  );
 };
 
 export const createCompanyContract = async (payload: {
@@ -80,14 +91,13 @@ export const uploadCustomerData = async (payload: {
   >("/api/v1/companies/points/upload", payload);
 };
 
-export const requestCompanyWalletVerfication = async (data: {
+export const requestWalletVerification = async (data: {
   walletAddress: string;
   signature: `0x${string}`;
   message: string;
-  requestedRole: USER_ROLE;
 }) => {
-  return axios.post<{ company: Company; accessToken: string }>(
-    "/api/v1/companies/signature/verify",
+  return axios.post<{ user: User; accessToken: string }>(
+    "/api/v1/wallet/signature/verify",
     data
   );
 };

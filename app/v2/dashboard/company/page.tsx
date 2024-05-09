@@ -38,7 +38,7 @@ import { DropzoneOptions } from "react-dropzone";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
-const DashboardPage = () => {
+const CompanyDashboardPage = () => {
   const userStore = useUserStore();
   const companyStore = useCompanyStore();
   const router = useRouter();
@@ -331,4 +331,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default CompanyDashboardPage;

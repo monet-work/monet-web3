@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import {
   submitCompanyRequest,
-  requestCompanyWalletVerfication,
+  requestWalletVerification,
 } from "@/lib/api-requests";
 import { useMutation } from "@tanstack/react-query";
 import { Button } from "../ui/button";
@@ -12,8 +12,7 @@ import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 import { useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useCompanyStore } from "@/store/companyStore";
-import { useCustomerStore } from "@/store/customerStore";
+import { USER_ROLE } from "@/models/role";
 
 const VerifyWallet = () => {
   const [verificationMessage, setVerificationMessage] = useState<
@@ -23,11 +22,10 @@ const VerifyWallet = () => {
     "accessToken",
     undefined
   );
-
-  const [roleRequested, setRoleRequested] = useLocalStorage("roleRequested", "");
-
-  const companyStore = useCompanyStore();
-  const customerStore = useCustomerStore();
+  const [roleRequested, setRoleRequested] = useLocalStorage(
+    "roleRequested",
+    ""
+  );
 
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
@@ -36,7 +34,7 @@ const VerifyWallet = () => {
   });
 
   const submitSignatureVerificationMutation = useMutation({
-    mutationFn: requestCompanyWalletVerfication,
+    mutationFn: requestWalletVerification,
   });
 
   const router = useRouter();
@@ -50,7 +48,6 @@ const VerifyWallet = () => {
       {
         onSuccess: (response) => {
           setVerificationMessage(response.data.message);
-          console.log("response", verificationMessage);
           toast.success("Request submitted");
         },
         onError: (error: any) => {
@@ -71,16 +68,17 @@ const VerifyWallet = () => {
         walletAddress: walletAddress!,
         message: verificationMessage.join(" "),
         signature: walletSignature,
-        requestedRole: roleRequested
       },
       {
         onSuccess: (response) => {
           const accessToken = response.data.accessToken;
-          // const company = response.data.company;
           setAccessToken(accessToken);
           toast.success("Wallet verified");
-          // companyStore.setCompany(company);
-          // router.push("/v2/dashboard");
+          const navigationTo =
+            Number(roleRequested) === USER_ROLE.CUSTOMER
+              ? "/v2/dashboard/customer"
+              : "/v2/dashboard/company";
+          router.push(navigationTo);
         },
         onError: (error: any) => {
           console.log(error, "error");

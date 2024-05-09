@@ -1,26 +1,34 @@
 import { authenticate } from "@/lib/api-requests";
 import { useMutation } from "@tanstack/react-query";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import useLocalStorage from "./useLocalStorage";
 
 const useAuth = () => {
   const activeAccount = useActiveAccount();
-  const [roleRequested, setRoleRequested] = useLocalStorage("roleRequested", "");
+  const pathname = usePathname();
+  const [accessToken, setAccessToken] = useLocalStorage(
+    "accessToken",
+    undefined
+  );
+
+  const isLoginRoute = pathname.includes("login");
 
   const authMutation = useMutation({
     mutationFn: authenticate,
   });
 
   useEffect(() => {
-    if (!activeAccount) return; 
+    if (!activeAccount) return;
+    if (!isLoginRoute) return;
+    if (!accessToken) return;
 
     authMutation.mutate({
       walletAddress: activeAccount.address,
-      roleRequested
+      accessToken,
     });
   }, [activeAccount]);
-  
 
   return {
     user: authMutation.data?.data.user,

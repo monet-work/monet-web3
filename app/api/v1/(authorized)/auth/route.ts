@@ -6,9 +6,9 @@ const client = getXataClient();
 
 export async function POST(request: NextRequest) {
   const payload = await request.json();
-  const { walletAddress, roleRequested } = payload;
+  const { walletAddress } = payload;
 
-  if (!walletAddress || !roleRequested) {
+  if (!walletAddress) {
     return new Response("Invalid request", { status: 400 });
   }
 
@@ -23,16 +23,13 @@ export async function POST(request: NextRequest) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  if (!userRoles.includes(roleRequested)) {
-    return new Response("Unauthorized", { status: 401 });
-  }
 
   // generate access token
   const accessToken = await generateAccessTokenForUser(
     { id: user.id, walletAddress, roles: userRoles },
     userRoles
   );
-  return new Response(JSON.stringify({ accessToken }), {
+  return new Response(JSON.stringify({ accessToken, user }), {
     status: 200,
   });
 }

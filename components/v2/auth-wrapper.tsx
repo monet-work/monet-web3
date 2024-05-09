@@ -2,31 +2,47 @@
 
 import useAuth from "@/hooks/useAuth";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
 import { useUserStore } from "@/store/userStore";
-import { AutoConnect, useActiveAccount } from "thirdweb/react";
+import { AutoConnect, useActiveAccount, useActiveWalletConnectionStatus } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { client } from "@/app/thirdweb";
 import { useRouter } from "next/navigation";
+import { USER_ROLE } from "@/models/role";
 
 type Props = {
   children?: React.ReactNode;
 };
 const AuthWrapper: React.FC<Props> = ({ children }) => {
   const activeAccount = useActiveAccount();
+  const connectionStatus = useActiveWalletConnectionStatus();
   const userStore = useUserStore();
+  const [pageLoaded, setPageLoaded] = useState(false);
   const { user, isLoading, error, accessToken: token } = useAuth();
   const [accessToken, setAccessToken] = useLocalStorage(
     "accessToken",
     undefined
   );
+  const [roleRequested, setRoleRequested] = useLocalStorage(
+    "roleRequested",
+    ""
+  );
   const router = useRouter();
   const wallets = [createWallet("io.metamask")];
 
-  const redirectToVerifyWalletRoute = () => {
+  const redirectToVerifyWalletRouteIfUnApproved = () => {
     if (!user || !user.isWalletApproved) {
       router.push("/v2/verify-wallet");
+    }
+  };
+
+  const redirectToDashboardIfApproved = () => {
+    if (user && user.isWalletApproved) {
+      const redirectTo =
+        Number(roleRequested) === USER_ROLE.CUSTOMER
+          ? "/v2/dashboard/customer"
+          : "/v2/dashboard/company";
     }
   };
 
@@ -41,17 +57,26 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   }, [token]);
 
   useEffect(() => {
-    redirectToVerifyWalletRoute();
+    redirectToVerifyWalletRouteIfUnApproved();
+    redirectToDashboardIfApproved();
   }, [user, error]);
 
   useEffect(() => {
-    if (!activeAccount) {
-      // act as logout
-      userStore.setUser(null);
-      setAccessToken(null);
-      router.push("/v2");
+    if(connectionStatus === 'connected') {
+      setPageLoaded(true);
     }
-  }, [activeAccount]);
+  }, [connectionStatus]);
+
+  useEffect(() => {
+    // detect logout
+    if (!activeAccount && pageLoaded) {
+      //logout
+      console.log("logging out");
+      setAccessToken(undefined);
+      router.push("/v2");
+      localStorage.clear();
+    }
+  }, [activeAccount, pageLoaded]);
 
   return (
     <div>

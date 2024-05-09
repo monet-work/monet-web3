@@ -1,4 +1,4 @@
-import { generateAccessToken, generateAccessTokenForUser } from "@/app/api/v1/lib/utils";
+import { generateAccessTokenForUser } from "@/app/api/v1/lib/utils";
 import { User, getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
 import { USER_ROLE } from "../../../../lib/role";
@@ -10,14 +10,9 @@ export async function POST(request: Request) {
   if (!body) {
     return new Response("Invalid request", { status: 400 });
   }
-  const { walletAddress, signature, message, requestedRole } = body;
-  if (!walletAddress || !signature || !message || !requestedRole) {
+  const { walletAddress, signature, message } = body;
+  if (!walletAddress || !signature || !message) {
     return new Response("Invalid request", { status: 400 });
-  }
-
-  // check if role is valid
-  if (!Object.values(USER_ROLE).includes(requestedRole)) {
-    return new Response("Invalid role", { status: 400 });
   }
 
   // validate signature
@@ -33,19 +28,17 @@ export async function POST(request: Request) {
 
     const user = await client.db.User.create({
       walletAddress,
-      roles: [String(requestedRole)],
+      roles: [String(USER_ROLE.COMPANY), String(USER_ROLE.CUSTOMER)], // assign company and customer role
     });
 
     await approveUserWallet(user);
 
+    const userRoles = user.roles || [];
+
     // generate access token
-    const accessToken = await generateAccessTokenForUser(user, [requestedRole]);
+    const accessToken = await generateAccessTokenForUser(user, userRoles);
 
-    const updatedCompany = await client.db.Company.filter({
-      user: user.id,
-    }).select(["user.*", "pointContractAddress", "name", "approved"]);
-
-    return new Response(JSON.stringify({ accessToken }), {
+    return new Response(JSON.stringify({ accessToken, user }), {
       status: 200,
     });
   } else {
@@ -58,4 +51,3 @@ const approveUserWallet = async (user: User) => {
     isWalletApproved: true,
   });
 };
-

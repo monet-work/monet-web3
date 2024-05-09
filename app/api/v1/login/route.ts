@@ -21,13 +21,13 @@ export async function POST(request: Request) {
   }
 
   const user = await client.db.User.filter({ walletAddress }).getFirst();
-
-  if(!user?.isWalletApproved){
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   if (!user) {
     return new Response("Invalid Request", { status: 404 });
+  }
+  console.log(user, "user");
+
+  if (!user?.isWalletApproved) {
+    return new Response("Unauthorized", { status: 401 });
   }
 
   const userRoles = user?.roles;
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       roles: [String(requestedRole)],
     });
 
-    if(!updatedUser || !updatedUser.roles) {
+    if (!updatedUser || !updatedUser.roles) {
       return new Response("Unauthorized", { status: 401 });
     }
 
@@ -47,20 +47,22 @@ export async function POST(request: Request) {
       updatedUser.roles
     );
 
-    return new Response(JSON.stringify({ accessToken }), {
+    return new Response(JSON.stringify({ accessToken, user }), {
       status: 200,
     });
   }
 
   // if role is not already assigned to user, append it to user roles
-  if (!userRoles.includes(requestedRole)) {
+  if (!userRoles.includes(String(requestedRole))) {
     await client.db.User.update(user.id, {
-      roles: [...userRoles, requestedRole],
+      roles: [...userRoles, String(requestedRole)],
     });
 
-    const updatedUser = await client.db.User.filter({ walletAddress }).getFirst();
+    const updatedUser = await client.db.User.filter({
+      walletAddress,
+    }).getFirst();
 
-    if(!updatedUser || !updatedUser.roles) {
+    if (!updatedUser || !updatedUser.roles) {
       return new Response("Unauthorized", { status: 401 });
     }
 
@@ -69,11 +71,9 @@ export async function POST(request: Request) {
       updatedUser.roles
     );
 
-    return new Response(JSON.stringify({ accessToken }), {
+    return new Response(JSON.stringify({ accessToken, user }), {
       status: 200,
     });
-
-
   }
 
   const accessToken = await generateAccessTokenForUser(
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     userRoles
   );
 
-  return new Response(JSON.stringify({ accessToken }), {
+  return new Response(JSON.stringify({ accessToken, user }), {
     status: 200,
   });
 }
