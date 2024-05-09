@@ -1,7 +1,7 @@
 import { generateAccessToken, generateAccessTokenForUser } from "@/app/api/v1/lib/utils";
 import { User, getXataClient } from "@/xata";
 import { verifyEOASignature } from "thirdweb/auth";
-import { USER_ROLE } from "../../../lib/role";
+import { USER_ROLE } from "../../../../lib/role";
 
 const client = getXataClient();
 

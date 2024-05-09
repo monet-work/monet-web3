@@ -8,7 +8,7 @@ import {
   toUnits,
 } from "thirdweb";
 import { privateKeyAccount } from "thirdweb/wallets";
-import { eigenLayerPointsContract as elpContract } from "../lib/utils";
+import { eigenLayerPointsContract as elpContract } from "../../lib/utils";
 
 const companyWalletPrivateKey = process.env.COMPANY_WALLET_PRIVATE_KEY;
 

@@ -1,6 +1,6 @@
 import { getXataClient } from "@/xata";
 import { NextRequest } from "next/server";
-import { generateAccessTokenForUser } from "../lib/utils";
+import { generateAccessTokenForUser } from "../../lib/utils";
 
 const client = getXataClient();
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
   }
 
   // generate access token
-  const accessToken = generateAccessTokenForUser(
+  const accessToken = await generateAccessTokenForUser(
     { id: user.id, walletAddress, roles: userRoles },
     userRoles
   );

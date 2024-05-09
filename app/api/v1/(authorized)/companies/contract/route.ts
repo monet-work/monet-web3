@@ -7,7 +7,7 @@ import {
   toWei,
   watchContractEvents,
 } from "thirdweb";
-import { monetPointsFactoryContract } from "../../lib/utils";
+import { monetPointsFactoryContract } from "../../../lib/utils";
 
 const client = getXataClient();
 
