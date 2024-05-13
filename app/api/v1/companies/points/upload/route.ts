@@ -3,7 +3,7 @@ import { getXataClient } from "@/xata";
 const client = getXataClient();
 
 export async function POST(request: Request) {
-  // extract the json  body from the request
+  // extract the json body from the request
   const body = await request.json();
   if (!body) {
     return new Response("Bad Request", { status: 400 });
@@ -15,12 +15,12 @@ export async function POST(request: Request) {
     return new Response("Bad Request", { status: 400 });
   }
 
-  //ensure the body is as array of objects containing name, wallet and points
+  // ensure the body is an array of objects containing name, wallet, and points
   if (!Array.isArray(customerData)) {
     return new Response("Bad Request", { status: 400 });
   }
 
-  //iterate through the array and ensure each object has the required fields
+  // iterate through the array and ensure each object has the required fields
   for (const item of customerData) {
     if (!item.name || !item.wallet || !item.value) {
       return new Response("Bad Request", { status: 400 });
@@ -41,28 +41,58 @@ export async function POST(request: Request) {
     return new Response("Company not found", { status: 404 });
   }
 
-  //save the data to the database
-
-  // create users based on name, wallet
+  // save or update the data in the database
   await Promise.all(
     customerData.map(async (item) => {
-      //create new user
-      const user = await client.db.User.create({
-        name: item.name,
+      // check if the user already exists
+      let user = await client.db.User.filter({
         walletAddress: item.wallet,
-      });
+      }).getFirst();
 
-      // create new customer
-      await client.db.Customer.create({
+      if (!user) {
+        // if user doesn't exist, create a new one
+        user = await client.db.User.create({
+          name: item.name,
+          walletAddress: item.wallet,
+        });
+
+        // create a new customer for the user
+        await client.db.Customer.create({
+          user: user.id,
+        });
+      }
+
+      // check if the customer already exists
+      let customer = await client.db.Customer.filter({
         user: user.id,
-      });
+      }).getFirst();
 
-      // create new Point
-      await client.db.Point.create({
+      // if customer doesn't exist, create a new one
+      if (!customer) {
+        customer = await client.db.Customer.create({
+          user: user.id,
+        });
+      }
+
+      // check if there's already a point entry for this user and company
+      let point = await client.db.Point.filter({
         owner: user.id,
         company: company.id,
-        value: item.value,
-      });
+      }).getFirst();
+
+      if (point) {
+        // if a point entry exists, increment the value
+        await client.db.Point.update(point.id, {
+          value: point.value + item.value,
+        });
+      } else {
+        // if no point entry exists, create a new one
+        await client.db.Point.create({
+          owner: user.id,
+          company: company.id,
+          value: item.value,
+        });
+      }
     })
   );
 
