@@ -3,7 +3,7 @@
 import { connectWallet } from "@/app/thirdweb";
 import LoginCompany from "@/components/login-company";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { login } from "@/lib/api-requests";
+import { authenticate, login } from "@/lib/api-requests";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -17,34 +17,42 @@ const CompanyLoginPage = () => {
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
-  const loginMutation = useMutation({
-    mutationFn: login,
+  const authMutation = useMutation({
+    mutationFn: authenticate,
   });
 
-  const handleLoginCompany = async() => {
+  const handleLoginCompany = async () => {
     setLoginRequested(true);
     await connectWallet(connect);
   };
 
+  const redirectToVerfication = () => {
+    router.push("/company/verify");
+  }
+
+  const redirectToDashboard = () => {
+    router.push("/company/dashboard");
+  }
+
   useEffect(() => {
     if (activeAccount && loginRequested) {
-      loginMutation.mutate(
+      if (!accessToken) {
+        redirectToVerfication();
+      }
+      authMutation.mutate(
         {
           walletAddress: activeAccount.address,
+          accessToken,
         },
         {
           onSuccess: (response) => {
             const { accessToken, user } = response.data;
             setAccessToken(accessToken);
             userStore.setUser(user);
-            if (user.isWalletApproved) {
-              router.push("/company/dashboard");
-            } else {
-              router.push("/company/verify");
-            }
+            redirectToDashboard();
           },
           onError: () => {
-            router.push("/company/verify");
+            redirectToVerfication();
           },
         }
       );
@@ -55,7 +63,7 @@ const CompanyLoginPage = () => {
     <main>
       <LoginCompany
         onClickConnectWallet={handleLoginCompany}
-        loading={loginMutation.isPending}
+        loading={authMutation.isPending}
       />
     </main>
   );

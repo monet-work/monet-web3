@@ -18,11 +18,6 @@ export async function POST(request: Request) {
   // check if user already exists
   const user = await client.db.User.filter({ walletAddress }).getFirst();
 
-  // check if user wallet is already approved
-  if (user?.isWalletApproved) {
-    return new Response("Wallet already approved", { status: 400 });
-  }
-
   if (user && !user.isWalletApproved) {
     await approveUserWallet(user);
     // if user does not have roles or does not have customer role, assign company role
