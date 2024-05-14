@@ -1,9 +1,11 @@
+import FloatingConnect from "@/components/floating-connect";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const HomePage = () => {
   return (
     <main>
+      <FloatingConnect />
       <section className="bg-gray-900 text-white">
         <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
           <div className="mx-auto max-w-3xl text-center">
@@ -12,9 +14,11 @@ const HomePage = () => {
               <span className="sm:block"> Decentralized Rewards. </span>
             </h1>
 
-            <p className="mx-auto mt-4 max-w-xl sm:text-xl/relaxed">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt
-              illo tenetur fuga ducimus numquam ea!
+            <p className="mx-auto mt-4 max-w-2xl text-base/relaxed text-slate-300">
+              Monet is a decentralized loyalty rewards platform that allows
+              businesses to create and manage their own loyalty programs on the
+              blockchain. Customers can earn and redeem loyalty points across
+              multiple businesses and trade them on the Monet marketplace.
             </p>
 
             <div className="mt-8 flex flex-wrap justify-center gap-4">

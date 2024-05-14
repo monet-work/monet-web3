@@ -4,17 +4,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   useActiveAccount,
-  useActiveWallet,
   useActiveWalletConnectionStatus,
   useDisconnect,
 } from "thirdweb/react";
 import useLocalStorage from "./useLocalStorage";
+import { createWallet } from "thirdweb/wallets";
 
 const useAuth = () => {
   const { disconnect } = useDisconnect();
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
-  const wallet = useActiveWallet();
   const pathname = usePathname();
 
   const [pageLoaded, setPageLoaded] = useState(false);
@@ -25,6 +24,7 @@ const useAuth = () => {
   const router = useRouter();
 
   const isLoginRoute = pathname.includes("login");
+  const isHomeRoute = pathname === "/";
 
   const authMutation = useMutation({
     mutationFn: authenticate,
@@ -37,6 +37,17 @@ const useAuth = () => {
   }, [connectionStatus]);
 
   useEffect(() => {
+    // redirect to home if not logged in
+    if (isLoginRoute) return;
+    if (isHomeRoute) return;
+
+    if (!activeAccount) {
+      router.replace("/");
+    }
+   
+  }, [pathname])
+
+  useEffect(() => {
     // detect logout
     if (!activeAccount && pageLoaded) {
       //logout
@@ -46,8 +57,9 @@ const useAuth = () => {
 
   useEffect(() => {
     if (!activeAccount) return;
-    if (!isLoginRoute) return;
     if (!accessToken) return;
+    if (isLoginRoute) return;
+    if (isHomeRoute) return;
 
     authMutation.mutate({
       walletAddress: activeAccount.address,
@@ -56,7 +68,8 @@ const useAuth = () => {
   }, [activeAccount]);
 
   const logout = () => {
-    if (!wallet) return;
+    console.log("logout");
+    const wallet = createWallet("io.metamask");
     disconnect(wallet);
     setAccessToken(undefined);
     router.replace("/");

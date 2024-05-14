@@ -33,7 +33,6 @@ const CompanyLoginPage = () => {
     loginMutation.mutate(
       {
         walletAddress: account.address,
-        requestedRole: roleRequested,
       },
       {
         onSuccess: (response) => {

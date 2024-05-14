@@ -25,13 +25,13 @@ export const authenticate = async (payload: {
 
 export const login = async (data: {
   walletAddress: string;
-  requestedRole: typeof USER_ROLE;
 }) => {
   return axios.post<{ accessToken: string; user: User }>(
     "/api/v1/login",
     data
   );
 };
+
 
 export const getCompanies = async () => {
   return axios.get<Company[]>("/api/v1/companies");

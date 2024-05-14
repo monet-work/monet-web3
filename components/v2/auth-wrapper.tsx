@@ -15,7 +15,7 @@ import { toast } from "sonner";
 type Props = {
   children?: React.ReactNode;
 };
-const AuthWrapper: React.FC<Props> = ({ children }) => {
+const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to a provider
   const userStore = useUserStore();
 
   const { user, isLoading, error, accessToken: token, logout } = useAuth();
@@ -92,6 +92,8 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   }, [token]);
 
   useEffect(() => {
+    if(!user) return;
+    console.log('handle redirection', user, 'user found')
     redirectToVerifyWalletRouteIfUnApproved();
     redirectToDashboardIfApproved();
   }, [user, error]);

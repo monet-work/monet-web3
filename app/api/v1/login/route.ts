@@ -20,13 +20,13 @@ export async function POST(request: Request) {
   }
 
   if (!user?.isWalletApproved) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized. Wallet unapproved", { status: 401 });
   }
 
   const userRoles = user?.roles;
 
   if (!userRoles) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized. No roles", { status: 401 });
   }
 
   const accessToken = await generateAccessTokenForUser(

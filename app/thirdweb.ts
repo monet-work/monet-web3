@@ -64,8 +64,8 @@ export const monetPointsFactoryContract = getContract({
 
 export const connectWallet = async (
   connect: (options: Wallet | (() => Promise<Wallet>)) => Promise<Wallet | null>
-) => {
-  connect(async () => {
+): Promise<Wallet | null> => {
+  return connect(async () => {
     const metamask = createWallet("io.metamask");
 
     // if user has metamask installed, connect to it

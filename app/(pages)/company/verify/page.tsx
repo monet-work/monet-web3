@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import VerifyWallet from "@/components/verfiy-wallet";
+import FloatingConnect from "@/components/floating-connect";
+import VerifyWallet from "@/components/verify-wallet";
 
 const VerifyConpanyWalletPage = () => {
   const handleRequestVerification = () => {};
   const handleSignAndVerify = () => {};
   return (
     <main>
-      <main>
-        <VerifyWallet
-          loading={false}
-          onClickRequestVerification={handleRequestVerification}
-          onClickSignAndVerify={handleSignAndVerify}
-          verificationMessage={[]}
-        />
-      </main>
+      <FloatingConnect />
+      <VerifyWallet
+        loading={false}
+        onClickRequestVerification={handleRequestVerification}
+        onClickSignAndVerify={handleSignAndVerify}
+        verificationMessage={[]}
+      />
     </main>
   );
 };

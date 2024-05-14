@@ -11,7 +11,7 @@ export const apiLoggerMiddleware = async (request: Request) => {
     method: request.method,
     url: request.url,
     timestamp: new Date().toISOString(),
-    headers: Object.fromEntries(request.headers),
+    // headers: Object.fromEntries(request.headers),
   });
 
   // Continue to the next Middleware or route handler.

@@ -1,14 +1,21 @@
 import Link from "next/link";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { Button } from "./ui/button";
+import FloatingConnect from "./floating-connect";
 
 type Props = {
   onClickConnectWallet: () => void;
+  loading?: boolean;
 };
 
-const LoginCustomer: React.FC<Props> = ({ onClickConnectWallet }) => {
+const LoginCustomer: React.FC<Props> = ({
+  onClickConnectWallet,
+  loading = false,
+}) => {
   return (
     <section className="bg-white">
+      <FloatingConnect />
+
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
           <img
@@ -39,22 +46,22 @@ const LoginCustomer: React.FC<Props> = ({ onClickConnectWallet }) => {
               </p>
             </div>
 
-            <div className="col-span-6 sm:flex sm:items-center sm:gap-4 mt-12">
+            <div className="col-span-6 flex flex-col items-center justify-center sm:justify-start sm:flex-row sm:items-center sm:gap-4 mt-12">
               <Button
+                loading={loading}
                 onClick={onClickConnectWallet}
                 className="border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-800 focus:outline-none focus:ring active:text-blue-500"
               >
                 Connect your wallet
               </Button>
-              <span className="text-gray-500">or</span>
+              <span className="text-gray-500 py-2 sm:py-0">or</span>
 
               <Link href={"/company/login"}>
-                <Button className="bg-slate-500 px-12 py-3 text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto">
+                <Button className="w-full bg-slate-500 px-12 py-3 text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring active:bg-blue-500 sm:w-auto">
                   Continue as Business
                 </Button>
               </Link>
             </div>
-            
           </div>
         </main>
       </div>

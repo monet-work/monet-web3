@@ -12,7 +12,7 @@ const CustomerLoginPage = () => {
   };
   return (
     <main>
-      <LoginCustomer onClickConnectWallet={handleLoginCustomer} />
+      <LoginCustomer onClickConnectWallet={handleLoginCustomer}/>
     </main>
   );
 };
