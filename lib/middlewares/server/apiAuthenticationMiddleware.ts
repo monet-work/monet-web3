@@ -26,6 +26,8 @@ export const apiAuthenticationMiddleware = async (request: Request) => {
 
   const isUserAuthenticated = isAuthenticated(request);
 
+  console.log(isUserAuthenticated, "isUserAuthenticated");
+
   if (!isUserAuthenticated) {
     return new Response("Unauthenticated", { status: 401 });
   }

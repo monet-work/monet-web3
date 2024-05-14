@@ -34,10 +34,14 @@ export async function POST(request: Request) {
 
     const userRoles = user.roles || [];
 
+    const updatedUser = await client.db.User.filter({
+      walletAddress,
+    }).getFirst();
+
     // generate access token
     const accessToken = await generateAccessTokenForUser(user, userRoles);
 
-    return new Response(JSON.stringify({ accessToken, user }), {
+    return new Response(JSON.stringify({ accessToken, user: updatedUser }), {
       status: 200,
     });
   }
@@ -61,10 +65,14 @@ export async function POST(request: Request) {
 
     const userRoles = user.roles || [];
 
+    const updatedUser = await client.db.User.filter({
+      walletAddress,
+    }).getFirst();
+
     // generate access token
     const accessToken = await generateAccessTokenForUser(user, userRoles);
 
-    return new Response(JSON.stringify({ accessToken, user }), {
+    return new Response(JSON.stringify({ accessToken, user: updatedUser }), {
       status: 200,
     });
   } else {

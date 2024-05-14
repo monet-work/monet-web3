@@ -37,7 +37,11 @@ export async function POST(request: Request) {
     // generate access token
     const accessToken = await generateAccessTokenForUser(user, userRoles);
 
-    return new Response(JSON.stringify({ accessToken, user }), {
+    const updatedUser = await client.db.User.filter({
+      walletAddress,
+    }).getFirst();
+
+    return new Response(JSON.stringify({ accessToken, user: updatedUser }), {
       status: 200,
     });
   }
@@ -64,7 +68,11 @@ export async function POST(request: Request) {
     // generate access token
     const accessToken = await generateAccessTokenForUser(user, userRoles);
 
-    return new Response(JSON.stringify({ accessToken, user }), {
+    const updatedUser = await client.db.User.filter({
+      walletAddress,
+    }).getFirst();
+
+    return new Response(JSON.stringify({ accessToken, user: updatedUser }), {
       status: 200,
     });
   } else {

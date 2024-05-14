@@ -11,6 +11,7 @@ import { client } from "@/app/thirdweb";
 import { usePathname, useRouter } from "next/navigation";
 import { USER_ROLE } from "@/models/role";
 import { toast } from "sonner";
+import { User } from "@/xata";
 
 type Props = {
   children?: React.ReactNode;
@@ -34,7 +35,7 @@ const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to
   const isCustomerRoute = pathname.includes("/customer");
   const isCompanyRoute = pathname.includes("/company");
 
-  const redirectToVerifyWalletRouteIfUnApproved = () => {
+  const redirectToVerifyWalletRouteIfUnApproved = (user: User) => {
     if (!user || !user.isWalletApproved) {
       if (requestedRoute === "customer") {
         router.push("/customer/verify");
@@ -51,9 +52,11 @@ const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to
     return user.roles.includes(String(role));
   };
 
-  const redirectToDashboardIfApproved = () => {
+  const redirectToDashboardIfApproved = (user: User) => {
     if (user && user.isWalletApproved) {
       if (requestedRoute === "customer") {
+        console.log('redirecting to customer dashboard');
+        console.log('isAuthorized', isAuthorized(USER_ROLE.CUSTOMER));
         if (!isAuthorized(USER_ROLE.CUSTOMER)) {
           logout();
           toast.error("Unauthorized");
@@ -94,8 +97,8 @@ const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to
   useEffect(() => {
     if(!user) return;
     console.log('handle redirection', user, 'user found')
-    redirectToVerifyWalletRouteIfUnApproved();
-    redirectToDashboardIfApproved();
+    redirectToVerifyWalletRouteIfUnApproved(user);
+    redirectToDashboardIfApproved(user);
   }, [user, error]);
 
   return (

@@ -1,4 +1,3 @@
-import { USER_ROLE } from "@/models/role";
 import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 
@@ -93,11 +92,30 @@ export const uploadCustomerData = async (payload: {
 
 export const requestWalletVerification = async (data: {
   walletAddress: string;
+}) => {
+  return axios.post<{ message: string[] }>(
+    "/api/v1/wallet/request",
+    data
+  );
+};
+
+export const verifyCompanyWalletSignature = async (data: {
+  walletAddress: string;
   signature: `0x${string}`;
   message: string;
 }) => {
   return axios.post<{ user: User; accessToken: string }>(
-    "/api/v1/wallet/signature/verify",
+    "/api/v1/wallet/company/signature/verify",
+    data
+  );
+};
+export const verifyCustomerWalletSignature = async (data: {
+  walletAddress: string;
+  signature: `0x${string}`;
+  message: string;
+}) => {
+  return axios.post<{ user: User; accessToken: string }>(
+    "/api/v1/wallet/customer/signature/verify",
     data
   );
 };
