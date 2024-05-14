@@ -21,14 +21,14 @@ const CustomerLoginPage = () => {
     mutationFn: login,
   });
 
-  useEffect(() => {
-    if (!account) return;
+  // useEffect(() => {
+  //   if (!account) return;
 
-    loginMutation.mutate({
-      walletAddress: account.address,
-      requestedRole: roleRequested,
-    });
-  }, [account]);
+  //   loginMutation.mutate({
+  //     walletAddress: account.address,
+  //     requestedRole: roleRequested,
+  //   });
+  // }, [account]);
 
   return (
     <main className="min-h-screen bg-primary flex justify-center items-center">

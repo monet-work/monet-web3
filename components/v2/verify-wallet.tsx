@@ -63,29 +63,29 @@ const VerifyWallet = () => {
       message: verificationMessage.join(" "),
     });
     if (!walletSignature) return;
-    submitSignatureVerificationMutation.mutate(
-      {
-        walletAddress: walletAddress!,
-        message: verificationMessage.join(" "),
-        signature: walletSignature,
-      },
-      {
-        onSuccess: (response) => {
-          const accessToken = response.data.accessToken;
-          setAccessToken(accessToken);
-          toast.success("Wallet verified");
-          const navigationTo =
-            Number(roleRequested) === USER_ROLE.CUSTOMER
-              ? "/v2/dashboard/customer"
-              : "/v2/dashboard/company";
-          router.push(navigationTo);
-        },
-        onError: (error: any) => {
-          console.log(error, "error");
-          toast.error(error?.response?.data || "Failed to verify wallet");
-        },
-      }
-    );
+    // submitSignatureVerificationMutation.mutate(
+    //   {
+    //     walletAddress: walletAddress!,
+    //     message: verificationMessage.join(" "),
+    //     signature: walletSignature,
+    //   },
+    //   {
+    //     onSuccess: (response) => {
+    //       const accessToken = response.data.accessToken;
+    //       setAccessToken(accessToken);
+    //       toast.success("Wallet verified");
+    //       const navigationTo =
+    //         Number(roleRequested) === USER_ROLE.CUSTOMER
+    //           ? "/v2/dashboard/customer"
+    //           : "/v2/dashboard/company";
+    //       router.push(navigationTo);
+    //     },
+    //     onError: (error: any) => {
+    //       console.log(error, "error");
+    //       toast.error(error?.response?.data || "Failed to verify wallet");
+    //     },
+    //   }
+    // );
   };
 
   return (

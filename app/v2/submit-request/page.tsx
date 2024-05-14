@@ -4,7 +4,6 @@ import CompanyRequestForm from "@/components/forms/company-request-form";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  requestCompanyWalletVerfication,
   submitCompanyRequest,
 } from "@/lib/api-requests";
 import { useCompanyStore } from "@/store/companyStore";
@@ -29,9 +28,9 @@ const SubmitRequestPage = () => {
     mutationFn: submitCompanyRequest,
   });
 
-  const submitSignatureVerificationMutation = useMutation({
-    mutationFn: requestCompanyWalletVerfication,
-  });
+  // const submitSignatureVerificationMutation = useMutation({
+  //   mutationFn: requestCompanyWalletVerfication,
+  // });
 
   useEffect(() => {
     const company = companyStore.company;
@@ -47,23 +46,23 @@ const SubmitRequestPage = () => {
       message: randomWords.join(" "),
     });
     if (!walletSignature) return;
-    submitSignatureVerificationMutation.mutate(
-      {
-        walletAddress: walletAddress!,
-        message: randomWords.join(" "),
-        signature: walletSignature,
-      },
-      {
-        onSuccess: (response) => {
-          companyStore.setCompany(response.data);
-          toast.success("Wallet verified");
-          router.push("/v2/dashboard");
-        },
-        onError: (error) => {
-          toast.error(error.message || "Failed to verify wallet");
-        },
-      }
-    );
+    // submitSignatureVerificationMutation.mutate(
+    //   {
+    //     walletAddress: walletAddress!,
+    //     message: randomWords.join(" "),
+    //     signature: walletSignature,
+    //   },
+    //   {
+    //     onSuccess: (response) => {
+    //       companyStore.setCompany(response.data);
+    //       toast.success("Wallet verified");
+    //       router.push("/v2/dashboard");
+    //     },
+    //     onError: (error) => {
+    //       toast.error(error.message || "Failed to verify wallet");
+    //     },
+    //   }
+    // );
   };
 
   return (
@@ -116,7 +115,7 @@ const SubmitRequestPage = () => {
                 </div>
 
                 <Button
-                  loading={submitSignatureVerificationMutation.isPending}
+                  // loading={submitSignatureVerificationMutation.isPending}
                   onClick={handleVerifyWallet}
                   className="mt-4 w-full"
                 >
