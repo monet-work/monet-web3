@@ -38,10 +38,10 @@ const LoginCompany: React.FC<Props> = ({
 
             <div className="col-span-6 mt-4">
               <p className="text-gray-500">
-                By connecting your wallet, you can convert your off-chain
+                {` By connecting your wallet, you can convert your off-chain
                 loyalty points to on-chain points. You can use the marketplace
                 to trade these points and get benefits of Monet's interoperable
-                loyalty rewards ecosystem.
+                loyalty rewards ecosystem.`}
               </p>
             </div>
 
