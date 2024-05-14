@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThirdwebProvider } from "@/app/thirdweb";
+import { ThirdwebProvider, client } from "@/app/thirdweb";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
-import AuthWrapper from "@/components/customer-auth-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 

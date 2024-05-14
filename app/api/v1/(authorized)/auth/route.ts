@@ -1,10 +1,11 @@
 import { getXataClient } from "@/xata";
 import { NextRequest } from "next/server";
-import { generateAccessTokenForUser } from "../../lib/utils";
+import { generateAccessTokenForUser } from "@/app/api/v1/lib/utils";
 
 const client = getXataClient();
 
 export async function POST(request: NextRequest) {
+  
   const payload = await request.json();
   const { walletAddress } = payload;
 
@@ -22,7 +23,6 @@ export async function POST(request: NextRequest) {
   if (!userRoles) {
     return new Response("Unauthorized", { status: 401 });
   }
-
 
   // generate access token
   const accessToken = await generateAccessTokenForUser(

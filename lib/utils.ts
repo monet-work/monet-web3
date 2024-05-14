@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { USER_ROLE } from "@/models/role";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -34,4 +35,11 @@ export const parseJWT = (jwt: string) => {
   );
 
   return JSON.parse(jsonPayload);
+};
+
+export const extractLoggedInUserRoles = (jwt: string) => {
+  const parsedJWT = parseJWT(jwt);
+  if (!parsedJWT.roles) return [];
+
+  return parsedJWT.roles as (typeof USER_ROLE)[keyof typeof USER_ROLE][];
 };
