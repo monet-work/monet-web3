@@ -19,19 +19,14 @@ const tables = [
       { name: "pointName", type: "string" },
       { name: "pointSymbol", type: "string" },
     ],
-    revLinks: [
-      { column: "companyId", table: "Customer" },
-      { column: "company", table: "Point" },
-    ],
+    revLinks: [{ column: "company", table: "Point" }],
   },
   {
     name: "Customer",
     columns: [
       { name: "name", type: "text" },
       { name: "points", type: "float" },
-      { name: "companyId", type: "link", link: { table: "Company" } },
       { name: "user", type: "link", link: { table: "User" } },
-      { name: "offChainPoints", type: "link", link: { table: "Point" } },
     ],
   },
   {
@@ -65,7 +60,6 @@ const tables = [
       { name: "company", type: "link", link: { table: "Company" } },
       { name: "owner", type: "link", link: { table: "User" } },
     ],
-    revLinks: [{ column: "offChainPoints", table: "Customer" }],
   },
 ] as const;
 
