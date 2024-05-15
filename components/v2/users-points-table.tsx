@@ -15,7 +15,7 @@ const UserPointsTable: React.FC<Props> = ({ data }) => {
     <DataTable
       columns={UserPointsColumns}
       data={data}
-      noResultsMessage={"No users found."}
+      noResultsMessage={"No customer data found."}
     ></DataTable>
   );
 };

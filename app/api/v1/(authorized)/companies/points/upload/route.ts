@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   //iterate through the array and ensure each object has the required fields
   for (const item of customerData) {
-    if (!item.name || !item.wallet || !item.points) {
+    if (!item.name || !item.wallet || !item.value) {
       return new Response("Bad Request", { status: 400 });
     }
   }
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       await client.db.Point.create({
         owner: user.id,
         company: company.id,
-        value: item.points,
+        value: item.value,
       });
     })
   );

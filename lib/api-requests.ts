@@ -1,3 +1,4 @@
+import { CustomerPoint } from "@/models/point";
 import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 
@@ -37,7 +38,7 @@ export const getCompanyByWalletAddress = async (walletAddress: string) => {
 export const getCompanyDashboardData = async (walletAddress: string) => {
   return axios.get<{
     company: Company;
-    customers: Point[];
+    customers: CustomerPoint[];
   }>("/api/v1/companies/dashboard", { params: { walletAddress } });
 };
 

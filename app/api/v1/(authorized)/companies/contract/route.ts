@@ -57,14 +57,26 @@ export async function POST(request: Request) {
 
   const company = await client.db.Company.filter({ user: user.id }).getFirst();
   if (!company) {
-    return new Response("Company not found", { status: 404 });
+    //create company
+    await client.db.Company.create({
+      name: companyName,
+      user: user.id,
+    });
+  }
+
+  const updatedCompany = await client.db.Company.filter({
+    user: user.id,
+  }).getFirst();
+
+  if (!updatedCompany) {
+    return new Response("Error while creating company", { status: 500 });
   }
 
   // approve the company
-  await client.db.Company.update(company.id, { name: companyName });
+  await client.db.Company.update(updatedCompany.id, { name: companyName });
 
   if (!distributorWalletPrivateKey) {
-    return new Response("Private key not found!", { status: 404 });
+    return new Response("An error occured while interacting with the blockchain", { status: 500 });
   }
 
   const ownerWallet = privateKeyAccount({
@@ -115,17 +127,17 @@ export async function POST(request: Request) {
     const event = (await Promise.race([eventPromise, timeout(60000)])) as any; // Adjust timeout as needed
 
     // update company with pointContractAddress
-    await client.db.Company.update(company.id, {
+    await client.db.Company.update(updatedCompany.id, {
       pointContractAddress: event?.args?.pointAddress,
       pointName: event?.args?.name,
       pointSymbol: event?.args?.symbol,
     });
 
-    const updatedCompany = await client.db.Company.filter({
+    const retrievedCompany = await client.db.Company.filter({
       user: user.id,
     }).getFirst();
 
-    return new Response(JSON.stringify(updatedCompany), { status: 200 });
+    return new Response(JSON.stringify(retrievedCompany), { status: 200 });
   } catch (error) {
     // Handle timeout or any other errors
     console.error("Error occurred while waiting for contract event:", error);
