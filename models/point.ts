@@ -8,7 +8,10 @@ export interface Point {
 export interface CustomerPoint {
   value: number;
   owner: {
-    walletAddress: string;
+    user: {
+      walletAddress: string;
+      name: string;
+    }
     name: string;
   };
 }

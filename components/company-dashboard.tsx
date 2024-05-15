@@ -32,7 +32,7 @@ import { readExcelFile } from "@/lib/file-helper";
 import { formatCustomerData } from "@/lib/utils";
 
 type Props = {
-  customerPoints: CustomerPoint[];
+  customerPoints: {name: string, wallet: string, value: string}[];
   hasContract?: boolean;
   contract?: {
     address: string;
@@ -46,6 +46,7 @@ const CompanyDashboard: React.FC<Props> = ({
   hasContract = false,
   contract,
 }) => {
+  console.log(customerPoints, 'cp')
   const companyStore = useCompanyStore();
   const queryClient = useQueryClient();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
@@ -60,7 +61,7 @@ const CompanyDashboard: React.FC<Props> = ({
       wallet: string;
       value: string;
     }[]
-  >([]);
+  >(customerPoints);
 
   const activeAccount = useActiveAccount();
   const companyWalletAddress = activeAccount?.address;
@@ -93,7 +94,11 @@ const CompanyDashboard: React.FC<Props> = ({
           setFiles(null);
           setCustomerData(null);
           setShowUploadDialog(false);
-          setCustomerPointsData(formattedData);
+          setCustomerPointsData({
+            ...customerPointsData,
+            ...formattedData,
+          });
+          window.location.reload(); // TODO - remove this
         },
         onError: (error: any) => {
           toast.error(
@@ -104,9 +109,9 @@ const CompanyDashboard: React.FC<Props> = ({
     );
   };
 
-  const calculateTotalPoints = (customerPoints: CustomerPoint[]) => {
-    return customerPoints.reduce((total, customer) => {
-      return total + customer.value;
+  const calculateTotalPoints = (customerPoints: {name: string, wallet: string, value: string}[]) => {
+    return customerPoints.reduce((acc, item) => {
+      return acc + parseInt(item.value);
     }, 0);
   };
 
@@ -138,16 +143,11 @@ const CompanyDashboard: React.FC<Props> = ({
   }, [files]);
 
   useEffect(() => {
-    if (!customerPoints) return;
-    const formattedData = customerPoints.map((item) => {
-      return {
-        name: item.owner.name,
-        wallet: item.owner.walletAddress,
-        value: String(item.value),
-      };
-    });
-    setCustomerPointsData(formattedData);
-  }, [customerPoints]);
+    setCustomerPointsData(customerPoints);
+  }, [
+    customerPoints,
+    uploadCustomerDataMutation.data
+  ])
 
 
   const DisableBlockIfNoContract = ({

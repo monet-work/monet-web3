@@ -42,11 +42,10 @@ const useAuth = () => {
     if (isLoginRoute) return;
     if (isHomeRoute) return;
 
-    if (!activeAccount) {
+    if (!activeAccount && pageLoaded) {
       router.replace("/");
     }
-   
-  }, [pathname])
+  }, [pathname]);
 
   useEffect(() => {
     // detect logout

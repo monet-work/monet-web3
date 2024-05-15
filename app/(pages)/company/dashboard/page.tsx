@@ -33,7 +33,13 @@ const CompanyDashboardPage = () => {
     <CompanyDashboard
       hasContract={!!dashboardDataResponse?.data?.company?.pointContractAddress}
       contract={parseContractInfo(dashboardDataResponse?.data?.company)}
-      customerPoints={dashboardDataResponse?.data.customers || []}
+      customerPoints={
+        dashboardDataResponse?.data.customers.map(point => ({
+          value: String(point.value),
+          name: point.owner.user.name,
+          wallet: point.owner.user.walletAddress,
+        })) || []
+      }
     />
   );
 };

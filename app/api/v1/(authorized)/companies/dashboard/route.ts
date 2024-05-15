@@ -35,11 +35,11 @@ export async function GET(request: Request) {
   // fetch points data of customers for the company
   try {
     const points = await client.db.Point.filter({ company: company.id })
-      .select(["value", "owner.user.walletAddress", "owner.name"])
+      .select(["value", "owner.user.walletAddress", "owner.name", "owner.user.name"])
       .getAll();
-    return new Response(JSON.stringify({ company, points }), { status: 200 });
+    return new Response(JSON.stringify({ company, customers: points }), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ company, points: [] }), {
+    return new Response(JSON.stringify({ company, customers: [] }), {
       status: 200,
     });
   }
