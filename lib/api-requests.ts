@@ -22,15 +22,9 @@ export const authenticate = async (payload: {
   );
 };
 
-export const login = async (data: {
-  walletAddress: string;
-}) => {
-  return axios.post<{ accessToken: string; user: User }>(
-    "/api/v1/login",
-    data
-  );
+export const login = async (data: { walletAddress: string }) => {
+  return axios.post<{ accessToken: string; user: User }>("/api/v1/login", data);
 };
-
 
 export const getCompanies = async () => {
   return axios.get<Company[]>("/api/v1/companies");
@@ -38,6 +32,13 @@ export const getCompanies = async () => {
 
 export const getCompanyByWalletAddress = async (walletAddress: string) => {
   return axios.get<Company>("/api/v1/company", { params: { walletAddress } });
+};
+
+export const getCompanyDashboardData = async (walletAddress: string) => {
+  return axios.get<{
+    company: Company;
+    customers: Point[];
+  }>("/api/v1/companies/dashboard", { params: { walletAddress } });
 };
 
 export const createCompany = async (data: {
@@ -93,10 +94,7 @@ export const uploadCustomerData = async (payload: {
 export const requestWalletVerification = async (data: {
   walletAddress: string;
 }) => {
-  return axios.post<{ message: string[] }>(
-    "/api/v1/wallet/request",
-    data
-  );
+  return axios.post<{ message: string[] }>("/api/v1/wallet/request", data);
 };
 
 export const verifyCompanyWalletSignature = async (data: {

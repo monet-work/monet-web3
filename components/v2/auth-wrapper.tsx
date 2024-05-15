@@ -16,7 +16,8 @@ import { User } from "@/xata";
 type Props = {
   children?: React.ReactNode;
 };
-const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to a provider
+const AuthWrapper: React.FC<Props> = ({ children }) => {
+  //TODO: Convert this to a provider
   const userStore = useUserStore();
 
   const { user, isLoading, error, accessToken: token, logout } = useAuth();
@@ -35,42 +36,31 @@ const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to
   const isCustomerRoute = pathname.includes("/customer");
   const isCompanyRoute = pathname.includes("/company");
 
-  const redirectToVerifyWalletRouteIfUnApproved = (user: User) => {
-    if (!user || !user.isWalletApproved) {
-      if (requestedRoute === "customer") {
-        router.push("/customer/verify");
-      }
-      if (requestedRoute === "company") {
-        router.push("/company/verify");
-      }
-    }
-  };
-
   const isAuthorized = (role: (typeof USER_ROLE)[keyof typeof USER_ROLE]) => {
     if (!user) return false;
     if (!user.roles) return false;
     return user.roles.includes(String(role));
   };
 
-  const redirectToDashboardIfApproved = (user: User) => {
-    if (user && user.isWalletApproved) {
+  const redirectToDashboardIfAuthorized = (user: User) => {
+    if (user) {
       if (requestedRoute === "customer") {
-        console.log('redirecting to customer dashboard');
-        console.log('isAuthorized', isAuthorized(USER_ROLE.CUSTOMER));
         if (!isAuthorized(USER_ROLE.CUSTOMER)) {
           logout();
           toast.error("Unauthorized");
           return;
+        } else {
+          router.push("/customer/dashboard");
         }
-        router.push("/customer/dashboard");
       }
       if (requestedRoute === "company") {
         if (!isAuthorized(USER_ROLE.COMPANY)) {
           logout();
           toast.error("Unauthorized");
           return;
+        } else {
+          router.push("/company/dashboard");
         }
-        router.push("/company/dashboard");
       }
     }
   };
@@ -95,10 +85,8 @@ const AuthWrapper: React.FC<Props> = ({ children }) => { //TODO: Convert this to
   }, [token]);
 
   useEffect(() => {
-    if(!user) return;
-    console.log('handle redirection', user, 'user found')
-    redirectToVerifyWalletRouteIfUnApproved(user);
-    redirectToDashboardIfApproved(user);
+    if (!user) return;
+    redirectToDashboardIfAuthorized(user);
   }, [user, error]);
 
   return (
