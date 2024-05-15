@@ -28,6 +28,7 @@ const tables = [
       { name: "points", type: "float" },
       { name: "user", type: "link", link: { table: "User" } },
     ],
+    revLinks: [{ column: "owner", table: "Point" }],
   },
   {
     name: "User",
@@ -43,7 +44,6 @@ const tables = [
     revLinks: [
       { column: "user", table: "Company" },
       { column: "user", table: "Customer" },
-      { column: "owner", table: "Point" },
     ],
   },
   {
@@ -58,7 +58,7 @@ const tables = [
     columns: [
       { name: "value", type: "int" },
       { name: "company", type: "link", link: { table: "Company" } },
-      { name: "owner", type: "link", link: { table: "User" } },
+      { name: "owner", type: "link", link: { table: "Customer" } },
     ],
   },
 ] as const;

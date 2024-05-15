@@ -31,8 +31,8 @@ export async function GET(request: Request) {
         "company.name",
         "company.pointName",
         "company.pointSymbol",
-        "owner.email",
-        "owner.walletAddress",
+        "owner.user.email",
+        "owner.user.walletAddress",
       ])
       .getAll();
 

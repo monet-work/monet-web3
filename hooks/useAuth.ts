@@ -25,6 +25,7 @@ const useAuth = () => {
 
   const isLoginRoute = pathname.includes("login");
   const isHomeRoute = pathname === "/";
+  const isVerifyRoute = pathname.includes("verify");
 
   const authMutation = useMutation({
     mutationFn: authenticate,
@@ -41,7 +42,7 @@ const useAuth = () => {
     if (isLoginRoute) return;
     if (isHomeRoute) return;
 
-    if (!activeAccount && pageLoaded) {
+    if (!activeAccount) {
       router.replace("/");
     }
    
@@ -60,6 +61,7 @@ const useAuth = () => {
     if (!accessToken) return;
     if (isLoginRoute) return;
     if (isHomeRoute) return;
+    if (isVerifyRoute) return;
 
     authMutation.mutate({
       walletAddress: activeAccount.address,

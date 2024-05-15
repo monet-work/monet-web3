@@ -1,0 +1,13 @@
+{
+  "id": "mig_cp26lp3bsilsg4nrbj9g",
+  "parentID": "mig_cotiq7ci8sbc1v0pc9u0",
+  "checksum": "1:3ceb799098b4939bd7879a466bfb036e66c130ea11702d763073d02eae6cd2d1",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "owner",
+        "table": "Point"
+      }
+    }
+  ]
+}

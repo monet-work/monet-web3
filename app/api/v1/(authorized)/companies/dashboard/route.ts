@@ -33,11 +33,14 @@ export async function GET(request: Request) {
   }
 
   // fetch points data of customers for the company
-  const points = await client.db.Point.filter({ company: company.id })
-    .select(["value", "owner.walletAddress", "owner.name"])
-    .getAll();
-
-  return new Response(JSON.stringify({ company, customers: points }), {
-    status: 200,
-  });
+  try {
+    const points = await client.db.Point.filter({ company: company.id })
+      .select(["value", "owner.user.walletAddress", "owner.name"])
+      .getAll();
+    return new Response(JSON.stringify({ company, points }), { status: 200 });
+  } catch (error) {
+    return new Response(JSON.stringify({ company, points: [] }), {
+      status: 200,
+    });
+  }
 }

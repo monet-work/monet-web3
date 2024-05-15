@@ -25,7 +25,7 @@ export async function GET(request: Request) {
 
   // retrieve points for the company
   const points = await client.db.Point.filter({ company: company.id })
-    .select(["value", "owner.walletAddress", "owner.name"])
+    .select(["value", "owner.user.walletAddress", "owner.name"])
     .getAll();
   return new Response(JSON.stringify(points), { status: 200 });
 }
