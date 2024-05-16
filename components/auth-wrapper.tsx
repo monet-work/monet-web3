@@ -3,7 +3,7 @@
 import useAuth from "@/hooks/useAuth";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useEffect, useState } from "react";
-import { Spinner } from "../ui/spinner";
+import { Spinner } from "./ui/spinner";
 import { useUserStore } from "@/store/userStore";
 import { AutoConnect } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";

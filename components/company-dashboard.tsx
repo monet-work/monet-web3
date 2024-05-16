@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "./ui/button";
-import UserPointsTable from "./v2/users-points-table";
+import UserPointsTable from "./users-points-table";
 import { useEffect, useState } from "react";
 import { CustomerPoint } from "@/models/point";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -27,7 +27,7 @@ import { createCompanyContract, uploadCustomerData } from "@/lib/api-requests";
 import { toast } from "sonner";
 import CompanyRequestForm from "./forms/company-request-form";
 import { useCompanyStore } from "@/store/companyStore";
-import PointContractInfo from "./v2/point-contract-info";
+import PointContractInfo from "./point-contract-info";
 import { readExcelFile } from "@/lib/file-helper";
 import { formatCustomerData } from "@/lib/utils";
 
@@ -46,7 +46,6 @@ const CompanyDashboard: React.FC<Props> = ({
   hasContract = false,
   contract,
 }) => {
-  console.log(customerPoints, 'cp')
   const companyStore = useCompanyStore();
   const queryClient = useQueryClient();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
@@ -185,7 +184,7 @@ const CompanyDashboard: React.FC<Props> = ({
         </div>
       </header>
 
-      <main className="">
+      <main className="bg-gray-100">
         <div className="container">
           <div className="py-4">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">

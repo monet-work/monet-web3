@@ -1,8 +1,8 @@
+import CustomerDashboard from "@/components/customer-dashboard";
+
 const CustomerDashboardPage = () => {
   return (
-    <main>
-      <h1>Customer Dashboard</h1>
-    </main>
+    <CustomerDashboard />
   );
 };
 

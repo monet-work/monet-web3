@@ -129,6 +129,12 @@ export const getCustomer = async ({
   });
 };
 
+export const getCustomerPoints = async (walletAddress: string) => {
+  return await axios.get<Point[]>("/api/v1/customers/points", {
+    params: { walletAddress },
+  });
+};
+
 export const createCustomer = async (data: { walletAddress: string }) => {
   return axios.post<Customer>("/api/v1/customer", data);
 };
@@ -140,12 +146,6 @@ export const collectPoints = async ({
   return axios.post<Customer>("/api/v1/companies/points", {
     walletAddress,
     points,
-  });
-};
-
-export const getPoints = async (walletAddress: string) => {
-  return axios.get<Customer>("/api/v1/companies/points", {
-    params: { walletAddress },
   });
 };
 

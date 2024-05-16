@@ -1,4 +1,4 @@
-import { DataTable } from "../data-table/data-table";
+import { DataTable } from "./data-table/data-table";
 import { UserPointsColumns } from "./table-columns/user-points-columns";
 
 type Props = {

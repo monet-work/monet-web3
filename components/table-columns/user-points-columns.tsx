@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "../../data-table/data-table-column-header";
+import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 
 export const UserPointsColumns: ColumnDef<{name: string, wallet: string, value: string}>[] = [
   {

@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }).getFirst();
 
   if (!user) {
-    return new Response("User not found", { status: 404 });
+    return new Response("Not found", { status: 404 });
   }
 
   const customer = await client.db.Customer.filter({
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   }).getFirst();
 
   if (!customer) {
-    return new Response("Customer not found", { status: 404 });
+    return new Response("Not found", { status: 404 });
   }
 
   try {
@@ -31,8 +31,7 @@ export async function GET(request: Request) {
         "company.name",
         "company.pointName",
         "company.pointSymbol",
-        "owner.user.email",
-        "owner.user.walletAddress",
+        "company.pointContractAddress"
       ])
       .getAll();
 
