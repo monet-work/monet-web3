@@ -66,10 +66,9 @@ const useAuth = () => {
       walletAddress: activeAccount.address,
       accessToken,
     });
-  }, [activeAccount]);
+  }, [activeAccount, accessToken, pageLoaded, pathname]);
 
   const logout = () => {
-    console.log("logout");
     const wallet = createWallet("io.metamask");
     disconnect(wallet);
     setAccessToken(undefined);
