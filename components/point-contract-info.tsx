@@ -49,7 +49,7 @@ const PointContractInfo: React.FC<Props> = ({
                   <a
                     href={`https://etherscan.io/address/${address}`}
                     target="_blank"
-                    className="text-blue-400 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     {/* trim address with ellipsis */}
                     {address?.slice(0, 6)}...{address?.slice(-4)}

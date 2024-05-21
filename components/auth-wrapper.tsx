@@ -12,6 +12,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { USER_ROLE } from "@/models/role";
 import { toast } from "sonner";
 import { User } from "@/xata";
+import { MonetWorkLogo } from "./icons/monet-work-logo";
 
 type Props = {
   children?: React.ReactNode;
@@ -20,7 +21,13 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   //TODO: Convert this to a provider
   const userStore = useUserStore();
 
-  const { user, isLoading, error: authError, accessToken: token, logout } = useAuth();
+  const {
+    user,
+    isLoading,
+    error: authError,
+    accessToken: token,
+    logout,
+  } = useAuth();
   const [requestedRoute, setRequestedRoute] = useState<
     "customer" | "company" | null
   >(null);
@@ -66,11 +73,11 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   };
 
   useEffect(() => {
-    if(authError){
-      //logout 
+    if (authError) {
+      //logout
       logout();
     }
-  }, [authError])
+  }, [authError]);
 
   useEffect(() => {
     if (isCustomerRoute) {
@@ -100,12 +107,15 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
     <div>
       <AutoConnect wallets={wallets} client={client} />
       {isLoading && (
-        <div className="bg-primary min-h-screen flex justify-center items-center">
-          <Spinner className="w-24 h-24 text-slate-200" />
+        <div className="bg-black/80 backdrop-blur-sm min-h-screen flex justify-center items-center fixed top-0 left-0 w-full h-full z-50">
+          <div className="flex flex-col">
+            <MonetWorkLogo className="w-48 h-48" />
+            <Spinner className="w-8 h-8 text-slate-200" />
+          </div>
         </div>
       )}
 
-      {!isLoading && children}
+      {children}
     </div>
   );
 };

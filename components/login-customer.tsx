@@ -13,7 +13,7 @@ const LoginCustomer: React.FC<Props> = ({
   loading = false,
 }) => {
   return (
-    <section className="bg-white">
+    <section className="bg-background">
       <FloatingConnect />
 
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -29,16 +29,16 @@ const LoginCustomer: React.FC<Props> = ({
           <div className="max-w-xl lg:max-w-3xl">
             <Link href={"/"}>
               <div className="mt-6 text-2xl font-bold flex items-center text-gray-900 sm:text-3xl md:text-4xl">
-                <MonetWorkLogo className="text-blue-600 w-48" /> 🚀
+                <MonetWorkLogo className="text-primary w-48" /> 🚀
               </div>
             </Link>
 
-            <p className="mt-4 text-2xl leading-relaxed text-gray-500">
+            <p className="mt-4 text-2xl leading-relaxed text-foreground">
               Welcome to the future of loyalty programs!
             </p>
 
             <div className="col-span-6 mt-4">
-              <p className="text-gray-500">
+              <p className="text-muted-foreground">
                 {`By connecting your wallet, you can convert your off-chain
                 loyalty points to on-chain points. You can use the marketplace
                 to trade these points and get benefits of Monet's interoperable
@@ -50,7 +50,7 @@ const LoginCustomer: React.FC<Props> = ({
               <Button
                 loading={loading}
                 onClick={onClickConnectWallet}
-                className="border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-blue-800 focus:outline-none focus:ring active:text-blue-500"
+                className="border-primary bg-primary px-12 py-3 text-sm font-medium text-primary-foreground transition focus:outline-none focus:ring active:text-blue-500"
               >
                 Connect your wallet
               </Button>

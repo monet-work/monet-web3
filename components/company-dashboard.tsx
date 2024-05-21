@@ -168,7 +168,7 @@ const CompanyDashboard: React.FC<Props> = ({
 
   return (
     <>
-      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-primary w-full">
+      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-background w-full">
         <div className="relative ml-auto flex-1 md:grow-0">
           {activeAccount ? (
             <ConnectButton
@@ -184,7 +184,7 @@ const CompanyDashboard: React.FC<Props> = ({
         </div>
       </header>
 
-      <main className="bg-gray-100">
+      <main className="bg-background">
         <div className="container">
           <div className="py-4">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -277,7 +277,7 @@ const CompanyDashboard: React.FC<Props> = ({
           open={showContractFormDialog}
           onOpenChange={setShowContractFormDialog}
         >
-          <DialogContent className="bg-white">
+          <DialogContent className="">
             <CompanyRequestForm
               loading={createCompanyContractMutation.isPending}
               onSubmitForm={(values) => {
@@ -328,7 +328,7 @@ const CompanyDashboard: React.FC<Props> = ({
         </Dialog>
 
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
-          <DialogContent className="bg-white">
+          <DialogContent className="">
             <div className="text-center">
               <Button className="mx-auto" onClick={handleDownloadTemplate}>
                 Download Template
@@ -337,7 +337,7 @@ const CompanyDashboard: React.FC<Props> = ({
                 value={files}
                 onValueChange={setFiles}
                 dropzoneOptions={dropZoneConfig}
-                className="relative bg-white rounded-lg p-2 mt-4"
+                className="relative rounded-lg p-2 mt-4"
               >
                 <FileInput className="outline-dashed outline-1 outline-white">
                   <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">

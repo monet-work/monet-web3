@@ -16,7 +16,7 @@ const VerifyWallet: React.FC<Props> = ({
 }) => {
   const hasValidationMessage = verificationMessage.length > 0;
   return (
-    <section className="bg-white">
+    <section className="bg-background">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
           <img
@@ -28,12 +28,12 @@ const VerifyWallet: React.FC<Props> = ({
 
         <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
           <div className="max-w-xl lg:max-w-3xl">
-            <Card className="backdrop-blur-sm bg-white/80 relative">
+            <Card className="backdrop-blur-sm bg-muted-foreground/20 relative">
               <div className="p-4">
                 {!hasValidationMessage ? (
                   <div className="flex flex-col">
                     <h1 className="text-2xl font-bold">Verify Wallet</h1>
-                    <p className="text-sm mt-2 max-w-sm">
+                    <p className="text-sm mt-2 max-w-sm text-muted-foreground">
                       We need to verify your wallet to provide you with access
                       to our platform. Please click the button below to verify
                       your wallet.
@@ -51,7 +51,7 @@ const VerifyWallet: React.FC<Props> = ({
 
                 {hasValidationMessage ? (
                   <div>
-                    <p className="max-w-md">
+                    <p className="max-w-md text-muted-foreground">
                       To verify your wallet, we have generated a set of words.
                       You will notice these words when you sign using your
                       wallet. Once your signature is validated, your request
