@@ -30,6 +30,7 @@ import { useCompanyStore } from "@/store/companyStore";
 import PointContractInfo from "./point-contract-info";
 import { readExcelFile } from "@/lib/file-helper";
 import { formatCustomerData } from "@/lib/utils";
+import { MonetWorkLogo } from "./icons/monet-work-logo";
 
 type Props = {
   customerPoints: {name: string, wallet: string, value: string}[];
@@ -168,8 +169,10 @@ const CompanyDashboard: React.FC<Props> = ({
 
   return (
     <>
-      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-background w-full">
+      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-background w-full px-8">
+      <MonetWorkLogo className="text-primary w-24 h-24"/>
         <div className="relative ml-auto flex-1 md:grow-0">
+          
           {activeAccount ? (
             <ConnectButton
               client={client}
