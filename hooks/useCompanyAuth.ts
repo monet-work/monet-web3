@@ -1,7 +1,4 @@
-import {
-  authenticate,
-  login,
-} from "@/lib/api-requests";
+import { login } from "@/lib/api-requests";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -29,9 +26,9 @@ const useCompanyAuth = () => {
     mutationFn: login,
   });
 
-  const authMutation = useMutation({
-    mutationFn: authenticate,
-  });
+  // const authMutation = useMutation({
+  //   mutationFn: authenticate,
+  // });
 
   useEffect(() => {
     if (!walletAddress) return;
@@ -55,26 +52,26 @@ const useCompanyAuth = () => {
     );
   }, [walletAddress]);
 
-  useEffect(() => {
-    if (!accessToken || !walletAddress || !wallet) return;
-    authMutation.mutate(
-      {
-        walletAddress: walletAddress,
-        accessToken: accessToken,
-      },
-      {
-        onSuccess: (response) => {
-          const user = response.data.user;
-          userStore.setUser(user);
-        },
-        onError: (error: any) => {
-          setAccessToken(undefined);
-          disconnect.disconnect(wallet);
-          router.push("/v2");
-        },
-      }
-    );
-  }, [walletAddress, accessToken]);
+  // useEffect(() => {
+  //   if (!accessToken || !walletAddress || !wallet) return;
+  //   authMutation.mutate(
+  //     {
+  //       walletAddress: walletAddress,
+  //       accessToken: accessToken,
+  //     },
+  //     {
+  //       onSuccess: (response) => {
+  //         const user = response.data.user;
+  //         userStore.setUser(user);
+  //       },
+  //       onError: (error: any) => {
+  //         setAccessToken(undefined);
+  //         disconnect.disconnect(wallet);
+  //         router.push("/v2");
+  //       },
+  //     }
+  //   );
+  // }, [walletAddress, accessToken]);
 
   useEffect(() => {
     if (!account) {
@@ -84,8 +81,7 @@ const useCompanyAuth = () => {
     }
   }, [account]);
 
-
-  return { loading: loginMutation.isPending || authMutation.isPending };
+  return { loading: loginMutation.isPending };
 };
 
 export default useCompanyAuth;

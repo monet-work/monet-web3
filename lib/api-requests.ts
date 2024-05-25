@@ -7,21 +7,21 @@ interface updatePointsVariables {
   points: number;
 }
 
-export const authenticate = async (payload: {
-  walletAddress: string;
-  accessToken: string;
-}) => {
-  const headers = {
-    Authorization: `Bearer ${payload.accessToken}`,
-  };
-  return axios.post<{ user: User; accessToken?: string }>(
-    "/api/v1/auth",
-    {
-      walletAddress: payload.walletAddress,
-    },
-    { headers }
-  );
-};
+// export const authenticate = async (payload: {
+//   walletAddress: string;
+//   accessToken: string;
+// }) => {
+//   const headers = {
+//     Authorization: `Bearer ${payload.accessToken}`,
+//   };
+//   return axios.post<{ user: User; accessToken?: string }>(
+//     "/api/v1/auth",
+//     {
+//       walletAddress: payload.walletAddress,
+//     },
+//     { headers }
+//   );
+// };
 
 export const login = async (data: { walletAddress: string }) => {
   return axios.post<{ accessToken: string; user: User }>("/api/v1/login", data);

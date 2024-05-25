@@ -9,9 +9,6 @@ import { AutoConnect } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { client } from "@/app/thirdweb";
 import { usePathname, useRouter } from "next/navigation";
-import { USER_ROLE } from "@/models/role";
-import { toast } from "sonner";
-import { User } from "@/xata";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 
 type Props = {
@@ -22,10 +19,8 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   const userStore = useUserStore();
 
   const {
-    user,
     isLoading,
     error: authError,
-    accessToken: token,
     logout,
   } = useAuth();
   const [requestedRoute, setRequestedRoute] = useState<
@@ -43,36 +38,9 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   const isCustomerRoute = pathname.includes("/customer");
   const isCompanyRoute = pathname.includes("/company");
 
-  const isAuthorized = (role: (typeof USER_ROLE)[keyof typeof USER_ROLE]) => {
-    if (!user) return false;
-    if (!user.roles) return false;
-    return user.roles.includes(String(role));
-  };
-
-  const redirectToDashboardIfAuthorized = (user: User) => {
-    if (user) {
-      if (requestedRoute === "customer") {
-        if (!isAuthorized(USER_ROLE.CUSTOMER)) {
-          logout();
-          toast.error("Unauthorized");
-          return;
-        } else {
-          router.push("/customer/dashboard");
-        }
-      }
-      if (requestedRoute === "company") {
-        if (!isAuthorized(USER_ROLE.COMPANY)) {
-          logout();
-          toast.error("Unauthorized");
-          return;
-        } else {
-          router.push("/company/dashboard");
-        }
-      }
-    }
-  };
 
   useEffect(() => {
+    console.log('auth wrapper')
     if (authError) {
       //logout
       logout();
@@ -88,20 +56,6 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    if (!user) return;
-    userStore.setUser(user);
-  }, [user]);
-
-  useEffect(() => {
-    if (!token) return;
-    setAccessToken(token);
-  }, [token]);
-
-  useEffect(() => {
-    if (!user) return;
-    redirectToDashboardIfAuthorized(user);
-  }, [user, authError]);
 
   return (
     <div>

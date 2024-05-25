@@ -1,4 +1,3 @@
-import { authenticate } from "@/lib/api-requests";
 import { useMutation } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -9,6 +8,7 @@ import {
 } from "thirdweb/react";
 import useLocalStorage from "./useLocalStorage";
 import { createWallet } from "thirdweb/wallets";
+import { apiService } from "@/services/api.service";
 
 const useAuth = () => {
   const { disconnect } = useDisconnect();
@@ -16,57 +16,69 @@ const useAuth = () => {
   const connectionStatus = useActiveWalletConnectionStatus();
   const pathname = usePathname();
 
-  const [pageLoaded, setPageLoaded] = useState(false);
+  const [thirdwebConnected, setThirdwebConnected] = useState(false);
   const [accessToken, setAccessToken] = useLocalStorage(
     "accessToken",
     undefined
   );
+  const [refreshToken, setRefreshToken] = useLocalStorage(
+    "refreshToken",
+    undefined
+  );
   const router = useRouter();
 
-  const isLoginRoute = pathname.includes("login");
-  const isHomeRoute = pathname === "/";
-  const isVerifyRoute = pathname.includes("verify");
+  const publicRoutes = ["/", "/login", "/verify"];
 
   const authMutation = useMutation({
-    mutationFn: authenticate,
+    mutationFn: apiService.authenticate,
   });
 
   useEffect(() => {
     if (connectionStatus === "connected") {
-      setPageLoaded(true);
+      setThirdwebConnected(true);
     }
   }, [connectionStatus]);
 
   useEffect(() => {
-    // redirect to home if not logged in
-    if (isLoginRoute) return;
-    if (isHomeRoute) return;
+    if(publicRoutes.some(route => pathname.includes(route))) return;
 
-    if (!activeAccount && pageLoaded) {
-      router.replace("/");
+    if (!accessToken || !refreshToken) {
+      console.log('logging out', pathname)
+      logout();
+      return;
     }
-  }, [pathname]);
+  }, [accessToken, refreshToken, pathname]);
 
   useEffect(() => {
     // detect logout
-    if (!activeAccount && pageLoaded) {
+    if (!activeAccount && thirdwebConnected) {
       //logout
       logout();
     }
-  }, [activeAccount, pageLoaded]);
+  }, [activeAccount, thirdwebConnected]);
 
   useEffect(() => {
-    if (!activeAccount) return;
-    if (!accessToken) return;
-    if (isLoginRoute) return;
-    if (isHomeRoute) return;
-    if (isVerifyRoute) return;
+    if (!refreshToken || typeof refreshToken !== "object") return;
 
-    authMutation.mutate({
-      walletAddress: activeAccount.address,
-      accessToken,
+    authMutation.mutate(refreshToken.token, {
+      onError: (error) => {
+        console.error(error);
+        logout();
+      },
+      onSuccess: (response) => {
+        const {
+          company,
+          customer,
+          email,
+          isEmailVerified,
+          wallet_address,
+          roles,
+          name,
+          id,
+        } = response.data;
+      },
     });
-  }, [activeAccount, accessToken, pageLoaded, pathname]);
+  }, [accessToken, refreshToken, pathname]);
 
   const logout = () => {
     const wallet = createWallet("io.metamask");
@@ -77,10 +89,8 @@ const useAuth = () => {
   };
 
   return {
-    user: authMutation.data?.data.user,
     isLoading: authMutation.isPending,
     error: authMutation.error,
-    accessToken: authMutation.data?.data.accessToken,
     logout,
   };
 };

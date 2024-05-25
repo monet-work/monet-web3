@@ -1,5 +1,8 @@
 const API_BASE_URL = 'http://localhost:3000/v1';
 const API_ENDPOINTS = {
+    // auth
+    AUTHENTICATE: 'auth',
+
     // companies
     COMPANY_VERIFY_WALLET_1: 'companies/verify-wallet-1',
     COMPANY_VERIFY_WALLET_2: 'companies/verify-wallet-2',

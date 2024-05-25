@@ -33,7 +33,7 @@ import { formatCustomerData } from "@/lib/utils";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 
 type Props = {
-  customerPoints: {name: string, wallet: string, value: string}[];
+  customerPoints: { name: string; wallet: string; value: string }[];
   hasContract?: boolean;
   contract?: {
     address: string;
@@ -109,7 +109,9 @@ const CompanyDashboard: React.FC<Props> = ({
     );
   };
 
-  const calculateTotalPoints = (customerPoints: {name: string, wallet: string, value: string}[]) => {
+  const calculateTotalPoints = (
+    customerPoints: { name: string; wallet: string; value: string }[]
+  ) => {
     return customerPoints.reduce((acc, item) => {
       return acc + parseInt(item.value);
     }, 0);
@@ -144,11 +146,7 @@ const CompanyDashboard: React.FC<Props> = ({
 
   useEffect(() => {
     setCustomerPointsData(customerPoints);
-  }, [
-    customerPoints,
-    uploadCustomerDataMutation.data
-  ])
-
+  }, [customerPoints, uploadCustomerDataMutation.data]);
 
   const DisableBlockIfNoContract = ({
     children,
@@ -170,9 +168,8 @@ const CompanyDashboard: React.FC<Props> = ({
   return (
     <>
       <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-background w-full px-8">
-      <MonetWorkLogo className="text-primary w-24 h-24"/>
+        <MonetWorkLogo className="text-primary w-24 h-24" />
         <div className="relative ml-auto flex-1 md:grow-0">
-          
           {activeAccount ? (
             <ConnectButton
               client={client}
@@ -280,54 +277,7 @@ const CompanyDashboard: React.FC<Props> = ({
           open={showContractFormDialog}
           onOpenChange={setShowContractFormDialog}
         >
-          <DialogContent className="">
-            <CompanyRequestForm
-              loading={createCompanyContractMutation.isPending}
-              onSubmitForm={(values) => {
-                const {
-                  email,
-                  name,
-                  points,
-                  decimalDigits,
-                  orderingFee,
-                  pointName,
-                  pointSymbol,
-                } = values;
-
-                createCompanyContractMutation.mutate(
-                  {
-                    companyName: name,
-                    email,
-                    allPoints: points,
-                    decimalDigits,
-                    orderingFee: orderingFee,
-                    pointsName: pointName,
-                    pointsSymbol: pointSymbol,
-                    walletAddress: companyWalletAddress!,
-                  },
-                  {
-                    onSuccess: (response) => {
-                      toast.success("Points contract created successfully");
-                      companyStore.setCompany(response.data);
-                      setShowContractFormDialog(false);
-                      queryClient.invalidateQueries({
-                        queryKey: ["companies/dashboard", companyWalletAddress],
-                      });
-                      window.location.reload();
-                    },
-                    onError: (error: any) => {
-                      toast.error(
-                        error?.response?.data ||
-                          "Failed to create points contract"
-                      );
-                    },
-                  }
-                );
-
-                if (!companyWalletAddress) return;
-              }}
-            />
-          </DialogContent>
+          <DialogContent className=""></DialogContent>
         </Dialog>
 
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>

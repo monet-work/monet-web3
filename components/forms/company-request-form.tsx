@@ -21,14 +21,23 @@ type Props = {
 };
 
 const formSchema = z.object({
-  name: z.string(),
+  name: z.string().min(3),
   email: z.string().email(),
   pointName: z.string().min(3),
   pointSymbol: z.string().min(3),
   description: z.string().min(3),
 });
 
-const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading, words }) => {
+const verfiySignatureMessage = `To verify your wallet, we have generated a set of words.
+You will notice these words when you sign using your
+wallet. Once your signature is validated, your request
+will be submitted.`;
+
+const CompanyRequestForm: React.FC<Props> = ({
+  onSubmitForm,
+  loading,
+  words,
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -136,6 +145,15 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading, words }) =
               </FormItem>
             )}
           />
+        </div>
+
+        <div>
+          <p className="text-muted-foreground text-sm">{verfiySignatureMessage}</p>
+          <div className="flex items-center py-4">
+            <div className="text-lg font-semibold mx-2 p-2 border border-slate-200 rounded">
+              {words}
+            </div>
+          </div>
         </div>
 
         <Button type="submit" loading={loading}>

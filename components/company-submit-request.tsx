@@ -21,11 +21,6 @@ type Props = {
   verificationMessage: string;
 };
 
-const verfiySignatureMessage = `To verify your wallet, we have generated a set of words.
-You will notice these words when you sign using your
-wallet. Once your signature is validated, your request
-will be submitted.`;
-
 const CompanySubmitRequest: React.FC<Props> = ({
   loading,
   verificationMessage,
@@ -49,18 +44,17 @@ const CompanySubmitRequest: React.FC<Props> = ({
                 <CardHeader>
                   <CardTitle>Submit Points Contract Request</CardTitle>
 
-                  <CardDescription>
-                    <p>
-                      To submit a request to create a new points contract, fill
-                      out the form below and verify your wallet with the message
-                      provided.
-                    </p>
+                  <CardDescription className="">
+                    To submit a request to create a new points contract, fill
+                    out the form below and verify your wallet with the message
+                    provided.
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent>
                   <CompanyRequestForm
                     words={verificationMessage}
+                    loading={loading}
                     onSubmitForm={(values) => {
                       onClickSubmitRequest(values);
                     }}
