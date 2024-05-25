@@ -1,8 +1,9 @@
+const API_BASE_URL = 'http://localhost:3000/v1';
 const API_ENDPOINTS = {
     // companies
-    COMPANIE_VERIFY_WALLET_1: 'companies/verify-wallet-1',
-    COMPANIE_VERIFY_WALLET_2: 'companies/verify-wallet-2',
-    COMPANIE_UPLOAD_POINTS: (walletId: string) => `companies/${walletId}/upload-points`,
+    COMPANY_VERIFY_WALLET_1: 'companies/verify-wallet-1',
+    COMPANY_VERIFY_WALLET_2: 'companies/verify-wallet-2',
+    COMPANY_UPLOAD_POINTS: (walletId: string) => `companies/${walletId}/upload-points`,
 
     // customers
     CUSTOMER_VERIFY_WALLET_1: 'customers/verify-wallet-1',
@@ -17,4 +18,9 @@ const API_ENDPOINTS = {
 
     // auth
     REFRESH_TOKENS: 'auth/refresh-tokens',
+}
+
+export {
+    API_BASE_URL,
+    API_ENDPOINTS
 }

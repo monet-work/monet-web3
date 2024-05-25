@@ -15,6 +15,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
 type Props = {
+  words: string;
   onSubmitForm: (values: z.infer<typeof formSchema>) => void;
   loading?: boolean;
 };
@@ -24,12 +25,10 @@ const formSchema = z.object({
   email: z.string().email(),
   pointName: z.string().min(3),
   pointSymbol: z.string().min(3),
-  orderingFee: z.string().min(1).regex(/^\d+(\.\d+)?$/),
-  decimalDigits: z.string().min(1).regex(/^\d+$/),
-  points: z.string().min(1).regex(/^\d+$/),
+  description: z.string().min(3),
 });
 
-const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
+const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading, words }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,9 +36,7 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
       email: "",
       pointName: "",
       pointSymbol: "",
-      orderingFee: "",
-      decimalDigits: "",
-      points: "",
+      description: "",
     },
   });
 
@@ -88,13 +85,13 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
 
         <FormField
           control={form.control}
-          name="points"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Points</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter total points in circulation"
+                  placeholder="Enter company description"
                   {...field}
                   className="bg-transparent"
                 />
@@ -140,45 +137,9 @@ const CompanyRequestForm: React.FC<Props> = ({ onSubmitForm, loading }) => {
             )}
           />
         </div>
-        <div className="flex gap-4">
-          <FormField
-            control={form.control}
-            name="orderingFee"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Ordering Fee (In ETH)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Ordering Fee"
-                    {...field}
-                    className="bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="decimalDigits"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Decimal Digits</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Enter Decimal Digits"
-                    {...field}
-                    className="bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
         <Button type="submit" loading={loading}>
-          Submit Request
+          Submit Request and Verify Wallet
         </Button>
       </form>
     </Form>

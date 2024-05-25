@@ -3,10 +3,8 @@
 import FloatingConnect from "@/components/floating-connect";
 import VerifyWallet from "@/components/verify-wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import {
-  requestWalletVerification,
-  verifyCompanyWalletSignature,
-} from "@/lib/api-requests";
+import { verifyCompanyWalletSignature } from "@/lib/api-requests";
+import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -16,59 +14,53 @@ import { useActiveAccount } from "thirdweb/react";
 
 const VerifyConpanyWalletPage = () => {
   const activeAccount = useActiveAccount();
-  const [verificationMessage, setVerificationMessage] = useState<string[]>([]);
-  const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
   const userStore = useUserStore();
   const router = useRouter();
   const handleRequestVerification = () => {
     if (!activeAccount) return;
-    requestWalletVerificationMutation.mutate(
-      {
-        walletAddress: activeAccount.address,
+    requestWalletVerificationMutation.mutate(activeAccount.address, {
+      onSuccess: (response) => {
+        userStore.setVerificationWords(response.data.words);
+        router.push("/company/submit-request");
       },
-      {
-        onSuccess: (response) => {
-          setVerificationMessage(response.data.message);
-        },
-        onError: () => {
-          toast.error("Failed to request verification");
-        },
-      }
-    );
-  };
-  const handleSignAndVerify = async () => {
-    if (!activeAccount) return;
-    const walletSignature = await activeAccount?.signMessage({
-      message: verificationMessage.join(" "),
+      onError: () => {
+        toast.error("Failed to request verification");
+      },
     });
-    walletSignatureVerficationMutation.mutate(
-      {
-        walletAddress: activeAccount.address,
-        message: verificationMessage.join(" "),
-        signature: walletSignature,
-      },
-      {
-        onSuccess: (response) => {
-          const { user, accessToken } = response.data;
-          toast.success("Wallet verified successfully");
-          setAccessToken(accessToken);
-          userStore.setUser(user);
-
-          if (user.isWalletApproved) {
-            router.push("/company/dashboard");
-          } else {
-            router.push("/company/verify");
-          }
-        },
-        onError: () => {
-          toast.error("Failed to verify wallet");
-        },
-      }
-    );
   };
+  // const handleSignAndVerify = async () => {
+  //   if (!activeAccount) return;
+  //   const walletSignature = await activeAccount?.signMessage({
+  //     message: verificationMessage!,
+  //   });
+  //   walletSignatureVerficationMutation.mutate(
+  //     {
+  //       walletAddress: activeAccount.address,
+  //       message: verificationMessage!,
+  //       signature: walletSignature,
+  //     },
+  //     {
+  //       onSuccess: (response) => {
+  //         const { user, accessToken } = response.data;
+  //         toast.success("Wallet verified successfully");
+  //         setAccessToken(accessToken);
+  //         userStore.setUser(user);
+
+  //         if (user.isWalletApproved) {
+  //           router.push("/company/dashboard");
+  //         } else {
+  //           router.push("/company/verify");
+  //         }
+  //       },
+  //       onError: () => {
+  //         toast.error("Failed to verify wallet");
+  //       },
+  //     }
+  //   );
+  // };
 
   const requestWalletVerificationMutation = useMutation({
-    mutationFn: requestWalletVerification,
+    mutationFn: apiService.companyVerifyWalletStep1,
   });
 
   const walletSignatureVerficationMutation = useMutation({
@@ -84,8 +76,6 @@ const VerifyConpanyWalletPage = () => {
           walletSignatureVerficationMutation.isPending
         }
         onClickRequestVerification={handleRequestVerification}
-        onClickSignAndVerify={handleSignAndVerify}
-        verificationMessage={verificationMessage}
       />
     </main>
   );

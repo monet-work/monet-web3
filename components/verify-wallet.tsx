@@ -1,20 +1,17 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 type Props = {
-  verificationMessage: string[];
   onClickRequestVerification: () => void;
-  onClickSignAndVerify: () => void;
   loading: boolean;
 };
 
 const VerifyWallet: React.FC<Props> = ({
-  verificationMessage = [],
   onClickRequestVerification,
-  onClickSignAndVerify,
   loading = false,
 }) => {
-  const hasValidationMessage = verificationMessage.length > 0;
   return (
     <section className="bg-background">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -30,26 +27,24 @@ const VerifyWallet: React.FC<Props> = ({
           <div className="max-w-xl lg:max-w-3xl">
             <Card className="backdrop-blur-sm bg-muted-foreground/20 relative">
               <div className="p-4">
-                {!hasValidationMessage ? (
-                  <div className="flex flex-col">
-                    <h1 className="text-2xl font-bold">Verify Wallet</h1>
-                    <p className="text-sm mt-2 max-w-sm text-muted-foreground">
-                      We need to verify your wallet to provide you with access
-                      to our platform. Please click the button below to verify
-                      your wallet.
-                    </p>
+                <div className="flex flex-col">
+                  <h1 className="text-2xl font-bold">Verify Wallet</h1>
+                  <p className="text-sm mt-2 max-w-sm text-muted-foreground">
+                    We need to verify your wallet to provide you with access to
+                    our platform. Please click the button below to verify your
+                    wallet.
+                  </p>
 
-                    <Button
-                      onClick={onClickRequestVerification}
-                      loading={loading}
-                      className="w-full mt-16"
-                    >
-                      Verify Wallet
-                    </Button>
-                  </div>
-                ) : null}
+                  <Button
+                    onClick={onClickRequestVerification}
+                    loading={loading}
+                    className="w-full mt-16"
+                  >
+                    Verify Wallet
+                  </Button>
+                </div>
 
-                {hasValidationMessage ? (
+                {/* {hasValidationMessage ? (
                   <div>
                     <p className="max-w-md text-muted-foreground">
                       To verify your wallet, we have generated a set of words.
@@ -60,7 +55,7 @@ const VerifyWallet: React.FC<Props> = ({
 
                     <div className="flex justify-center items-center py-8">
                       <div className="text-xl font-semibold mx-2 p-2 border-2 border-slate-200 rounded">
-                        {verificationMessage.join(" ")}
+                        {verificationMessage}
                       </div>
                     </div>
 
@@ -72,7 +67,7 @@ const VerifyWallet: React.FC<Props> = ({
                       Sign and verify wallet
                     </Button>
                   </div>
-                ) : null}
+                ) : null} */}
               </div>
             </Card>
           </div>
