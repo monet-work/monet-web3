@@ -21,7 +21,7 @@ const SubmitRequestPage: React.FC = () => {
   const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
 
   const walletSignatureVerficationMutation = useMutation({
-    mutationFn: apiService.AdminVerifyWalletStep2,
+    mutationFn: apiService.adminVerifyWalletStep2,
   });
 
   useEffect(() => {

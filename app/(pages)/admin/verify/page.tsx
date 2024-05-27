@@ -38,7 +38,7 @@ const VerifyAdminWalletPage = () => {
   };
 
   const requestWalletVerificationMutation = useMutation({
-    mutationFn: apiService.AdminVerifyWalletStep1,
+    mutationFn: apiService.adminVerifyWalletStep1,
   });
 
   return (

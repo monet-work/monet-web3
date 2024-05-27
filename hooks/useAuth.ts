@@ -35,6 +35,8 @@ const useAuth = () => {
     "/customer/login",
     "/company/verify",
     "/customer/verify",
+    "/admin/verify",
+    "/admin/login",
     "/company/submit-request",
     "/customer/submit-request",
   ];
