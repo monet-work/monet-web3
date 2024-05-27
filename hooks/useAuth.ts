@@ -39,8 +39,6 @@ const useAuth = () => {
     "/customer/submit-request",
   ];
   
-  console.log(accessToken, "accessToken fetched");
-  console.log(localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN), 'lalala')
   const isPrivateRoute = !publicRoutes.includes(pathname);
 
   const authMutation = useMutation({

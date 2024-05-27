@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/v1/navbar";
 import SubNavbar from "@/components/sub-navbar";
-import CustomerAuthWrapper from "@/components/customer-auth-wrapper";
-
 
 export const metadata: Metadata = {
   title: "Monet Points",
@@ -16,10 +14,11 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <CustomerAuthWrapper>
+    <>
+      {" "}
       <Navbar />
       <SubNavbar />
       {children}
-    </CustomerAuthWrapper>
+    </>
   );
 }

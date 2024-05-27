@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import CompanyRequestForm from "@/components/forms/company-request-form";
 import { useUserStore } from "@/store/userStore";
+import CustomerRequestForm from "./forms/customer-request-form";
 
 type FormValues = {
   name: string;
@@ -24,7 +24,7 @@ type Props = {
   verificationMessage: string;
 };
 
-const CompanySubmitRequest: React.FC<Props> = ({
+const CustomerSubmitRequest: React.FC<Props> = ({
   loading,
   verificationMessage,
   onClickSubmitRequest,
@@ -48,26 +48,25 @@ const CompanySubmitRequest: React.FC<Props> = ({
                 <CardHeader>
                   <CardTitle>
                     {userStore.isRegistered
-                      ? "Submit Points Contract Request"
+                      ? "Complete Registration"
                       : "Verify Wallet"}
                   </CardTitle>
 
                   <CardDescription className="">
                     {!userStore.isRegistered
-                      ? `To submit a request to create a new points contract, fill
+                      ? `To complete your registration, fill
                     out the form below and verify your wallet with the message
                     provided.`
-                      : "Verify your wallet using signature. Once your signature is validated, your request will be submitted."}
+                      : "Verify your wallet using signature."}
                   </CardDescription>
                 </CardHeader>
 
                 <CardContent>
-                  <CompanyRequestForm
+                  <CustomerRequestForm
                     words={verificationMessage}
                     loading={loading}
                     isRegistered={userStore.isRegistered}
                     onSubmitForm={(values) => {
-                      console.log("on sumbit form", values);
                       onClickSubmitRequest(values);
                     }}
                   />
@@ -81,4 +80,4 @@ const CompanySubmitRequest: React.FC<Props> = ({
   );
 };
 
-export default CompanySubmitRequest;
+export default CustomerSubmitRequest;

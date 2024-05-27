@@ -19,11 +19,7 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   //TODO: Convert this to a provider
   const userStore = useUserStore();
 
-  const {
-    isLoading,
-    error: authError,
-    logout,
-  } = useAuth();
+  const { isLoading, error: authError, logout } = useAuth();
   const [requestedRoute, setRequestedRoute] = useState<
     "customer" | "company" | null
   >(null);
@@ -39,9 +35,7 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   const isCustomerRoute = pathname.includes("/customer");
   const isCompanyRoute = pathname.includes("/company");
 
-
   useEffect(() => {
-    console.log('auth wrapper')
     if (authError) {
       //logout
       logout();
@@ -56,7 +50,6 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
       setRequestedRoute("company");
     }
   }, [pathname]);
-
 
   return (
     <div>

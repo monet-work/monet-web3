@@ -1,6 +1,5 @@
 "use client";
 
-import { getCustomerPoints } from "@/lib/api-requests";
 import { useQuery } from "@tanstack/react-query";
 import { useActiveAccount } from "thirdweb/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "./ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
+import { apiService } from "@/services/api.service";
 
 const CustomerDashboard = () => {
   const activeAccount = useActiveAccount();
@@ -19,7 +19,7 @@ const CustomerDashboard = () => {
   } = useQuery({
     queryKey: ["customers/points", { walletAddress: walletAddress }],
     queryFn: () => {
-      return getCustomerPoints(walletAddress!);
+    return apiService.fetchCustomerPoints('123')
     },
     enabled: !!walletAddress,
   });
@@ -42,7 +42,7 @@ const CustomerDashboard = () => {
                   {isLoading && <Skeleton className="w-full h-[100px]" />}
 
                   {customerPointsResponse?.data &&
-                    customerPointsResponse?.data?.map((point) => (
+                    customerPointsResponse?.data?.map((point: any) => (
                       <div
                         key={point.id}
                         className="flex items-center justify-between"

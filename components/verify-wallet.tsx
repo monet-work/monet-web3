@@ -44,30 +44,7 @@ const VerifyWallet: React.FC<Props> = ({
                   </Button>
                 </div>
 
-                {/* {hasValidationMessage ? (
-                  <div>
-                    <p className="max-w-md text-muted-foreground">
-                      To verify your wallet, we have generated a set of words.
-                      You will notice these words when you sign using your
-                      wallet. Once your signature is validated, your request
-                      will be submitted.
-                    </p>
-
-                    <div className="flex justify-center items-center py-8">
-                      <div className="text-xl font-semibold mx-2 p-2 border-2 border-slate-200 rounded">
-                        {verificationMessage}
-                      </div>
-                    </div>
-
-                    <Button
-                      loading={loading}
-                      onClick={onClickSignAndVerify}
-                      className="mt-4 w-full"
-                    >
-                      Sign and verify wallet
-                    </Button>
-                  </div>
-                ) : null} */}
+                
               </div>
             </Card>
           </div>

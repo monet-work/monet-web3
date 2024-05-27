@@ -32,10 +32,6 @@ const CompanyLoginPage = () => {
     router.push("/company/verify");
   };
 
-  const redirectToDashboard = () => {
-    router.push("/company/dashboard");
-  };
-
   useEffect(() => {
     if (activeAccount && loginRequested) {
       redirectToVerification();

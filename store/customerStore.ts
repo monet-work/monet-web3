@@ -1,23 +1,22 @@
-import { Customer } from "@/xata";
-import { create } from "zustand";
+import { Customer } from "@/models/customer.model";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { StoreApi, UseBoundStore, create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 type Store = {
   customer: Customer | null;
-  onChainPoints: string | null;
-  setCustomer: (customer: Customer | null) => void;
-  setOnChainPoints: (points: string) => void;
-  addOnChainPoints: (points: string) => void;
+  setCustomer(customer: Customer | null): void;
 };
 
-export const useCustomerStore = create<Store>((set) => ({
-  customer: null,
-  setCustomer: (customer) => set({ customer }),
-  onChainPoints: null,
-  setOnChainPoints: (points) => set({ onChainPoints: points }),
-  addOnChainPoints: (points) =>
-    set((state) => ({
-      onChainPoints: state.onChainPoints
-        ? (BigInt(state.onChainPoints) + BigInt(points)).toString()
-        : points,
+export const useCustomerStore = create(
+  persist(
+    create<Store>((set) => ({
+      customer: null,
+      setCustomer: () => set({ customer: null }),
     })),
-}));
+    {
+      name: LOCALSTORAGE_KEYS.CUSTOMER,
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+) ;

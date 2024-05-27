@@ -105,7 +105,7 @@ const SubNavbar = () => {
       }
       redeemPointsMutationFn.mutate(walletAddress, {
         onSuccess: (res) => {
-          customerStore.setCustomer(res.data);
+          // customerStore.setCustomer(res.data);
           toast.message("Points redeemed successfully", {
             description:
               "Your on-chain points have been redeemed successfully. It will be reflected in your wallet soon.",
@@ -137,7 +137,7 @@ const SubNavbar = () => {
 
   return (
     <div className="sticky top-[70px] z-50">
-      {customerStore.customer ? (
+      {/* {customerStore.customer ? (
         <div className="sticky top-[70px] z-30 px-8 py-2 bg-teal-700 text-white flex justify-end">
           <div className="flex gap-4 text-slate-200 text-sm items-center">
             <div className="flex gap-4">
@@ -169,7 +169,7 @@ const SubNavbar = () => {
             ) : null}
           </div>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 };

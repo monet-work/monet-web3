@@ -36,7 +36,7 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
       {
         onSuccess: (data) => {
           // update points in store and invaliate cache
-          customerStore.setCustomer(data.data);
+          // customerStore.setCustomer(data.data);
           toast.message(successMessageBasedOnKey(id), {
             description: `You have successfully collected ${points} points!`,
           })

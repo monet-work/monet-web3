@@ -1,6 +1,8 @@
 export const LOCALSTORAGE_KEYS = {
   ACCESS_TOKEN: "access_token",
   REFRESH_TOKEN: "refresh_token",
+  CUSTOMER: "customer",
+  COMPANY: "company",
 };
 
 
