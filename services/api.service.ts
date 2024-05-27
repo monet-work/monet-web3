@@ -2,6 +2,7 @@ import { API_BASE_URL, API_ENDPOINTS } from "@/config/api.config";
 import { CompanyVerifyWallet } from "@/models/api-payload.model";
 import {
   AuthResponse,
+  VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
   VerifyWalletResponse,
@@ -9,6 +10,7 @@ import {
 import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import axios from "axios";
+import { Wallet } from "thirdweb/wallets";
 
 // Helper function to check if a URL matches a dynamic pattern
 const matchesDynamicRoute = (url: string, pattern: string) => {
@@ -59,7 +61,30 @@ const companyVerifyWalletStep1 = async (wallet: string) => {
   );
 };
 
-const companyVerifyWalletStep2 = async (payload: Partial<CompanyVerifyWallet>) => {
+const adminVerifyWalletStep1 = async (wallet: string) => {
+  return axios.post<VerifyWalletResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_1}`,
+    { walletAddress: wallet }
+  );
+};
+
+const adminVerifyWalletStep2 = async ({
+  wallet,
+  words,
+  signature,
+}: {
+  wallet: string;
+  words: string;
+  signature: string;
+}) => {
+  return axios.post<VerifyAdminSubmitRequestResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_2}`,
+    { walletAddress: wallet, words: words, signature: signature }
+  );
+};
+const companyVerifyWalletStep2 = async (
+  payload: Partial<CompanyVerifyWallet>
+) => {
   return axios.post<VerifyCompanySubmitRequestResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_2}`,
     payload
@@ -91,5 +116,7 @@ export const apiService = {
   companyVerifyWalletStep2,
   customerVerifyWalletStep1,
   customerVerifyWalletStep2,
-  fetchCustomerPoints
+  fetchCustomerPoints,
+  adminVerifyWalletStep1,
+  adminVerifyWalletStep2,
 };

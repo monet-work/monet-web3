@@ -1,5 +1,5 @@
-import { AuthTokens, Company } from "./company.model";
 import { Customer } from "./customer.model";
+import { Admin, AuthTokens, Company } from "./company.model";
 
 export interface VerifyWalletResponse {
   words: string;
@@ -13,6 +13,9 @@ export interface VerifyCompanySubmitRequestResponse {
 
 export interface VerifyCustomerSubmitRequestResponse {
   customer: Customer;
+}
+export interface VerifyAdminSubmitRequestResponse {
+  admin: Admin;
   tokens: AuthTokens;
 }
 export interface AuthResponse {
