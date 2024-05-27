@@ -10,6 +10,7 @@ import { createWallet } from "thirdweb/wallets";
 import { client } from "@/app/thirdweb";
 import { usePathname, useRouter } from "next/navigation";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
 type Props = {
   children?: React.ReactNode;
@@ -27,7 +28,7 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
     "customer" | "company" | null
   >(null);
   const [accessToken, setAccessToken] = useLocalStorage(
-    "accessToken",
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     undefined
   );
 

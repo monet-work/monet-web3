@@ -8,16 +8,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import CompanyRequestForm from "@/components/forms/company-request-form";
+import { useUserStore } from "@/store/userStore";
+
+type FormValues = {
+  name: string;
+  email: string;
+  pointName: string;
+  pointSymbol: string;
+  description: string;
+};
 
 type Props = {
   loading: boolean;
-  onClickSubmitRequest: (values: {
-    name: string;
-    email: string;
-    pointName: string;
-    pointSymbol: string;
-    description: string;
-  }) => void;
+  onClickSubmitRequest: (value: Partial<FormValues>) => void;
   verificationMessage: string;
 };
 
@@ -26,6 +29,7 @@ const CompanySubmitRequest: React.FC<Props> = ({
   verificationMessage,
   onClickSubmitRequest,
 }) => {
+  const userStore = useUserStore();
   return (
     <section className="bg-background">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -55,7 +59,9 @@ const CompanySubmitRequest: React.FC<Props> = ({
                   <CompanyRequestForm
                     words={verificationMessage}
                     loading={loading}
+                    isRegistered={userStore.isRegistered}
                     onSubmitForm={(values) => {
+                      console.log('on sumbit form', values);
                       onClickSubmitRequest(values);
                     }}
                   />

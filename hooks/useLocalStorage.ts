@@ -1,6 +1,7 @@
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { useState } from "react";
 
-const useLocalStorage = (key: string, initialValue: any) => {
+const useLocalStorage = (key: LOCALSTORAGE_KEYS, initialValue: any) => {
   // State to store our value
   const [storedValue, setStoredValue] = useState(() => {
     try {

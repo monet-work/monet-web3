@@ -167,9 +167,9 @@ const CompanyDashboard: React.FC<Props> = ({
 
   return (
     <>
-      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex h-14 items-center gap-4 border-b bg-background w-full px-8">
+      <header className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
         <MonetWorkLogo className="text-primary w-24 h-24" />
-        <div className="relative ml-auto flex-1 md:grow-0">
+        <div className="relative ml-auto">
           {activeAccount ? (
             <ConnectButton
               client={client}

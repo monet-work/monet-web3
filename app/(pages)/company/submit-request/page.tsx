@@ -4,6 +4,7 @@ import CompanySubmitRequest from "@/components/company-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -16,8 +17,8 @@ const SubmitRequestPage: React.FC = () => {
   const userStore = useUserStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
-  const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
+  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
+  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
 
   const walletSignatureVerficationMutation = useMutation({
     mutationFn: apiService.companyVerifyWalletStep2,

@@ -43,3 +43,6 @@ export const extractLoggedInUserRoles = (jwt: string) => {
 
   return parsedJWT.roles as (typeof USER_ROLE)[keyof typeof USER_ROLE][];
 };
+
+
+export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));

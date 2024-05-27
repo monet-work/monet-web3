@@ -3,6 +3,7 @@
 import FloatingConnect from "@/components/floating-connect";
 import VerifyWallet from "@/components/verify-wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -14,8 +15,8 @@ const VerifyConpanyWalletPage = () => {
   const activeAccount = useActiveAccount();
   const userStore = useUserStore();
   const router = useRouter();
-  const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
-  const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
+  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
+  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
 
   const handleRequestVerification = () => {
     if (!activeAccount) return;
@@ -23,12 +24,8 @@ const VerifyConpanyWalletPage = () => {
       onSuccess: (response) => {
         const { isRegistered, words } = response.data;
 
-        if (isRegistered && accessToken && refreshToken) {
-          router.push("/company/dashboard");
-          return;
-        }
-
         userStore.setVerificationWords(words);
+        userStore.setIsRegistered(isRegistered);
         router.push("/company/submit-request");
       },
       onError: () => {

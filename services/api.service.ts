@@ -6,6 +6,7 @@ import {
   VerifyWalletResponse,
 } from "@/models/api-response.model";
 import { Token } from "@/models/company.model";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import axios from "axios";
 
 // axios interceptors
@@ -17,7 +18,7 @@ axios.interceptors.request.use(
     if (config.url && securedRoutes.includes(config.url)) {
       // Add token to request header
       const accessToken = JSON.parse(
-        localStorage.getItem("accessToken") || ""
+        localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) || ""
       ) as Token;
       if (typeof accessToken === "object" && accessToken !== null) {
         config.headers.Authorization = `Bearer ${accessToken.token}`;

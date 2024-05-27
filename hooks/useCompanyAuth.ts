@@ -9,6 +9,7 @@ import {
 } from "thirdweb/react";
 import useLocalStorage from "./useLocalStorage";
 import { useUserStore } from "@/store/userStore";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
 const useCompanyAuth = () => {
   const disconnect = useDisconnect();
@@ -17,7 +18,7 @@ const useCompanyAuth = () => {
   const wallet = useActiveWallet();
   const userStore = useUserStore();
   const [accessToken, setAccessToken] = useLocalStorage(
-    "accessToken",
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     undefined
   );
   const router = useRouter();

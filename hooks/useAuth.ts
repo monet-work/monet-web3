@@ -9,6 +9,8 @@ import {
 import useLocalStorage from "./useLocalStorage";
 import { createWallet } from "thirdweb/wallets";
 import { apiService } from "@/services/api.service";
+import { delay } from "@/lib/utils";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
 const useAuth = () => {
   const { disconnect } = useDisconnect();
@@ -18,16 +20,28 @@ const useAuth = () => {
 
   const [thirdwebConnected, setThirdwebConnected] = useState(false);
   const [accessToken, setAccessToken] = useLocalStorage(
-    "accessToken",
-    undefined
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
+    ""
   );
   const [refreshToken, setRefreshToken] = useLocalStorage(
-    "refreshToken",
-    undefined
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
+    ""
   );
   const router = useRouter();
-
-  const publicRoutes = ["/", "/login", "/verify"];
+  
+  const publicRoutes = [
+    "/",
+    "/company/login",
+    "/customer/login",
+    "/company/verify",
+    "/customer/verify",
+    "/company/submit-request",
+    "/customer/submit-request",
+  ];
+  
+  console.log(accessToken, "accessToken fetched");
+  console.log(localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN), 'lalala')
+  const isPrivateRoute = !publicRoutes.includes(pathname);
 
   const authMutation = useMutation({
     mutationFn: apiService.authenticate,
@@ -40,16 +54,6 @@ const useAuth = () => {
   }, [connectionStatus]);
 
   useEffect(() => {
-    if(publicRoutes.some(route => pathname.includes(route))) return;
-
-    if (!accessToken || !refreshToken) {
-      console.log('logging out', pathname)
-      logout();
-      return;
-    }
-  }, [accessToken, refreshToken, pathname]);
-
-  useEffect(() => {
     // detect logout
     if (!activeAccount && thirdwebConnected) {
       //logout
@@ -58,38 +62,48 @@ const useAuth = () => {
   }, [activeAccount, thirdwebConnected]);
 
   useEffect(() => {
-    if (!refreshToken || typeof refreshToken !== "object") return;
+    if (!isPrivateRoute) return;
 
-    authMutation.mutate(refreshToken.token, {
-      onError: (error) => {
-        console.error(error);
+    const performAuthCheck = async () => {
+      await delay(1000);
+
+      if (isPrivateRoute && (!accessToken || !refreshToken)) {
         logout();
-      },
-      onSuccess: (response) => {
-        const {
-          company,
-          customer,
-          email,
-          isEmailVerified,
-          wallet_address,
-          roles,
-          name,
-          id,
-        } = response.data;
-      },
-    });
-  }, [accessToken, refreshToken, pathname]);
+        return;
+      }
+
+      authMutation.mutate(refreshToken.token, {
+        onError: (error) => {
+          console.error(error);
+          logout();
+        },
+        onSuccess: (response) => {
+          const {
+            company,
+            customer,
+            email,
+            isEmailVerified,
+            wallet_address,
+            roles,
+            name,
+            id,
+          } = response.data;
+        },
+      });
+    };
+
+    performAuthCheck();
+  }, [accessToken, refreshToken, isPrivateRoute]);
 
   const logout = () => {
     const wallet = createWallet("io.metamask");
     disconnect(wallet);
-    setAccessToken(undefined);
     router.replace("/");
     localStorage.clear();
   };
 
   return {
-    isLoading: authMutation.isPending,
+    isLoading: authMutation.isPending ?? true,
     error: authMutation.error,
     logout,
   };

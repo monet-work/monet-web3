@@ -3,7 +3,8 @@
 import { connectWallet } from "@/app/thirdweb";
 import LoginCompany from "@/components/login-company";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { authenticate, login } from "@/lib/api-requests";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -13,12 +14,13 @@ import { useActiveAccount, useConnect } from "thirdweb/react";
 const CompanyLoginPage = () => {
   const { connect } = useConnect();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
+  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
+  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
-  const authMutation = useMutation({
-    mutationFn: authenticate,
+  const verifyAddressStep1Mutation = useMutation({
+    mutationFn: apiService.companyVerifyWalletStep1,
   });
 
   const handleLoginCompany = async () => {
@@ -26,36 +28,18 @@ const CompanyLoginPage = () => {
     await connectWallet(connect);
   };
 
-  const redirectToVerfication = () => {
+  const redirectToVerification = () => {
     router.push("/company/verify");
-  }
+  };
 
   const redirectToDashboard = () => {
     router.push("/company/dashboard");
-  }
+  };
 
   useEffect(() => {
     if (activeAccount && loginRequested) {
-      if (!accessToken) {
-        redirectToVerfication();
-      }
-      authMutation.mutate(
-        {
-          walletAddress: activeAccount.address,
-          accessToken,
-        },
-        {
-          onSuccess: (response) => {
-            const { accessToken, user } = response.data;
-            setAccessToken(accessToken);
-            userStore.setUser(user);
-            redirectToDashboard();
-          },
-          onError: () => {
-            redirectToVerfication();
-          },
-        }
-      );
+      redirectToVerification();
+      return;
     }
   }, [activeAccount]);
 
@@ -63,7 +47,7 @@ const CompanyLoginPage = () => {
     <main>
       <LoginCompany
         onClickConnectWallet={handleLoginCompany}
-        loading={authMutation.isPending}
+        loading={verifyAddressStep1Mutation.isPending}
       />
     </main>
   );
