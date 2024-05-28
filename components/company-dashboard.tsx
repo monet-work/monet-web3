@@ -11,7 +11,7 @@ import {
 import { Button } from "./ui/button";
 import UserPointsTable from "./users-points-table";
 import { useEffect, useState } from "react";
-import { CustomerPoint } from "@/models/point";
+import { CustomerPoint } from "@/models/point.model";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   FileInput,
@@ -183,7 +183,6 @@ const CompanyDashboard: React.FC<Props> = ({
           ) : null}
         </div>
       </header>
-
       <main className="bg-background">
         <div className="container">
           <div className="py-4">

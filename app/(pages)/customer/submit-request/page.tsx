@@ -5,7 +5,7 @@ import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
-import { useCustomerStore } from "@/store/customerStore";
+import useCustomerStore from "@/store/customerStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ import { useActiveAccount } from "thirdweb/react";
 
 const SubmitRequestPage: React.FC = () => {
   const userStore = useUserStore();
-  // const customerStore = useCustomerStore();
+  const customerStore = useCustomerStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
   const [accessToken, setAccessToken] = useLocalStorage(
@@ -34,7 +34,7 @@ const SubmitRequestPage: React.FC = () => {
   useEffect(() => {
     if (!userStore.verificationWords) {
       // Redirect to verify page
-      router.push("/company/verify");
+      router.push("/customer/verify");
     }
   }, [userStore.verificationWords]);
   return (
@@ -67,7 +67,7 @@ const SubmitRequestPage: React.FC = () => {
                   toast.success("Wallet verified successfully");
                   setAccessToken(tokens.access);
                   setRefreshToken(tokens.refresh);
-                  // customerStore.setCustomer(customer);
+                  customerStore.setCustomer(customer);
 
                   if (customer) {
                     router.push("/customer/dashboard");

@@ -3,7 +3,7 @@
 import { connectWallet } from "@/app/thirdweb";
 import LoginAdmin from "@/components/login-admin";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { authenticate, login } from "@/lib/api-requests";
+import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -17,8 +17,8 @@ const AdminLoginPage = () => {
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
-  const authMutation = useMutation({
-    mutationFn: authenticate,
+  const verifyAddressStep1Mutation = useMutation({
+    mutationFn: apiService.adminVerifyWalletStep1
   });
 
   const handleLoginAdmin = async () => {
@@ -26,44 +26,23 @@ const AdminLoginPage = () => {
     await connectWallet(connect);
   };
 
-  const redirectToVerfication = () => {
+  const redirectToVerification = () => {
     router.push("/admin/verify");
-  };
-
-  const redirectToDashboard = () => {
-    router.push("/admin/dashboard");
   };
 
   useEffect(() => {
     if (activeAccount && loginRequested) {
-      if (!accessToken) {
-        redirectToVerfication();
-      }
-      authMutation.mutate(
-        {
-          walletAddress: activeAccount.address,
-          accessToken,
-        },
-        {
-          onSuccess: (response) => {
-            const { accessToken, user } = response.data;
-            setAccessToken(accessToken);
-            userStore.setUser(user);
-            redirectToDashboard();
-          },
-          onError: () => {
-            redirectToVerfication();
-          },
-        }
-      );
+      redirectToVerification();
+      return;
     }
   }, [activeAccount]);
+
 
   return (
     <main>
       <LoginAdmin
         onClickConnectWallet={handleLoginAdmin}
-        loading={authMutation.isPending}
+        loading={verifyAddressStep1Mutation.isPending}
       />
     </main>
   );

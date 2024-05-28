@@ -1,22 +1,23 @@
 import { Customer } from "@/models/customer.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
-import { StoreApi, UseBoundStore, create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type Store = {
   customer: Customer | null;
-  setCustomer(customer: Customer | null): void;
+  setCustomer: (customer: Customer | null) => void;
 };
 
-export const useCustomerStore = create(
+const useCustomerStore = create<Store>()(
   persist(
-    create<Store>((set) => ({
+    (set) => ({
       customer: null,
-      setCustomer: () => set({ customer: null }),
-    })),
-    {
-      name: LOCALSTORAGE_KEYS.CUSTOMER,
-      storage: createJSONStorage(() => localStorage),
+      setCustomer: (customer) => set({ customer }),
+    }),
+    { name: LOCALSTORAGE_KEYS.CUSTOMER, 
+      
     }
   )
-) ;
+);
+
+export default useCustomerStore;

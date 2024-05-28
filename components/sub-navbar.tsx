@@ -1,7 +1,6 @@
 "use client";
 
 import { elpContract } from "@/app/thirdweb";
-import { useCustomerStore } from "@/store/customerStore";
 import { useGlitch } from "react-powerglitch";
 import {
   PreparedTransaction,
@@ -92,7 +91,7 @@ const SubNavbar = () => {
       },
     });
   };
-  const customerStore = useCustomerStore();
+  // const customerStore = useCustomerStore();
   const { eventsFromElpContract } = useThirdwebEvents();
 
   useEffect(() => {

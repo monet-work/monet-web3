@@ -1,7 +1,11 @@
 import { API_BASE_URL, API_ENDPOINTS } from "@/config/api.config";
-import { CompanyVerifyWallet } from "@/models/api-payload.model";
+import {
+  CompanyUploadPointsPayload,
+  CompanyVerifyWalletPayload,
+} from "@/models/api-payload.model";
 import {
   AuthResponse,
+  CustomerPointResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
@@ -10,33 +14,53 @@ import {
 import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import axios from "axios";
-import { Wallet } from "thirdweb/wallets";
 
 // Helper function to check if a URL matches a dynamic pattern
 const matchesDynamicRoute = (url: string, pattern: string) => {
-  const regex = new RegExp(pattern.replace(/:[^\s/]+/g, '([\\w-]+)'));
-  return regex.test(url);
+  // Strip query parameters if present
+  const [urlPath] = url.split("?");
+
+  // Replace dynamic segments with regex patterns specifically in the path part
+  const regexPattern = pattern
+    .split("/")
+    .map((segment) => (segment.startsWith(":") ? "([\\w-]+)" : segment))
+    .join("/");
+
+  // Create the final regex with start and end anchors
+  const regex = new RegExp(`^${regexPattern}$`);
+
+  // Test the URL against the regex pattern
+  const result = regex.test(urlPath);
+
+  return result;
 };
 
 const securedRoutes = [
-  API_ENDPOINTS.AUTHENTICATE
+  `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
+  `${API_BASE_URL}/customers/:customerId/points`,
 ];
 
 // axios interceptors
 // intercept specific requests
 axios.interceptors.request.use(
   (config) => {
+    console.log("config url", config.url);
     // secured routes
-    const securedRoutes = [`${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`];
-    if (config.url && securedRoutes.includes(config.url)) {
+    if (config.url) {
+      const isSecuredRoute = securedRoutes.some((route) =>
+        matchesDynamicRoute(config.url!, route)
+      );
+      console.log(isSecuredRoute, config.url, "is secured route", "url");
       // Add token to request header
-      const accessToken = JSON.parse(
-        localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
-      ) as Token;
+      if (isSecuredRoute) {
+        const accessToken = JSON.parse(
+          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
+        ) as Token;
         if (typeof accessToken === "object" && accessToken !== null) {
           config.headers.Authorization = `Bearer ${accessToken.token}`;
         }
       }
+    }
     return config;
   },
   (error) => {
@@ -61,6 +85,24 @@ const companyVerifyWalletStep1 = async (wallet: string) => {
   );
 };
 
+const companyVerifyWalletStep2 = async (
+  payload: Partial<CompanyVerifyWalletPayload>
+) => {
+  return axios.post<VerifyCompanySubmitRequestResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_2}`,
+    payload
+  );
+};
+
+const companyUploadPoints = async (
+  companyId: string,
+  payload: CompanyUploadPointsPayload
+) => {
+  return axios.post(
+    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_UPLOAD_POINTS(companyId)}`
+  );
+};
+
 const adminVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_1}`,
@@ -82,14 +124,6 @@ const adminVerifyWalletStep2 = async ({
     { walletAddress: wallet, words: words, signature: signature }
   );
 };
-const companyVerifyWalletStep2 = async (
-  payload: Partial<CompanyVerifyWallet>
-) => {
-  return axios.post<VerifyCompanySubmitRequestResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_2}`,
-    payload
-  );
-};
 
 const customerVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
@@ -98,17 +132,20 @@ const customerVerifyWalletStep1 = async (wallet: string) => {
   );
 };
 
-const customerVerifyWalletStep2 = async (payload: Partial<CompanyVerifyWallet>) => {
+const customerVerifyWalletStep2 = async (
+  payload: Partial<CompanyVerifyWalletPayload>
+) => {
   return axios.post<VerifyCustomerSubmitRequestResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_VERIFY_WALLET_2}`,
     payload
   );
-}
+};
 
 const fetchCustomerPoints = async (customerId: string) => {
-  return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_POINTS(customerId)}`);
-}
-
+  return axios.get<CustomerPointResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_POINTS(customerId)}`
+  );
+};
 
 export const apiService = {
   authenticate,

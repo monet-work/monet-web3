@@ -8,20 +8,22 @@ import { Skeleton } from "./ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
+import useCustomerStore from "@/store/customerStore";
 
 const CustomerDashboard = () => {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
+  const customerStore = useCustomerStore();
   const {
     data: customerPointsResponse,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["customers/points", { walletAddress: walletAddress }],
+    queryKey: ["customers/points", { customerId: customerStore?.customer?.id }],
     queryFn: () => {
-    return apiService.fetchCustomerPoints('123')
+      return apiService.fetchCustomerPoints(customerStore?.customer?.id!);
     },
-    enabled: !!walletAddress,
+    enabled: !!customerStore?.customer?.id,
   });
 
   return (
@@ -32,17 +34,24 @@ const CustomerDashboard = () => {
             <CardHeader>
               <CardTitle>Your collected points</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-8">
+            <CardContent className="grid gap-8 min-h-[400px]">
               <Tabs defaultValue="offchain" className="">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="offchain">Off-Chain</TabsTrigger>
                   <TabsTrigger value="onchain">On-Chain</TabsTrigger>
                 </TabsList>
-                <TabsContent value="offchain">
+                <TabsContent value="offchain" className="h-full">
                   {isLoading && <Skeleton className="w-full h-[100px]" />}
 
                   {customerPointsResponse?.data &&
-                    customerPointsResponse?.data?.map((point: any) => (
+                  !(customerPointsResponse?.data.points.length > 0) ? (
+                    <div className="text-center h-full flex justify-center items-center h-full">
+                      <span>No off-chain points available</span>
+                    </div>
+                  ) : null}
+
+                  {customerPointsResponse?.data &&
+                    customerPointsResponse?.data?.points.map((point: any) => (
                       <div
                         key={point.id}
                         className="flex items-center justify-between"

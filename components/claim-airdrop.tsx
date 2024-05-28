@@ -1,6 +1,5 @@
 "use client";
 
-import { useCustomerStore } from "@/store/customerStore";
 import { useState } from "react";
 import { toast } from "sonner";
 import {

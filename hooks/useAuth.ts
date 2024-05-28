@@ -57,6 +57,7 @@ const useAuth = () => {
     // detect logout
     if (!activeAccount && thirdwebConnected) {
       //logout
+      console.log('no active account')
       logout();
     }
   }, [activeAccount, thirdwebConnected]);
@@ -65,16 +66,12 @@ const useAuth = () => {
     if (!isPrivateRoute) return;
 
     const performAuthCheck = async () => {
-      await delay(1000);
+      await delay(10);
 
-      if (isPrivateRoute && (!accessToken || !refreshToken)) {
-        logout();
-        return;
-      }
-
-      authMutation.mutate(refreshToken.token, {
+      authMutation.mutate(refreshToken?.token, {
         onError: (error) => {
           console.error(error);
+          console.log('auth mutation eror')
           logout();
         },
         onSuccess: (response) => {

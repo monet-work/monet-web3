@@ -1,5 +1,6 @@
 import { Customer } from "./customer.model";
 import { Admin, AuthTokens, Company } from "./company.model";
+import { Point } from "./point.model";
 
 export interface VerifyWalletResponse {
   words: string;
@@ -13,6 +14,7 @@ export interface VerifyCompanySubmitRequestResponse {
 
 export interface VerifyCustomerSubmitRequestResponse {
   customer: Customer;
+  tokens: AuthTokens;
 }
 export interface VerifyAdminSubmitRequestResponse {
   admin: Admin;
@@ -30,6 +32,10 @@ export interface AuthResponse {
   roles: Role[];
   company: LinkedCompany;
   customer: LinkedCustomer;
+}
+
+export interface CustomerPointResponse {
+  points: Point[];
 }
 
 interface LinkedCompany {

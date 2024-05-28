@@ -1,4 +1,4 @@
-import { CustomerPoint } from "@/models/point";
+import { CustomerPoint } from "@/models/point.model";
 import { Company, Customer, Point, User } from "@/xata";
 import axios from "axios";
 

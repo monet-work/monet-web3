@@ -2,13 +2,11 @@
 
 import useAuth from "@/hooks/useAuth";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { useEffect, useState } from "react";
 import { Spinner } from "./ui/spinner";
 import { useUserStore } from "@/store/userStore";
 import { AutoConnect } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { client } from "@/app/thirdweb";
-import { usePathname, useRouter } from "next/navigation";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
@@ -20,36 +18,13 @@ const AuthWrapper: React.FC<Props> = ({ children }) => {
   const userStore = useUserStore();
 
   const { isLoading, error: authError, logout } = useAuth();
-  const [requestedRoute, setRequestedRoute] = useState<
-    "customer" | "company" | null
-  >(null);
   const [accessToken, setAccessToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     undefined
   );
 
-  const router = useRouter();
-  const pathname = usePathname();
   const wallets = [createWallet("io.metamask")];
 
-  const isCustomerRoute = pathname.includes("/customer");
-  const isCompanyRoute = pathname.includes("/company");
-
-  useEffect(() => {
-    if (authError) {
-      //logout
-      logout();
-    }
-  }, [authError]);
-
-  useEffect(() => {
-    if (isCustomerRoute) {
-      setRequestedRoute("customer");
-    }
-    if (isCompanyRoute) {
-      setRequestedRoute("company");
-    }
-  }, [pathname]);
 
   return (
     <div>

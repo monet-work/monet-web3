@@ -3,7 +3,7 @@
 import { useActiveAccount } from "thirdweb/react";
 import PointCard from "./point-card";
 import { BackgroundGradient } from "./ui/background-gradient";
-import { Point } from "@/models/point";
+import { Point } from "@/models/point.model";
 
 const pointsData: Point[] = [
   {
@@ -47,7 +47,7 @@ const CollectPoints = () => {
 
       {walletAddress ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-16">
-          {pointsData.map((point) => (
+          {/* {pointsData.map((point) => (
             <PointCard
               key={point.id}
               id={point.id}
@@ -55,7 +55,7 @@ const CollectPoints = () => {
               description={point.description}
               points={point.points}
             />
-          ))}
+          ))} */}
         </div>
       ) : null}
 
