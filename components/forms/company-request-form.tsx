@@ -29,6 +29,7 @@ const getFormSchema = (isRegistered: boolean) => {
     pointSymbol: isRegistered
       ? z.string().min(3).optional()
       : z.string().min(3),
+    decimal: isRegistered ? z.string().min(1).optional() : z.string().min(1),
     description: isRegistered
       ? z.string().min(3).optional()
       : z.string().min(3),
@@ -56,6 +57,7 @@ const CompanyRequestForm: React.FC<Props> = ({
       pointName: "",
       pointSymbol: "",
       description: "",
+      decimal: "",
     },
   });
 
@@ -150,6 +152,23 @@ const CompanyRequestForm: React.FC<Props> = ({
                     <FormControl>
                       <Input
                         placeholder="Enter Point Symbol"
+                        {...field}
+                        className="bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="decimal"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Decimal</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter decimals"
                         {...field}
                         className="bg-transparent"
                       />

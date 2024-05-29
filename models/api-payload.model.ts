@@ -12,6 +12,7 @@ export interface CompanyVerifyWalletPayload extends VerifyWalletPayload {
   email: string;
   pointName: string;
   pointSymbol: string;
+  decimal: string;
 }
 
 export interface CustomerVerifyWalletPayload extends VerifyWalletPayload {}

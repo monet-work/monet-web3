@@ -16,6 +16,7 @@ type FormValues = {
   pointName: string;
   pointSymbol: string;
   description: string;
+  decimal: string;
 };
 
 type Props = {

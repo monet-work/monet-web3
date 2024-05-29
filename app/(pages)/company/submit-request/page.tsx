@@ -39,7 +39,7 @@ const SubmitRequestPage: React.FC = () => {
           loading={walletSignatureVerficationMutation.isPending}
           verificationMessage={userStore.verificationWords}
           onClickSubmitRequest={async (values) => {
-            const { name, email, pointName, pointSymbol, description } = values;
+            const { name, email, pointName, pointSymbol, description, decimal } = values;
             if (!userStore.verificationWords) return;
 
             if (!activeAccount) return;
@@ -54,6 +54,7 @@ const SubmitRequestPage: React.FC = () => {
                 pointName,
                 pointSymbol,
                 description,
+                decimal,
                 words: userStore.verificationWords,
                 signature: walletSignature,
                 walletAddress: activeAccount.address,
