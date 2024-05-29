@@ -19,7 +19,7 @@ const LoginAdmin: React.FC<Props> = ({
         <aside className="relative block h-16 lg:order-first lg:col-span-5 lg:h-full xl:col-span-6">
           <img
             alt=""
-            src="https://images.unsplash.com/photo-1557411732-1797a9171fcf?q=80&w=3024&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={"/images/svgs/abstract-background-wave.svg"}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </aside>
@@ -38,10 +38,7 @@ const LoginAdmin: React.FC<Props> = ({
 
             <div className="col-span-6 mt-4">
               <p className="text-muted-foreground">
-                {` By connecting your wallet, you can convert your off-chain
-                loyalty points to on-chain points. You can use the marketplace
-                to trade these points and get benefits of Monet's interoperable
-                loyalty rewards ecosystem.`}
+                To get started, connect your wallet to access the admin panel.
               </p>
             </div>
 

@@ -17,9 +17,9 @@ const LoginCompany: React.FC<Props> = ({
       <FloatingConnect />
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         <aside className="relative block h-16 lg:order-first lg:col-span-5 lg:h-full xl:col-span-6">
-          <img
+        <img
             alt=""
-            src="https://images.unsplash.com/photo-1557411732-1797a9171fcf?q=80&w=3024&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={"/images/svgs/abstract-background-fluctuate.svg"}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </aside>
