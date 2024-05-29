@@ -15,10 +15,10 @@ const VerifyWallet: React.FC<Props> = ({
   return (
     <section className="bg-background">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
-        <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
-          <img
+        <aside className="relative block h-16 lg:order-first lg:col-span-5 lg:h-full xl:col-span-6">
+        <img
             alt=""
-            src="https://images.unsplash.com/photo-1507214617719-4a3daf41b9ac?q=80&w=2924&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src={"/images/svgs/abstract-background-curve.svg"}
             className="absolute inset-0 h-full w-full object-cover"
           />
         </aside>
