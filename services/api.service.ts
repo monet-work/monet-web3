@@ -39,7 +39,10 @@ const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
   `${API_BASE_URL}/companies/:companyId/dashboard`,
-  `${API_BASE_URL}/admins/companies`,
+  `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`,
+  `${API_BASE_URL}/customers/:customerId/redeem`,
+  `${API_BASE_URL}/companies/:companyId/upload-points`,
+  `${API_BASE_URL}/admins/companies/:companyId/approve`,
 ];
 
 // axios interceptors
