@@ -27,3 +27,8 @@ export interface AuthResponse extends User{}
 export interface CustomerPointResponse {
   points: Point[];
 }
+
+export interface CompanyDashboardResponse {
+  company: Company;
+  dashboard: Point[];
+}

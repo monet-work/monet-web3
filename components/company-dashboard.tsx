@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { client } from "@/app/thirdweb";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
@@ -23,76 +23,64 @@ import {
 import FileSvgDraw from "./file-svg-draw";
 import { Paperclip } from "lucide-react";
 import { DropzoneOptions } from "react-dropzone";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCompanyContract, uploadCustomerData } from "@/lib/api-requests";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useCompanyStore } from "@/store/companyStore";
 import PointContractInfo from "./point-contract-info";
 import { readExcelFile } from "@/lib/file-helper";
 import { formatCustomerData } from "@/lib/utils";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
+import { Company } from "@/models/company.model";
+import { apiService } from "@/services/api.service";
+import { CustomerPoint, Point } from "@/models/point.model";
 
 type Props = {
-  customerPoints: { name: string; wallet: string; value: string }[];
-  hasContract?: boolean;
-  contract?: {
-    address: string;
-    name: string | null | undefined;
-    symbol: string | null | undefined;
-  };
+  company: Company;
+  dashboardData: Point[];
+  onUploadSuccess: () => void;
 };
 
 const CompanyDashboard: React.FC<Props> = ({
-  customerPoints,
-  hasContract = false,
-  contract,
+  company,
+  dashboardData,
+  onUploadSuccess,
 }) => {
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [showContractFormDialog, setShowContractFormDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);
-  const [customerData, setCustomerData] = useState<
-    { name: string; wallet: string; value: number }[] | null
-  >(null);
-  const [customerPointsData, setCustomerPointsData] = useState<
-    {
-      name: string;
-      wallet: string;
-      value: string;
-    }[]
-  >(customerPoints);
+  const [customerData, setCustomerData] = useState<CustomerPoint[] | null>(
+    null
+  );
 
   const activeAccount = useActiveAccount();
   const companyWalletAddress = activeAccount?.address;
 
+  const isCompanyApproved = company?.is_approved;
+
+  const companyContract = {
+    address: company?.point_contract_address,
+    name: company?.point_name,
+    symbol: company?.point_symbol,
+  };
+
   const uploadCustomerDataMutation = useMutation({
-    mutationFn: uploadCustomerData,
+    mutationFn: apiService.companyUploadPoints,
   });
 
-
   const handleCustomerPointsUpload = () => {
-    if (!customerData || !companyWalletAddress) return;
     uploadCustomerDataMutation.mutate(
       {
-        walletAddress: companyWalletAddress,
-        customerData: customerData,
+        companyId: company.id,
+        points: {
+          customerPoints: customerData || [],
+        },
       },
       {
         onSuccess: (response) => {
-          const formattedData = response.data.map((item: any) => {
-            return {
-              name: item.owner.name,
-              wallet: item.owner.walletAddress,
-              value: item.value,
-            };
-          });
           toast.success("Customer data uploaded successfully");
           setFiles(null);
           setCustomerData(null);
           setShowUploadDialog(false);
-          setCustomerPointsData({
-            ...customerPointsData,
-            ...formattedData,
-          });
+          onUploadSuccess();
+
           window.location.reload(); // TODO - remove this
         },
         onError: (error: any) => {
@@ -104,12 +92,8 @@ const CompanyDashboard: React.FC<Props> = ({
     );
   };
 
-  const calculateTotalPoints = (
-    customerPoints: { name: string; wallet: string; value: string }[]
-  ) => {
-    return customerPoints.reduce((acc, item) => {
-      return acc + parseInt(item.value);
-    }, 0);
+  const calculateTotalPoints = (points: Point[]) => {
+    return points.reduce((acc, point) => acc + point.points, 0);
   };
 
   const handleDownloadTemplate = () => {
@@ -138,10 +122,6 @@ const CompanyDashboard: React.FC<Props> = ({
     };
     processFile();
   }, [files]);
-
-  useEffect(() => {
-    setCustomerPointsData(customerPoints);
-  }, [customerPoints, uploadCustomerDataMutation.data]);
 
   const DisableBlockIfNoContract = ({
     children,
@@ -183,29 +163,24 @@ const CompanyDashboard: React.FC<Props> = ({
           <div className="py-4">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <PointContractInfo
-                  contract={contract}
-                  onContractCreateRequested={() =>
-                    setShowContractFormDialog(true)
-                  }
-                />
-                <DisableBlockIfNoContract disabled={!hasContract}>
+                <PointContractInfo contract={companyContract} />
+                <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-2">
                       <CardDescription>Points On Chain</CardDescription>
                       <CardTitle className="text-4xl">
-                        {customerPoints.length || 0}
+                        {/* {customerPoints.length || 0} */}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="text-xs text-muted-foreground">
                         <div className="flex flex-col">
                           <span>
-                            <span className="font-semibold">999 Million</span>{" "}
-                            points available
+                            <span className="font-semibold">NA</span> points
+                            available
                           </span>
                           <span>
-                            <span className="font-semibold">2345</span> points
+                            <span className="font-semibold">NA</span> points
                             distributed
                           </span>
                         </div>
@@ -214,23 +189,23 @@ const CompanyDashboard: React.FC<Props> = ({
                   </Card>
                 </DisableBlockIfNoContract>
 
-                <DisableBlockIfNoContract disabled={!hasContract}>
+                <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-2">
                       <CardDescription>Total Customers</CardDescription>
                       <CardTitle className="text-4xl">
-                        {customerPoints.length || 0}
+                        {dashboardData.length || 0}
                       </CardTitle>
                     </CardHeader>
                     <CardContent></CardContent>
                   </Card>
                 </DisableBlockIfNoContract>
-                <DisableBlockIfNoContract disabled={!hasContract}>
+                <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-2">
                       <CardDescription>Total Off-Chain points</CardDescription>
                       <CardTitle className="text-4xl">
-                        {calculateTotalPoints(customerPoints) || 0}
+                        {calculateTotalPoints(dashboardData)}
                       </CardTitle>
                     </CardHeader>
                     <CardContent></CardContent>
@@ -239,7 +214,7 @@ const CompanyDashboard: React.FC<Props> = ({
               </div>
 
               <div>
-                <DisableBlockIfNoContract disabled={!hasContract}>
+                <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-3">
                       <div className="flex justify-between">
@@ -258,7 +233,13 @@ const CompanyDashboard: React.FC<Props> = ({
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <UserPointsTable data={customerPointsData} />
+                      <UserPointsTable data={dashboardData.map(item => (
+                        {
+                          name: "",
+                          wallet_address: item.wallet_address || '',
+                          points: item.points.toString(),
+                        }
+                      ))} />
                     </CardContent>
                   </Card>
                 </DisableBlockIfNoContract>
@@ -266,13 +247,6 @@ const CompanyDashboard: React.FC<Props> = ({
             </div>
           </div>
         </div>
-
-        <Dialog
-          open={showContractFormDialog}
-          onOpenChange={setShowContractFormDialog}
-        >
-          <DialogContent className=""></DialogContent>
-        </Dialog>
 
         <Dialog open={showUploadDialog} onOpenChange={setShowUploadDialog}>
           <DialogContent className="">

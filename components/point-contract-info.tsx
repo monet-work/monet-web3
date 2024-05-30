@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -13,12 +12,10 @@ type Props = {
     name: string | undefined | null;
     symbol: string | undefined | null;
   };
-  onContractCreateRequested: () => void;
 };
 
 const PointContractInfo: React.FC<Props> = ({
   contract,
-  onContractCreateRequested,
 }) => {
   const { address, name, symbol } = contract ?? {};
   return (
@@ -34,8 +31,8 @@ const PointContractInfo: React.FC<Props> = ({
               </span>
             ) : (
               <span>
-                You do not have a points contract yet. Click the button below to
-                create one.
+                Your request to create a points contract is pending. You will be
+                able to access your dashboard once the contract is created.
               </span>
             )}
           </CardDescription>
@@ -69,9 +66,7 @@ const PointContractInfo: React.FC<Props> = ({
             </div>
           ) : (
             <div>
-              <Button onClick={onContractCreateRequested}>
-                Create Points Contract
-              </Button>
+              <p>Contract creation pending</p>
             </div>
           )}
         </CardContent>
