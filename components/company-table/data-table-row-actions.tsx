@@ -2,27 +2,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { approveCompany, rejectCompany } from "@/lib/api-requests";
 import { toast } from "sonner";
+import { apiService } from "@/services/api.service";
 
 type Props = {
   approved: boolean;
-  companyWalletAddress: string;
+  companyUserId: string;
 };
 
 const CompanyTableRowActions: React.FC<Props> = ({
   approved,
-  companyWalletAddress,
+  companyUserId,
 }) => {
   const queryClient = useQueryClient();
   const approveCompanyMutation = useMutation({
-    mutationFn: approveCompany,
+    mutationFn: apiService.approveAdminCompany,
   });
 
   const rejectCompanyMutation = useMutation({
-    mutationFn: rejectCompany,
+    mutationFn: apiService.rejectAdminCompany,
   });
 
   const handleApprove = async () => {
-    await approveCompanyMutation.mutate(companyWalletAddress, {
+    await approveCompanyMutation.mutate(companyUserId, {
       onSuccess: () => {
         toast.success("Company approved");
         queryClient.invalidateQueries({ queryKey: ["companies"] });
@@ -31,7 +32,7 @@ const CompanyTableRowActions: React.FC<Props> = ({
   };
 
   const handleReject = async () => {
-    await rejectCompanyMutation.mutate(companyWalletAddress, {
+    await rejectCompanyMutation.mutate(companyUserId, {
       onSuccess: () => {
         toast.success("Company rejected");
         queryClient.invalidateQueries({ queryKey: ["companies"] });
