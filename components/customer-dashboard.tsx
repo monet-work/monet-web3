@@ -3,17 +3,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { useActiveAccount } from "thirdweb/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "./ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
+import { useUserStore } from "@/store/userStore";
 
 const CustomerDashboard = () => {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
   const customerStore = useCustomerStore();
+  const userStore = useUserStore();
   const {
     data: customerPointsResponse,
     isLoading,
@@ -45,7 +46,7 @@ const CustomerDashboard = () => {
 
                   {customerPointsResponse?.data &&
                   !(customerPointsResponse?.data.points.length > 0) ? (
-                    <div className="text-center h-full flex justify-center items-center h-full">
+                    <div className="text-center h-full flex justify-center items-center">
                       <span>No off-chain points available</span>
                     </div>
                   ) : null}

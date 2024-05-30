@@ -4,6 +4,7 @@ import AdminSubmitRequest from "@/components/admin-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
 import { useAdminStore } from "@/store/adminStore";
 import { useUserStore } from "@/store/userStore";
@@ -18,8 +19,8 @@ const SubmitRequestPage: React.FC = () => {
   const adminStore = useAdminStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
-  const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
+  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, null);
+  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, null);
 
   const walletSignatureVerficationMutation = useMutation({
     mutationFn: apiService.adminVerifyWalletStep2,

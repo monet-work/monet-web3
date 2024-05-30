@@ -1,3 +1,5 @@
+'use client';
+
 import CustomerDashboard from "@/components/customer-dashboard";
 
 const CustomerDashboardPage = () => {

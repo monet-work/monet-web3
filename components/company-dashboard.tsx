@@ -1,3 +1,5 @@
+'use client';
+
 import { client } from "@/app/thirdweb";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";

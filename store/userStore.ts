@@ -1,4 +1,5 @@
-import { User } from "@/xata";
+
+import { User } from "@/models/user.model";
 import { create } from "zustand";
 
 type Store = {

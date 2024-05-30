@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -9,7 +9,6 @@ import {
 import useLocalStorage from "./useLocalStorage";
 import { createWallet } from "thirdweb/wallets";
 import { apiService } from "@/services/api.service";
-import { delay } from "@/lib/utils";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
 const useAuth = () => {
@@ -51,7 +50,7 @@ const useAuth = () => {
   } = useQuery({
     queryKey: ["auth"],
     queryFn: apiService.authenticate,
-    enabled: isPrivateRoute && !!accessToken?.token,
+    enabled: isPrivateRoute
   });
 
   useEffect(() => {

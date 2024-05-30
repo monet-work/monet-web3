@@ -2,10 +2,10 @@
 
 import CompanyDashboard from "@/components/company-dashboard";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { getCompanyDashboardData } from "@/lib/api-requests";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
 import { useCompanyStore } from "@/store/companyStore";
+import { useUserStore } from "@/store/userStore";
 import { Company } from "@/xata";
 import { useQuery } from "@tanstack/react-query";
 import { useActiveAccount } from "thirdweb/react";
@@ -13,6 +13,7 @@ import { useActiveAccount } from "thirdweb/react";
 const CompanyDashboardPage = () => {
   const activeAccount = useActiveAccount();
   const companyStore = useCompanyStore();
+  const userStore = useUserStore();
   const walletAddress = activeAccount?.address;
   const [refreshToken, setRefreshToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.REFRESH_TOKEN,
@@ -26,10 +27,10 @@ const CompanyDashboardPage = () => {
     ],
     queryFn: () => {
       return apiService.fetchCompanyDashboard(
-        companyStore.company?.id!,
+        companyStore.company?.id || userStore.user?.company.id || ""
       );
     },
-    enabled: !!companyStore.company?.id && !!refreshToken.token,
+    enabled: !!companyStore.company?.id || !!userStore.user?.company.id,
   });
 
   const parseContractInfo = (company?: Partial<Company>) => {
