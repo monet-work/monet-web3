@@ -7,6 +7,7 @@ const API_ENDPOINTS = {
     COMPANY_VERIFY_WALLET_1: 'companies/verify-wallet-1',
     COMPANY_VERIFY_WALLET_2: 'companies/verify-wallet-2',
     COMPANY_UPLOAD_POINTS: (walletId: string) => `companies/${walletId}/upload-points`,
+    COMPANY_DASHBOARD: (companyId: string) => `companies/${companyId}/dashboard`,
 
     // customers
     CUSTOMER_VERIFY_WALLET_1: 'customers/verify-wallet-1',

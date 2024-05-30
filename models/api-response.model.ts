@@ -1,6 +1,7 @@
 import { Customer } from "./customer.model";
-import { Admin, AuthTokens, Company } from "./company.model";
+import { AuthTokens, Company } from "./company.model";
 import { Point } from "./point.model";
+import { Admin } from "./admin.model";
 
 export interface VerifyWalletResponse {
   words: string;

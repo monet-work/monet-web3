@@ -1,21 +1,22 @@
-import { Company } from "@/models/company.model";
+
+import { Admin } from "@/models/admin.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 type Store = {
-  company: Company | null;
-  setCompany(customer: Company | null): void;
+  admin: Admin | null;
+  setAdmin(customer: Admin | null): void;
 };
 
-export const useCompanyStore = create<Store>()(
+export const useAdminStore = create<Store>()(
   persist(
     (set) => ({
-      company: null,
-      setCompany: (company) => set({ company }),
+      admin: null,
+      setAdmin: (admin) => set({ admin }),
     }),
     {
-      name: LOCALSTORAGE_KEYS.COMPANY,
+      name: LOCALSTORAGE_KEYS.ADMIN,
       storage: createJSONStorage(() => localStorage),
     }
   )

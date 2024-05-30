@@ -21,12 +21,7 @@ const VerifyAdminWalletPage = () => {
     if (!activeAccount) return;
     requestWalletVerificationMutation.mutate(activeAccount.address, {
       onSuccess: (response) => {
-        const { isRegistered, words } = response.data;
-
-        if (isRegistered && accessToken && refreshToken) {
-          router.push("/admin/dashboard");
-          return;
-        }
+        const { words } = response.data;
 
         userStore.setVerificationWords(words);
         router.push("/admin/submit-request");

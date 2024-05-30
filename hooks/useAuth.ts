@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -28,23 +28,30 @@ const useAuth = () => {
     ""
   );
   const router = useRouter();
-  
+
   const publicRoutes = [
     "/",
     "/company/login",
     "/customer/login",
+    "/admin/login",
     "/company/verify",
     "/customer/verify",
     "/admin/verify",
-    "/admin/login",
     "/company/submit-request",
     "/customer/submit-request",
+    "/admin/submit-request",
   ];
-  
+
   const isPrivateRoute = !publicRoutes.includes(pathname);
 
-  const authMutation = useMutation({
-    mutationFn: apiService.authenticate,
+  const {
+    data: authResponse,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["auth"],
+    queryFn: apiService.authenticate,
+    enabled: isPrivateRoute,
   });
 
   useEffect(() => {
@@ -57,40 +64,30 @@ const useAuth = () => {
     // detect logout
     if (!activeAccount && thirdwebConnected) {
       //logout
-      console.log('no active account')
+      console.log("no active account");
       logout();
     }
   }, [activeAccount, thirdwebConnected]);
 
   useEffect(() => {
-    if (!isPrivateRoute) return;
+    if (authResponse) {
+      const {
+        company,
+        customer,
+        email,
+        isEmailVerified,
+        name,
+        roles,
+        wallet_address,
+      } = authResponse.data;
+    }
+  }, [authResponse]);
 
-    const performAuthCheck = async () => {
-      await delay(10);
-
-      authMutation.mutate(refreshToken?.token, {
-        onError: (error) => {
-          console.error(error);
-          console.log('auth mutation eror')
-          logout();
-        },
-        onSuccess: (response) => {
-          const {
-            company,
-            customer,
-            email,
-            isEmailVerified,
-            wallet_address,
-            roles,
-            name,
-            id,
-          } = response.data;
-        },
-      });
-    };
-
-    performAuthCheck();
-  }, [accessToken, refreshToken, isPrivateRoute]);
+  useEffect(() => {
+    if (error) {
+      logout();
+    }
+  }, [error]);
 
   const logout = () => {
     const wallet = createWallet("io.metamask");
@@ -100,8 +97,8 @@ const useAuth = () => {
   };
 
   return {
-    isLoading: authMutation.isPending ?? true,
-    error: authMutation.error,
+    isLoading: isLoading,
+    error: error,
     logout,
   };
 };

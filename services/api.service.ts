@@ -38,6 +38,7 @@ const matchesDynamicRoute = (url: string, pattern: string) => {
 const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
+  `${API_BASE_URL}/companies/:companyId/dashboard`,
 ];
 
 // axios interceptors
@@ -50,7 +51,6 @@ axios.interceptors.request.use(
       const isSecuredRoute = securedRoutes.some((route) =>
         matchesDynamicRoute(config.url!, route)
       );
-      console.log(isSecuredRoute, config.url, "is secured route", "url");
       // Add token to request header
       if (isSecuredRoute) {
         const accessToken = JSON.parse(
@@ -69,12 +69,9 @@ axios.interceptors.request.use(
   }
 );
 
-const authenticate = async (refreshToken: string) => {
+const authenticate = async () => {
   return axios.get<AuthResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
-    {
-      params: { refreshToken },
-    }
+    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`
   );
 };
 
@@ -94,6 +91,14 @@ const companyVerifyWalletStep2 = async (
   );
 };
 
+const fetchCompanyDashboard = async (
+  companyId: string
+) => {
+  return axios.get(
+    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_DASHBOARD(companyId)}`
+  );
+};
+
 const companyUploadPoints = async (
   companyId: string,
   payload: CompanyUploadPointsPayload
@@ -104,7 +109,7 @@ const companyUploadPoints = async (
 };
 
 const adminVerifyWalletStep1 = async (wallet: string) => {
-  return axios.post<VerifyWalletResponse>(
+  return axios.post<Pick<VerifyWalletResponse, "words">>(
     `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_1}`,
     { walletAddress: wallet }
   );
@@ -151,6 +156,8 @@ export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
   companyVerifyWalletStep2,
+  fetchCompanyDashboard,
+  companyUploadPoints,
   customerVerifyWalletStep1,
   customerVerifyWalletStep2,
   fetchCustomerPoints,

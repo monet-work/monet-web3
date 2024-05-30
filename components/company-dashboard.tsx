@@ -11,7 +11,6 @@ import {
 import { Button } from "./ui/button";
 import UserPointsTable from "./users-points-table";
 import { useEffect, useState } from "react";
-import { CustomerPoint } from "@/models/point.model";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   FileInput,
@@ -20,12 +19,11 @@ import {
   FileUploaderItem,
 } from "@/components/ui/file-uploader";
 import FileSvgDraw from "./file-svg-draw";
-import { LockIcon, Paperclip } from "lucide-react";
+import { Paperclip } from "lucide-react";
 import { DropzoneOptions } from "react-dropzone";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCompanyContract, uploadCustomerData } from "@/lib/api-requests";
 import { toast } from "sonner";
-import CompanyRequestForm from "./forms/company-request-form";
 import { useCompanyStore } from "@/store/companyStore";
 import PointContractInfo from "./point-contract-info";
 import { readExcelFile } from "@/lib/file-helper";
@@ -48,7 +46,6 @@ const CompanyDashboard: React.FC<Props> = ({
   contract,
 }) => {
   const companyStore = useCompanyStore();
-  const queryClient = useQueryClient();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showContractFormDialog, setShowContractFormDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);
@@ -70,9 +67,6 @@ const CompanyDashboard: React.FC<Props> = ({
     mutationFn: uploadCustomerData,
   });
 
-  const createCompanyContractMutation = useMutation({
-    mutationFn: createCompanyContract,
-  });
 
   const handleCustomerPointsUpload = () => {
     if (!customerData || !companyWalletAddress) return;

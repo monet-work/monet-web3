@@ -1,7 +1,7 @@
 import { Customer } from "@/models/customer.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type Store = {
   customer: Customer | null;
@@ -14,8 +14,9 @@ const useCustomerStore = create<Store>()(
       customer: null,
       setCustomer: (customer) => set({ customer }),
     }),
-    { name: LOCALSTORAGE_KEYS.CUSTOMER, 
-      
+    {
+      name: LOCALSTORAGE_KEYS.CUSTOMER,
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
