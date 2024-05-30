@@ -32,3 +32,13 @@ export interface CompanyDashboardResponse {
   company: Company;
   dashboard: Point[];
 }
+
+export interface CustomerRedeemPointsResponse {
+  data: {
+    canRedeem: boolean;
+    onchainPoints: number;
+    signature: string;
+    offChainPoints: number;
+    amount: number;
+  }
+}

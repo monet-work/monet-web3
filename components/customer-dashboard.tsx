@@ -1,20 +1,15 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { useActiveAccount } from "thirdweb/react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "./ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
-import { useUserStore } from "@/store/userStore";
 
 const CustomerDashboard = () => {
-  const activeAccount = useActiveAccount();
-  const walletAddress = activeAccount?.address;
   const customerStore = useCustomerStore();
-  const userStore = useUserStore();
   const {
     data: customerPointsResponse,
     isLoading,
@@ -27,21 +22,29 @@ const CustomerDashboard = () => {
     enabled: !!customerStore?.customer?.id,
   });
 
+  const redeemPointsMutation = useMutation({
+    mutationFn: apiService.customerRedeemPoints,
+  });
+
+  const handleRedeemPoints = (companyId: string, customerId: string, amount: string) => {
+
+  }
+
   return (
     <main className="bg-background min-h-screen">
       <div className="container py-16">
-        <div className="max-w-xl">
+        <div className="w-full">
           <Card>
             <CardHeader>
               <CardTitle>Your collected points</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-8 min-h-[400px]">
               <Tabs defaultValue="offchain" className="">
-                <TabsList className="grid w-full grid-cols-2">
+                <TabsList className="grid grid-cols-2">
                   <TabsTrigger value="offchain">Off-Chain</TabsTrigger>
                   <TabsTrigger value="onchain">On-Chain</TabsTrigger>
                 </TabsList>
-                <TabsContent value="offchain" className="h-full">
+                <TabsContent value="offchain" className="h-full py-4">
                   {isLoading && <Skeleton className="w-full h-[100px]" />}
 
                   {customerPointsResponse?.data &&
@@ -52,10 +55,10 @@ const CustomerDashboard = () => {
                   ) : null}
 
                   {customerPointsResponse?.data &&
-                    customerPointsResponse?.data?.points.map((point: any) => (
+                    customerPointsResponse?.data?.points.map((point) => (
                       <div
                         key={point.id}
-                        className="flex items-center justify-between"
+                        className="flex items-center py-4 px-2 justify-between odd:bg-gray-900"
                       >
                         <div className="flex items-center">
                           <div className="ml-4">
@@ -67,17 +70,17 @@ const CustomerDashboard = () => {
                             <div className="text-xs">
                               {/* point name and symbol in a single line */}
                               <span>
-                                {point?.company?.pointName} (
-                                {point?.company?.pointSymbol})
+                                {point?.company?.point_name} (
+                                {point?.company?.point_symbol})
                               </span>
                             </div>
                           </div>
                         </div>
                         <div className="flex gap-4 items-center">
                           <div className="text-lg font-semibold">
-                            {point?.value}
+                            {point?.points}
                           </div>
-                          <Button>Transfer</Button>
+                          <Button variant={'outline'}>Redeem</Button>
                         </div>
                       </div>
                     ))}

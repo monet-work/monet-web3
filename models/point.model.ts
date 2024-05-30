@@ -1,3 +1,6 @@
+import { Company } from "./company.model";
+
+
 export interface Point {
   id: string;
   created_at: string;
@@ -5,6 +8,7 @@ export interface Point {
   points: number;
   company_id: string;
   wallet_address: string;
+  company?: Company;
 }
 
 

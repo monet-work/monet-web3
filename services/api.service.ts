@@ -7,6 +7,7 @@ import {
   AuthResponse,
   CompanyDashboardResponse,
   CustomerPointResponse,
+  CustomerRedeemPointsResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
@@ -101,12 +102,10 @@ const fetchCompanyDashboard = async (companyId: string) => {
   );
 };
 
-const companyUploadPoints = async (
-  payload: {
-    points: CompanyUploadPointsPayload,
-    companyId: string
-  }
-) => {
+const companyUploadPoints = async (payload: {
+  points: CompanyUploadPointsPayload;
+  companyId: string;
+}) => {
   return axios.post(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_UPLOAD_POINTS(payload.companyId)}`,
     payload.points
@@ -161,9 +160,17 @@ const fetchAdminCompanies = async () => {
   return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`);
 };
 
-const customerRedeemPoints = async (customerId: string) => {
-  return axios.post(
-    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_REDEEM_POINTS(customerId)}`
+const customerRedeemPoints = async (payload: {
+  customerId: string;
+  amount: string;
+  companyId: string;
+}) => {
+  return axios.post<CustomerRedeemPointsResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_REDEEM_POINTS(payload.customerId)}`,
+    {
+      amount: payload.amount,
+      companyId: payload.companyId,
+    }
   );
 };
 
@@ -179,4 +186,5 @@ export const apiService = {
   adminVerifyWalletStep1,
   adminVerifyWalletStep2,
   fetchAdminCompanies,
+  customerRedeemPoints,
 };
