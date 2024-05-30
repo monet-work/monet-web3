@@ -13,6 +13,7 @@ const API_ENDPOINTS = {
     CUSTOMER_VERIFY_WALLET_1: 'customers/verify-wallet-1',
     CUSTOMER_VERIFY_WALLET_2: 'customers/verify-wallet-2',
     CUSTOMER_POINTS: (customerId: string) => `customers/${customerId}/points`,
+    CUSTOMER_REDEEM_POINTS: (customerId: string) => `customers/${customerId}/redeem`,
 
     // admins
     ADMIN_VERIFY_WALLET_1: 'admins/verify-wallet-1',

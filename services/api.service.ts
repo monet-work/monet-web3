@@ -159,6 +159,12 @@ const fetchAdminCompanies = async () => {
   return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`);
 }
 
+const customerRedeemPoints = async (customerId: string) => {
+  return axios.post(
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_REDEEM_POINTS(customerId)}`
+  );
+}
+
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
