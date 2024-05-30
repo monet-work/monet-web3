@@ -39,13 +39,13 @@ const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
   `${API_BASE_URL}/companies/:companyId/dashboard`,
+  `${API_BASE_URL}/admins/companies`,
 ];
 
 // axios interceptors
 // intercept specific requests
 axios.interceptors.request.use(
   (config) => {
-    console.log("config url", config.url);
     // secured routes
     if (config.url) {
       const isSecuredRoute = securedRoutes.some((route) =>
@@ -152,6 +152,10 @@ const fetchCustomerPoints = async (customerId: string) => {
   );
 };
 
+const fetchAdminCompanies = async () => {
+  return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`);
+}
+
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -163,4 +167,5 @@ export const apiService = {
   fetchCustomerPoints,
   adminVerifyWalletStep1,
   adminVerifyWalletStep2,
+  fetchAdminCompanies,
 };

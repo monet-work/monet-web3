@@ -1,7 +1,6 @@
 "use client";
 
 import AdminSubmitRequest from "@/components/admin-submit-request";
-import CompanySubmitRequest from "@/components/company-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -46,8 +45,6 @@ const SubmitRequestPage: React.FC = () => {
             const walletSignature = await activeAccount?.signMessage({
               message: userStore.verificationWords!,
             });
-
-            console.log('readhe d herer')
 
             walletSignatureVerficationMutation.mutate(
               {

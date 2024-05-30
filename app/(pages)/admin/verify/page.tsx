@@ -7,6 +7,7 @@ import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -16,6 +17,12 @@ const VerifyAdminWalletPage = () => {
   const router = useRouter();
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", null);
   const [refreshToken, setRefreshToken] = useLocalStorage("refreshToken", null);
+
+  useEffect(() => {
+    if (!activeAccount) {
+      router.push("/admin/login");
+    }
+  }, []);
 
   const handleRequestVerification = () => {
     if (!activeAccount) return;

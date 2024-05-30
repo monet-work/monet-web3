@@ -51,7 +51,7 @@ const useAuth = () => {
   } = useQuery({
     queryKey: ["auth"],
     queryFn: apiService.authenticate,
-    enabled: isPrivateRoute,
+    enabled: isPrivateRoute && !!accessToken?.token,
   });
 
   useEffect(() => {
@@ -85,6 +85,7 @@ const useAuth = () => {
 
   useEffect(() => {
     if (error) {
+      console.log("authError", error);
       logout();
     }
   }, [error]);

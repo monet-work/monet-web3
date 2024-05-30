@@ -8,6 +8,7 @@ import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -15,8 +16,20 @@ const VerifyConpanyWalletPage = () => {
   const activeAccount = useActiveAccount();
   const userStore = useUserStore();
   const router = useRouter();
-  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
-  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
+  const [accessToken, setAccessToken] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
+    ""
+  );
+  const [refreshToken, setRefreshToken] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
+    ""
+  );
+
+  useEffect(() => {
+    if (!activeAccount) {
+      router.push("/company/login");
+    }
+  }, []);
 
   const handleRequestVerification = () => {
     if (!activeAccount) return;

@@ -45,7 +45,6 @@ const CompanyDashboard: React.FC<Props> = ({
   hasContract = false,
   contract,
 }) => {
-  const companyStore = useCompanyStore();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showContractFormDialog, setShowContractFormDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);

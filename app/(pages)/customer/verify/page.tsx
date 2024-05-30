@@ -8,7 +8,7 @@ import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -19,28 +19,30 @@ const VerifyCustomerWalletPage = () => {
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     ""
   );
+
+  useEffect(() => {
+    if (!activeAccount) {
+      router.push("/customer/login");
+    }
+  }, []);
+
   const userStore = useUserStore();
   const router = useRouter();
   const handleRequestVerification = () => {
     if (!activeAccount) return;
-    console.log(activeAccount.address, 'address')
-    requestWalletVerificationMutation.mutate(
-      activeAccount.address,
-      {
-        onSuccess: (response) => {
-          const { isRegistered, words } = response.data;
-          
-          userStore.setVerificationWords(words);
-          userStore.setIsRegistered(isRegistered)
-          router.push("/customer/submit-request");
-        },
-        onError: () => {
-          toast.error("Failed to request verification");
-        },
-      }
-    );
-  };
+    requestWalletVerificationMutation.mutate(activeAccount.address, {
+      onSuccess: (response) => {
+        const { isRegistered, words } = response.data;
 
+        userStore.setVerificationWords(words);
+        userStore.setIsRegistered(isRegistered);
+        router.push("/customer/submit-request");
+      },
+      onError: () => {
+        toast.error("Failed to request verification");
+      },
+    });
+  };
 
   const requestWalletVerificationMutation = useMutation({
     mutationFn: apiService.customerVerifyWalletStep1,
