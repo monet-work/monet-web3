@@ -94,6 +94,7 @@ const useAuth = () => {
     disconnect(wallet);
     router.replace("/");
     localStorage.clear();
+    window.location.reload();
   };
 
   return {

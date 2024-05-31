@@ -8,22 +8,27 @@ import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
 import { toast } from "sonner";
-import {
-  PreparedTransaction,
-  prepareContractCall,
-  sendTransaction,
-} from "thirdweb";
-import { monetPointsContractFactory, ownerWallet } from "@/lib/contracts";
+import { PreparedTransaction, prepareContractCall } from "thirdweb";
+import { monetPointsContractFactory } from "@/lib/contracts";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import RedeemPointsForm from "./forms/redeem-points-form";
+import { Point } from "@/models/point.model";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
   const account = useActiveAccount();
+  const [showRedeemForm, setShowRedeemForm] = useState(false);
+  const [activePointToRedeem, setActivePointToRedeem] = useState<Point | null>(
+    null
+  );
 
   const {
     data: customerPointsResponse,
     isLoading,
     error,
+    refetch: refetchCustomerPoints,
   } = useQuery({
     queryKey: ["customers/points", { customerId: customerStore?.customer?.id }],
     queryFn: () => {
@@ -38,17 +43,17 @@ const CustomerDashboard = () => {
 
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
 
-  const handleRedeemPoints = (data: {
-    companyId: string;
-    customerId: string;
-    amount: string;
-    contractAddress: string;
-    walletAddress: string;
-  }) => {
-    const { companyId, customerId, amount, walletAddress } = data;
-
+  const processRedeemPoints = async (point: Point) => {
+    const { company_id, points, company } = point;
+    if (!customerStore.customer) return;
+    if (!company) return;
+    const { point_contract_address } = company;
     redeemPointsMutation.mutate(
-      { companyId, customerId, amount },
+      {
+        companyId: company_id,
+        customerId: customerStore.customer?.id,
+        amount: String(points),
+      },
       {
         onSuccess: async (response) => {
           const {
@@ -66,16 +71,18 @@ const CustomerDashboard = () => {
           if (canRedeem) {
             const call = async () => {
               const transaction = await prepareContractCall({
-                contract: monetPointsContractFactory(data.contractAddress),
+                contract: monetPointsContractFactory(point_contract_address),
                 method: "mint",
                 params: [BigInt(amount), signature as any],
-                gas: "1000000000" as any,
               });
 
               await sendTransaction(transaction as PreparedTransaction, {
                 onSuccess: (result) => {
                   toast.success("Points redeemed successfully");
-                  console.log(result, "result");
+                  setShowRedeemForm(false);
+
+                  //refetch points
+                  refetchCustomerPoints();
                 },
 
                 onError: (error) => {
@@ -93,6 +100,12 @@ const CustomerDashboard = () => {
         },
       }
     );
+  };
+
+  const handleRedeemPoints = (point: Point) => {
+    setActivePointToRedeem(point);
+
+    setShowRedeemForm(true);
   };
 
   return (
@@ -150,18 +163,9 @@ const CustomerDashboard = () => {
                             loading={
                               redeemPointsMutation.isPending || isPending
                             }
-                            onClick={() =>
-                              point &&
-                              point.company &&
-                              handleRedeemPoints({
-                                companyId: point.company.id,
-                                customerId: customerStore?.customer?.id!,
-                                amount: String(point.points),
-                                contractAddress:
-                                  point.company.point_contract_address,
-                                walletAddress: point.wallet_address,
-                              })
-                            }
+                            onClick={() => {
+                              handleRedeemPoints(point);
+                            }}
                           >
                             Redeem
                           </Button>
@@ -181,6 +185,33 @@ const CustomerDashboard = () => {
           </Card>
         </div>
       </div>
+
+      <Dialog
+        open={showRedeemForm}
+        onOpenChange={(open) => setShowRedeemForm(open)}
+      >
+        <DialogContent>
+          <div className="p-8">
+            <h1 className="text-2xl font-bold">Redeem Points</h1>
+            <p className="text-sm mt-2 max-w-sm text-muted-foreground">
+              Enter the amount of points you want to redeem.
+            </p>
+            <RedeemPointsForm
+              totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
+              onSubmitForm={(values) => {
+                const { amount } = values;
+
+                if (activePointToRedeem && activePointToRedeem.company) {
+                  processRedeemPoints({
+                    ...activePointToRedeem,
+                    points: Number(amount),
+                  });
+                }
+              }}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 };

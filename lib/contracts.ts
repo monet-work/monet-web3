@@ -34,9 +34,3 @@ export const monetPointsContractFactory = (address: string) => {
     abi: MONET_POINT_CONTRACT_ABI,
   });
 }
-
-
-export const ownerWallet = privateKeyAccount({
-  client,
-  privateKey: process.env.NEXT_PUBLIC_OWNER_WALLET_PRIVATE_KEY!,
-});
