@@ -4,7 +4,7 @@ import useAuth from "@/hooks/useAuth";
 import { Spinner } from "./ui/spinner";
 import { AutoConnect } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
-import { client } from "@/app/thirdweb";
+import { client } from "@/app/contract-utils";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 type Props = {
   children?: React.ReactNode;

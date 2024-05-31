@@ -1,6 +1,6 @@
 "use client";
 
-import { connectWallet } from "@/app/thirdweb";
+import { connectWallet } from "@/app/contract-utils";
 import LoginAdmin from "@/components/login-admin";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { apiService } from "@/services/api.service";

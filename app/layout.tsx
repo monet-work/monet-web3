@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThirdwebProvider } from "@/app/thirdweb";
+import { ThirdwebProvider } from "@/app/contract-utils";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";

@@ -18,7 +18,7 @@ import {
   airdropContract,
   eigenLayerTokenContract,
   elpContract,
-} from "@/app/thirdweb";
+} from "@/app/contract-utils";
 import { Dialog, DialogContent } from "./ui/dialog";
 
 type CLAIM_AIRDROP_STATE = "PENDING" | "CLAIMING" | "CLAIMED";

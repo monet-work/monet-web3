@@ -1,6 +1,6 @@
 "use client";
 
-import { elpContract } from "@/app/thirdweb";
+import { elpContract } from "@/app/contract-utils";
 import { useGlitch } from "react-powerglitch";
 import {
   PreparedTransaction,

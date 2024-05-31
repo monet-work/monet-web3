@@ -80,6 +80,13 @@ const authenticate = async () => {
   );
 };
 
+const refreshToken = async (refreshToken: string) => {
+  return axios.post<AuthResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
+    { refreshToken }
+  );
+}
+
 const companyVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_1}`,

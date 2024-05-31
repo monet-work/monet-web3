@@ -1,6 +1,6 @@
 "use client";
 
-import { ConnectButton, client } from "@/app/thirdweb";
+import { ConnectButton, client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 

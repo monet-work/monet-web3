@@ -4,7 +4,7 @@ import { Listing, ListingStatus } from "@/models/listing";
 import ListingCard from "./listing-card";
 import { useSendTransaction } from "thirdweb/react";
 import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
-import { elpMarketplaceContract } from "@/app/thirdweb";
+import { elpMarketplaceContract } from "@/app/contract-utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

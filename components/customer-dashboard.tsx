@@ -8,9 +8,18 @@ import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
 import { toast } from "sonner";
+import {
+  PreparedTransaction,
+  prepareContractCall,
+  sendTransaction,
+} from "thirdweb";
+import { monetPointsContractFactory, ownerWallet } from "@/lib/contracts";
+import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
+  const account = useActiveAccount();
+
   const {
     data: customerPointsResponse,
     isLoading,
@@ -27,11 +36,17 @@ const CustomerDashboard = () => {
     mutationFn: apiService.customerRedeemPoints,
   });
 
-  const handleRedeemPoints = (
-    companyId: string,
-    customerId: string,
-    amount: string
-  ) => {
+  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+
+  const handleRedeemPoints = (data: {
+    companyId: string;
+    customerId: string;
+    amount: string;
+    contractAddress: string;
+    walletAddress: string;
+  }) => {
+    const { companyId, customerId, amount, walletAddress } = data;
+
     redeemPointsMutation.mutate(
       { companyId, customerId, amount },
       {
@@ -43,7 +58,34 @@ const CustomerDashboard = () => {
             offChainPoints,
             onchainPoints,
           } = response.data.data;
-          console.log(response);
+
+          console.log(response.data.data, "response.data.data");
+
+          //prepare transaction
+
+          if (canRedeem) {
+            const call = async () => {
+              const transaction = await prepareContractCall({
+                contract: monetPointsContractFactory(data.contractAddress),
+                method: "mint",
+                params: [BigInt(amount), signature as any],
+                gas: "1000000000" as any,
+              });
+
+              await sendTransaction(transaction as PreparedTransaction, {
+                onSuccess: (result) => {
+                  toast.success("Points redeemed successfully");
+                  console.log(result, "result");
+                },
+
+                onError: (error) => {
+                  toast.error(error.message);
+                },
+              });
+            };
+
+            call();
+          }
         },
 
         onError: (error) => {
@@ -105,15 +147,20 @@ const CustomerDashboard = () => {
                           </div>
                           <Button
                             variant={"outline"}
-                            loading={redeemPointsMutation.isPending}
+                            loading={
+                              redeemPointsMutation.isPending || isPending
+                            }
                             onClick={() =>
                               point &&
                               point.company &&
-                              handleRedeemPoints(
-                                point?.company?.id,
-                                customerStore?.customer?.id!,
-                                String(point?.points)
-                              )
+                              handleRedeemPoints({
+                                companyId: point.company.id,
+                                customerId: customerStore?.customer?.id!,
+                                amount: String(point.points),
+                                contractAddress:
+                                  point.company.point_contract_address,
+                                walletAddress: point.wallet_address,
+                              })
                             }
                           >
                             Redeem

@@ -1,4 +1,4 @@
-import { elpContract, elpMarketplaceContract } from "@/app/thirdweb";
+import { elpContract, elpMarketplaceContract } from "@/app/contract-utils";
 import { prepareEvent, watchContractEvents } from "thirdweb";
 import { useContractEvents } from "thirdweb/react";
 
