@@ -42,9 +42,13 @@ const CompanyTableRowActions: React.FC<Props> = ({
 
   return (
     <div className="flex gap-4">
-      {!approved && <Button onClick={handleApprove}>Approve</Button>}
+      {!approved ? (
+        <Button onClick={handleApprove}>Approve</Button>
+      ) : (
+        <div>Already Approved</div>
+      )}
 
-      <Button onClick={handleReject}>Reject</Button>
+      {/* <Button onClick={handleReject}>Reject</Button> */}
     </div>
   );
 };
