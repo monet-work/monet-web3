@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
+import { toast } from "sonner";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
@@ -26,9 +27,31 @@ const CustomerDashboard = () => {
     mutationFn: apiService.customerRedeemPoints,
   });
 
-  const handleRedeemPoints = (companyId: string, customerId: string, amount: string) => {
+  const handleRedeemPoints = (
+    companyId: string,
+    customerId: string,
+    amount: string
+  ) => {
+    redeemPointsMutation.mutate(
+      { companyId, customerId, amount },
+      {
+        onSuccess: async (response) => {
+          const {
+            amount,
+            signature,
+            canRedeem,
+            offChainPoints,
+            onchainPoints,
+          } = response.data.data;
+          console.log(response);
+        },
 
-  }
+        onError: (error) => {
+          toast.error(error.message);
+        },
+      }
+    );
+  };
 
   return (
     <main className="bg-background min-h-screen">
@@ -80,7 +103,21 @@ const CustomerDashboard = () => {
                           <div className="text-lg font-semibold">
                             {point?.points}
                           </div>
-                          <Button variant={'outline'}>Redeem</Button>
+                          <Button
+                            variant={"outline"}
+                            loading={redeemPointsMutation.isPending}
+                            onClick={() =>
+                              point &&
+                              point.company &&
+                              handleRedeemPoints(
+                                point?.company?.id,
+                                customerStore?.customer?.id!,
+                                String(point?.points)
+                              )
+                            }
+                          >
+                            Redeem
+                          </Button>
                         </div>
                       </div>
                     ))}
