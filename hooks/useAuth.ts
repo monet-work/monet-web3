@@ -39,6 +39,7 @@ const useAuth = () => {
     "/company/submit-request",
     "/customer/submit-request",
     "/admin/submit-request",
+    "/marketplace",
   ];
 
   const isPrivateRoute = !publicRoutes.includes(pathname);
@@ -50,7 +51,7 @@ const useAuth = () => {
   } = useQuery({
     queryKey: ["auth"],
     queryFn: apiService.authenticate,
-    enabled: isPrivateRoute
+    enabled: isPrivateRoute,
   });
 
   useEffect(() => {

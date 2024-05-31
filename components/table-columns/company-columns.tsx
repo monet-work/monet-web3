@@ -27,6 +27,20 @@ export const columns: ColumnDef<Company>[] = [
     },
   },
   {
+    accessorKey: "point_contract_address",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Point Contract Address" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="w-[200px]">
+          {row.getValue("point_contract_address")}
+        </div>
+      );
+    },
+  },
+
+  {
     accessorKey: "user",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
