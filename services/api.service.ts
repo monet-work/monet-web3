@@ -81,11 +81,10 @@ const authenticate = async () => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  return axios.post<AuthResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
-    { refreshToken }
-  );
-}
+  return axios.post(`${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`, {
+    refreshToken,
+  });
+};
 
 const companyVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
@@ -208,4 +207,5 @@ export const apiService = {
   fetchAdminCompanies,
   approveAdminCompany,
   customerRedeemPoints,
+  refreshToken,
 };
