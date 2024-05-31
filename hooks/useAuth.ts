@@ -97,7 +97,7 @@ const useAuth = () => {
     if (!activeAccount && thirdwebConnected) {
       //logout
       console.log("no active account");
-      // logout();
+      logout();
     }
   }, [activeAccount, thirdwebConnected]);
 
