@@ -18,13 +18,24 @@ export const columns: ColumnDef<Company>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="id" />
+    ),
+    cell: ({ row }) => {
+      return <div className="w-[200px]">{row.getValue("id")}</div>;
+    },
+  },
+  {
     accessorKey: "user",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
     cell: ({ row }) => {
       return (
-        <div className="w-[200px]">{row.getValue<User>("user")?.email}</div>
+        <div className="w-[200px]">
+          {row.getValue<User>("user")?.email || ""}
+        </div>
       );
     },
   },
@@ -37,21 +48,23 @@ export const columns: ColumnDef<Company>[] = [
       return (
         <div
           className="w-[200px]"
-          title={row.getValue<User>("user")?.walletAddress || ""}
+          title={row.getValue<any>("user")?.wallet_address || ""}
         >
-          {row.getValue<User>("user")?.walletAddress?.slice(0, 10) + "..."}
+          {row.getValue<any>("user")?.wallet_address?.slice(0, 10) + "..."}
         </div>
       );
     },
   },
   {
-    accessorKey: "approved",
+    accessorKey: "is_approved",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Approved" />
     ),
     cell: ({ row }) => (
       <div>
-        {row.getValue("approved") ? `${row.getValue("approved")}` : `Pending`}
+        {row.getValue("is_approved")
+          ? `${row.getValue("is_approved")}`
+          : `Pending`}
       </div>
     ),
   },
@@ -62,10 +75,8 @@ export const columns: ColumnDef<Company>[] = [
     ),
     cell: ({ row }) => (
       <CompanyTableRowActions
-        approved={row.getValue("approved") as boolean}
-        companyWalletAddress={
-          row.getValue<User>("user")?.walletAddress as string
-        }
+        approved={row.getValue("is_approved") as boolean}
+        companyUserId={row.getValue("id") as string}
       />
     ),
   },

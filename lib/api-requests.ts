@@ -50,8 +50,10 @@ export const createCompany = async (data: {
   return axios.post<Company>("/api/v1/company", data);
 };
 
-export const approveCompany = async (walletAddress: string) => {
-  return axios.post<Company>("/api/v1/companies/approve", { walletAddress });
+export const approveCompany = async (userId: string) => {
+  return axios.post<Company>(`/api/v1/admins/companies/${userId}/approve`, {
+    approve: true,
+  });
 };
 
 export const rejectCompany = async (walletAddress: string) => {

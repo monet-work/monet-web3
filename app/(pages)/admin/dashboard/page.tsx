@@ -1,9 +1,14 @@
+"use client";
+
+import AdminDashboard from "@/components/admin-dashboard";
+
+import { useActiveAccount } from "thirdweb/react";
+
 const AdminDashboardPage = () => {
-    return (
-        <div>
-        <h1>Admin Dashboard</h1>
-        </div>
-    );
+  const activeAccount = useActiveAccount();
+  const walletAddress = activeAccount?.address;
+
+  return <AdminDashboard />;
 };
 
 export default AdminDashboardPage;

@@ -156,8 +156,20 @@ const fetchCustomerPoints = async (customerId: string) => {
   );
 };
 
-const fetchAdminCompanies = async () => {
+export const fetchAdminCompanies = async () => {
   return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`);
+};
+
+export const approveAdminCompany = async (companyId: string) => {
+  return axios.post(`${API_BASE_URL}/admins/companies/${companyId}/approve`, {
+    approve: true,
+  });
+};
+
+export const rejectAdminCompany = async (companyId: string) => {
+  return axios.post(`${API_BASE_URL}/admins/companies/${companyId}/approve`, {
+    approve: false,
+  });
 };
 
 const customerRedeemPoints = async (payload: {
@@ -184,7 +196,9 @@ export const apiService = {
   customerVerifyWalletStep2,
   fetchCustomerPoints,
   adminVerifyWalletStep1,
+  rejectAdminCompany,
   adminVerifyWalletStep2,
   fetchAdminCompanies,
+  approveAdminCompany,
   customerRedeemPoints,
 };
