@@ -1,16 +1,12 @@
+import { CustomerPoint } from "@/models/point.model";
 import { DataTable } from "./data-table/data-table";
 import { UserPointsColumns } from "./table-columns/user-points-columns";
 
 type Props = {
-  data: {
-    name: string;
-    wallet: string;
-    value: string;
-  }[];
+  data: {name: string, points: string, wallet_address: string}[];
 };
 
 const UserPointsTable: React.FC<Props> = ({ data }) => {
-  console.log(data, 'data')
   return (
     <DataTable
       columns={UserPointsColumns}

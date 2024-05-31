@@ -1,4 +1,15 @@
-export interface Point {}
+import { Company } from "./company.model";
+
+
+export interface Point {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  points: number;
+  company_id: string;
+  wallet_address: string;
+  company?: Company;
+}
 
 
 export interface CustomerPoint {

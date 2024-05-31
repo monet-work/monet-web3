@@ -16,8 +16,8 @@ export const formatCustomerData = (
   return data.map((item) => {
     return {
       name: item["Name"],
-      wallet: item["Wallet Address"],
-      value: item["Points"],
+      walletAddress: item["Wallet Address"],
+      points: item["Points"],
     };
   });
 };
