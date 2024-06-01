@@ -13,15 +13,15 @@ export const TradeListColumns: ColumnDef<{
   Collateral: string;
   FillType: any;
 }>[] = [
-  {
-    accessorKey: "Price",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("price")}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   accessorKey: "Price",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Price" />
+  //   ),
+  //   cell: ({ row }) => <div className="w-[80px]">{row.getValue("price")}</div>,
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "Amount",
     header: ({ column }) => (

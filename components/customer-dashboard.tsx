@@ -9,12 +9,12 @@ import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
 import { toast } from "sonner";
 import { PreparedTransaction, prepareContractCall } from "thirdweb";
-import { monetPointsContractFactory } from "@/lib/contracts";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import RedeemPointsForm from "./forms/redeem-points-form";
 import { Point } from "@/models/point.model";
+import { monetPointsContractFactory } from "@/app/contract-utils";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
@@ -156,7 +156,7 @@ const CustomerDashboard = () => {
                         </div>
                         <div className="flex gap-4 items-center">
                           <div className="text-lg font-semibold">
-                            {point?.points}
+                            {point?.points} points
                           </div>
                           <Button
                             variant={"outline"}

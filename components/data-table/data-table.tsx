@@ -33,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   loading?: boolean;
   noResultsMessage?: string;
   maxWidth?: string;
+  enablePagination?: boolean;
+  onRowClick?: (rowData: TData) => void; // Added prop for row click event
 }
 
 export function DataTable<TData, TValue>({
@@ -41,6 +43,8 @@ export function DataTable<TData, TValue>({
   loading,
   noResultsMessage,
   maxWidth,
+  enablePagination = false,
+  onRowClick, // Destructuring the new prop
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -72,8 +76,14 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const handleRowClick = (rowData: TData) => {
+    if (onRowClick) {
+      onRowClick(rowData);
+    }
+  };
+
   return (
-    <div className="space-y-4  ">
+    <div className="space-y-4">
       {/* <DataTableToolbar table={table} /> */}
       <div className="rounded-md border">
         <Table>
@@ -109,6 +119,7 @@ export function DataTable<TData, TValue>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      onClick={() => handleRowClick(row.original)} // Added onClick handler
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
@@ -135,7 +146,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* <DataTablePagination table={table} /> */}
+      {enablePagination && <DataTablePagination table={table} />}
     </div>
   );
 }

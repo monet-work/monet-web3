@@ -46,3 +46,26 @@ export const extractLoggedInUserRoles = (jwt: string) => {
 
 
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+// Helper function to check if a URL matches a dynamic pattern
+export const matchesDynamicRoute = (url: string, pattern: string) => {
+  // Decode the URL path
+  const decodedUrl = decodeURIComponent(url).replace(/ /g, "");
+
+  // Strip query parameters if present
+  const [urlPath] = decodedUrl.split("?");
+
+  // Replace dynamic segments with regex patterns specifically in the path part
+  const regexPattern = pattern
+    .split("/")
+    .map((segment) => (segment.startsWith(":") ? "([\\w-]+)" : segment))
+    .join("/");
+
+  // Create the final regex with start and end anchors
+  const regex = new RegExp(`^${regexPattern}$`);
+
+  // Test the URL against the regex pattern
+  const result = regex.test(urlPath);
+
+  return result;
+};

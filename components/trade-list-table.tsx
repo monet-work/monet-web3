@@ -1,6 +1,5 @@
 import React from "react";
 import { DataTable } from "./data-table/data-table";
-import { PointsListColumns } from "./table-columns/points-list-columns";
 import { TradeListColumns } from "./table-columns/trade-list-columns";
 
 type Props = {
@@ -8,13 +7,12 @@ type Props = {
   isLoading: boolean;
 };
 
-function TradeListComponent({ Points, isLoading }: Props) {
+const TradeListComponent: React.FC<Props> = ({ Points, isLoading }) => {
   return (
-    <div className="max-w-7xl px-1 ">
-      {" "}
+    <div className="container">
       <DataTable columns={TradeListColumns} data={Points} loading={isLoading} />
     </div>
   );
-}
+};
 
 export default TradeListComponent;

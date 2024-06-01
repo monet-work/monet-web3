@@ -1,23 +1,29 @@
 import React from "react";
 import { DataTable } from "./data-table/data-table";
 import { PointsListColumns } from "./table-columns/points-list-columns";
+import { useRouter } from "next/navigation";
 
 type Props = {
   Points: any[];
   isLoading: boolean;
 };
 
-function PointsListComponent({ Points, isLoading }: Props) {
+const PointsList: React.FC<Props> = ({ Points, isLoading }) => {
+  const router = useRouter();
   return (
-    <div className="max-w-7xl">
-      {" "}
+    <div className="w-full">
       <DataTable
         columns={PointsListColumns}
         data={Points}
         loading={isLoading}
+        onRowClick={(rowData) => {
+          const pointName = rowData.Token;
+          const urlEncodedPointName = encodeURIComponent(pointName);
+          router.push(`/marketplace/${urlEncodedPointName}`);
+        }}
       />
     </div>
   );
-}
+};
 
-export default PointsListComponent;
+export default PointsList;
