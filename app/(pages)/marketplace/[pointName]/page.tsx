@@ -4,7 +4,7 @@ import { pointsTableData } from "@/data";
 
 const PointPage = () => {
   return (
-    <main>
+    <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-4 w-full container">
         <TradesView />
         <TradeDetails isActive={true} Data={pointsTableData} />

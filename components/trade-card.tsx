@@ -20,14 +20,14 @@ import {
 import { Button } from "./ui/button";
 import Image from "next/image";
 
-const TradeCard:React.FC<Props> = ({
+const TradeCard: React.FC<Props> = ({
   Offer,
   For,
   OfferPrice,
   ForPrice,
   OfferImg,
   ForImg,
-}) =>{
+}) => {
   return (
     <div className="w-full">
       <Card className=" w-full  duration-200 transition cursor-pointer  hover:bg-neutral-700">
@@ -48,14 +48,17 @@ const TradeCard:React.FC<Props> = ({
             <p className="text-xs ">{ForPrice}</p>
           </div>
         </CardContent>
-        <CardFooter className="flex border justify-between">
-          <Button variant={"outline"} size={'xs'}>PARTIAL</Button>
-          <Button variant={'secondary'} size={'xs'}>BUY</Button>
+        <CardFooter className="flex border pb-0 py-3 justify-between">
+          <Button variant={"outline"} size={"xs"}>
+            PARTIAL
+          </Button>
+          <Button variant={"secondary"} size={"xs"}>
+            BUY
+          </Button>
         </CardFooter>
       </Card>
     </div>
   );
-}
+};
 
-
-export default TradeCard
+export default TradeCard;
