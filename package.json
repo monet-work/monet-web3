@@ -28,7 +28,6 @@
     "@tsparticles/engine": "^3.3.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.3.0",
-    "@xata.io/client": "^0.29.3",
     "abitype": "^1.0.2",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",

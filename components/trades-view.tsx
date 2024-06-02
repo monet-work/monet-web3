@@ -60,7 +60,7 @@ type Props = {};
 const TradesView: React.FC<Props> = () => {
   const [isGridActive, setIsGridActive] = useState(false);
   return (
-    <div className="bg-muted/40 w-full grow p-4">
+    <div className="bg-muted/40 w-full">
       <Tabs defaultValue="list">
         <div className="flex items-center">
           <TabsList>

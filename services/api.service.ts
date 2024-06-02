@@ -9,6 +9,7 @@ import {
   CompanyDashboardResponse,
   CustomerPointResponse,
   CustomerRedeemPointsResponse,
+  PointsListResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
@@ -176,7 +177,7 @@ const customerRedeemPoints = async (payload: {
 };
 
 const getMarketplacePointsList = async () => {
-  return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`);
+  return axios.get<PointsListResponse>(`${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`);
 };
 
 export const apiService = {
