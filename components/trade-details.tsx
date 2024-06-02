@@ -21,7 +21,7 @@ import { Input } from "./ui/input";
 
 const TradeDetails: React.FC<Props> = ({ isActive, Data }) => {
   return (
-    <Card className="w-full">
+    <Card className="w-full max-w-96">
       <CardContent className="flex flex-col pt-4 w-full ">
         <div className="flex pt-4 w-full justify-between">
           <div className="flex flex-col gap-1 items-start">

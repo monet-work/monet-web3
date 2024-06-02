@@ -18,8 +18,6 @@ import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import axios from "axios";
 
-
-
 const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
@@ -28,6 +26,7 @@ const securedRoutes = [
   `${API_BASE_URL}/customers/:customerId/redeem`,
   `${API_BASE_URL}/companies/:companyId/upload-points`,
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
+  `${API_BASE_URL}/marketplace`,
 ];
 
 // axios interceptors
@@ -68,7 +67,7 @@ const refreshToken = async (refreshToken: string) => {
     `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
     { refreshToken }
   );
-}
+};
 
 const companyVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
@@ -176,6 +175,10 @@ const customerRedeemPoints = async (payload: {
   );
 };
 
+const getMarketplacePointsList = async () => {
+  return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`);
+};
+
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -191,4 +194,5 @@ export const apiService = {
   fetchAdminCompanies,
   approveAdminCompany,
   customerRedeemPoints,
+  getMarketplacePointsList,
 };

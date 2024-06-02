@@ -4,7 +4,7 @@ import { PointsListColumns } from "./table-columns/points-list-columns";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  Points: any[];
+  Points: any;
   isLoading: boolean;
 };
 
@@ -14,10 +14,10 @@ const PointsList: React.FC<Props> = ({ Points, isLoading }) => {
     <div className="w-full">
       <DataTable
         columns={PointsListColumns}
-        data={Points}
+        data={Points.pointsAssets}
         loading={isLoading}
         onRowClick={(rowData) => {
-          const pointName = rowData.Token;
+          const pointName = rowData.name;
           const urlEncodedPointName = encodeURIComponent(pointName);
           router.push(`/marketplace/${urlEncodedPointName}`);
         }}
