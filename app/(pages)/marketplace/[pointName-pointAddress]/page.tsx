@@ -51,7 +51,7 @@ const PointPage = () => {
       pointAssetInfoData.data.listings.assetListings.map((listing) => {
         return {
           ...listing,
-          price: toTokens(BigInt(listing.totalPrice), 18),
+          totalPrice: toTokens(BigInt(listing.totalPrice), 18),
           pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
         };
       });
