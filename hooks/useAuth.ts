@@ -147,7 +147,7 @@ const useAuth = () => {
       if (refreshTokenExpiryDate > now) {
         refreshTokens(refreshTokenData.token);
       } else {
-        logout();
+        // logout();
         console.log("Refresh token expired, log out");
       }
     }
@@ -161,7 +161,7 @@ const useAuth = () => {
     if ("/company/dashboard" === pathname) {
       return userRoles.includes("COMPANY");
     }
-    if ("/customer/profile" === pathname) {
+    if ("/customer/dashboard" === pathname) {
       return userRoles.includes("CUSTOMER");
     }
   };
