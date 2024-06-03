@@ -1,43 +1,17 @@
 import React from "react";
 import TradeCard from "./trade-card";
+import { AssetListing } from "@/models/asset-listing.model";
 
-type Props = {};
+type Props = {
+  assetListings: AssetListing[];
+};
 
-function GridViewComponent({}: Props) {
+function GridViewComponent({ assetListings }: Props) {
   return (
-    <div className="grid grid-cols-1   sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      <TradeCard
-        For="15"
-        ForImg={"/images/For.svg"}
-        ForPrice="$7.08"
-        Offer="0.281"
-        OfferImg={"/images/Offer.png"}
-        OfferPrice="$106.1"
-      />
-      <TradeCard
-        For="15"
-        ForImg={"/images/For.svg"}
-        ForPrice="$7.08"
-        Offer="0.281"
-        OfferImg={"/images/Offer.png"}
-        OfferPrice="$106.1"
-      />
-      <TradeCard
-        For="15"
-        ForImg={"/images/For.svg"}
-        ForPrice="$7.08"
-        Offer="0.281"
-        OfferImg={"/images/Offer.png"}
-        OfferPrice="$106.1"
-      />
-      <TradeCard
-        For="15"
-        ForImg={"/images/For.svg"}
-        ForPrice="$7.08"
-        Offer="0.281"
-        OfferImg={"/images/Offer.png"}
-        OfferPrice="$106.1"
-      />
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {assetListings.map((listing) => (
+        <TradeCard assetListing={listing} key={listing.Id} />
+      ))}
     </div>
   );
 }

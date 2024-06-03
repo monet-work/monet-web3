@@ -2,6 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
+import { ListingStatus } from "@/models/listing";
 
 export const PointsListColumns: ColumnDef<{
   name: string;
@@ -14,7 +15,9 @@ export const PointsListColumns: ColumnDef<{
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px] cursor-pointer">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="w-[80px] cursor-pointer">{row.getValue("name")}</div>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -41,7 +44,13 @@ export const PointsListColumns: ColumnDef<{
     ),
     cell: ({ row }) => (
       <div className="">
-        {row.getValue("status") === 0 ? "Active" : "Inactive"}
+        {row.getValue("status") === ListingStatus.LIVE ? (
+          <span className="text-green-500">Live</span>
+        ) : row.getValue("status") === ListingStatus.BOUGHT ? (
+          <span className="text-red-500">Bought</span>
+        ) : (
+          <span className="text-yellow-500">Cancelled</span>
+        )}
       </div>
     ),
   },

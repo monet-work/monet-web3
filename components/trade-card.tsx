@@ -1,33 +1,19 @@
 import React from "react";
 
 type Props = {
-  Offer: string;
-  For: string;
-  OfferPrice: string;
-  ForPrice: string;
-  OfferImg: string;
-  ForImg: string;
+  assetListing: AssetListing;
 };
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
 import Image from "next/image";
+import {
+  AssetListing,
+  ListingFillType,
+  ListingType,
+} from "@/models/asset-listing.model";
 
-const TradeCard: React.FC<Props> = ({
-  Offer,
-  For,
-  OfferPrice,
-  ForPrice,
-  OfferImg,
-  ForImg,
-}) => {
+const TradeCard: React.FC<Props> = ({ assetListing }) => {
   return (
     <div className="w-full">
       <Card className=" w-full  duration-200 transition cursor-pointer  hover:bg-neutral-700">
@@ -35,25 +21,27 @@ const TradeCard: React.FC<Props> = ({
           <div className="flex flex-col gap-1 items-start">
             <p className="text-xs text-neutral-400">OFFER</p>
             <div className="flex items-center gap-2">
-              {Offer} <Image src={OfferImg} width={20} height={20} alt={""} />
+              {/* {Offer} <Image src={OfferImg} width={20} height={20} alt={""} /> */}
             </div>
-            <p className="text-xs text-green-500 ">{OfferPrice}</p>
+            <p className="text-xs text-green-500 ">{''}</p>
           </div>
 
           <div className="flex flex-col gap-1 items-end">
             <p className="text-xs text-neutral-400">FOR</p>
             <div className="flex gap-2 items-center">
-              {For} <Image src={ForImg} width={20} height={20} alt={""} />
+              {/* {For} <Image src={ForImg} width={20} height={20} alt={""} /> */}
             </div>
-            <p className="text-xs ">{ForPrice}</p>
+            <p className="text-xs ">{assetListing.amount}</p>
           </div>
         </CardContent>
         <CardFooter className="flex border pb-0 py-3 justify-between">
           <Button variant={"outline"} size={"xs"}>
-            PARTIAL
+            {assetListing.fillType === ListingFillType.PARTIAL
+              ? "PARTIAL"
+              : "FULL"}
           </Button>
           <Button variant={"secondary"} size={"xs"}>
-            BUY
+            {assetListing.listingType === ListingType.BUY ? "SELL" : "BUY"}
           </Button>
         </CardFooter>
       </Card>

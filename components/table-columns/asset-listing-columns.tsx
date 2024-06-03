@@ -6,10 +6,23 @@ import {
   AssetListing,
   ListingFillType,
   ListingType,
+  PaymentType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
+import { ListingStatus } from "@/models/listing";
 
 export const AssetListingColumns: ColumnDef<AssetListing>[] = [
+  {
+    accessorKey: "Id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id" className="text-xs" />
+    ),
+    cell: ({ row }) => {
+      return <div className="text-xs">{row.getValue("Id")}</div>;
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "amount",
     header: ({ column }) => (
@@ -63,16 +76,69 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "paymentType",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Payment"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs">
+        {row.getValue("paymentType") === PaymentType.NATIVE_TOKEN
+          ? "ETH"
+          : "Custom"}
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "owner",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Owner"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => <div className="text-xs">{row.getValue("owner")}</div>,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: "totalPrice",
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Price"
+        title="Total Price"
         className="text-xs"
       />
     ),
     cell: ({ row }) => (
       <div className="text-xs">{row.getValue("totalPrice")}</div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Status"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs">
+        {row.getValue("status") === ListingStatus.LIVE
+          ? <span className="text-blue-400 text-semibold">Live</span>
+          : row.getValue("status") === ListingStatus.BOUGHT
+            ? <span className="text-muted-foreground">Bought</span>
+            : "Sold"}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,

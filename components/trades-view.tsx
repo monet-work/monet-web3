@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {useState } from "react";
+import { useState } from "react";
 import GridViewComponent from "./grid-view-component";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
 import { DataTable } from "./data-table/data-table";
@@ -28,7 +28,6 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
   const sellListings = assetListings.filter(
     (listing) => listing.listingType === ListingType.SELL
   );
-
 
   const [viewType, setViewType] = useState<"list" | "grid">("list");
 
@@ -68,20 +67,12 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
           </div>
         </div>
         <TabsContent value="list">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <DataTable
-              columns={AssetListingColumns}
-              data={buyListings}
-              loading={loading}
-              noResultsMessage="No listings available."
-            />
-            <DataTable
-              columns={AssetListingColumns}
-              data={sellListings}
-              loading={loading}
-              noResultsMessage="No listings available."
-            />
-          </div>
+          <DataTable
+            columns={AssetListingColumns}
+            data={assetListings}
+            loading={loading}
+            noResultsMessage="No listings available."
+          />
         </TabsContent>
 
         <TabsContent value="grid">
@@ -101,7 +92,7 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
               </TabsList>
             )}
             <TabsContent value="All">
-              <GridViewComponent />
+              <GridViewComponent assetListings={assetListings || []} />
             </TabsContent>
             <TabsContent value="Buy">Buy</TabsContent>
           </Tabs>

@@ -6,16 +6,12 @@ export interface AssetListing {
   owner: string;
   asset: string;
   paymentToken: string;
-  listingType: number;
-  paymentType: number;
-  fillType: number;
-  status: string;
+  listingType: ListingType;
+  paymentType: PaymentType;
+  fillType: ListingFillType;
+  status: ListingStatus;
 }
 
-export enum ListingStatus {
-  ACTIVE = 0,
-  INACTIVE = 1,
-}
 
 export enum ListingFillType {
   PARTIAL = 0,
@@ -30,4 +26,10 @@ export enum ListingType {
 export enum PaymentType {
   NATIVE_TOKEN = 0,
   CUSTOM_TOKEN = 1,
+}
+
+export enum ListingStatus {
+  LIVE = 0,
+  CANCELLED = 1,
+  SOLD = 2,
 }
