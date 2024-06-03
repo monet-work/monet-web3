@@ -15,10 +15,6 @@ import { useActiveAccount } from "thirdweb/react";
 const VerifyCustomerWalletPage = () => {
   const activeAccount = useActiveAccount();
   const [verificationMessage, setVerificationMessage] = useState<string[]>([]);
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
-  );
 
   useEffect(() => {
     if (!activeAccount) {

@@ -19,9 +19,15 @@ const SubmitRequestPage: React.FC = () => {
   const companyStore = useCompanyStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
-  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
+  const [accessTokenData, setAccessTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
+    { token: "", expiry: 0 }
+  );
 
+  const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
+    { token: "", expiry: 0 }
+  );
 
   const walletSignatureVerficationMutation = useMutation({
     mutationFn: apiService.companyVerifyWalletStep2,
@@ -41,7 +47,14 @@ const SubmitRequestPage: React.FC = () => {
           loading={walletSignatureVerficationMutation.isPending}
           verificationMessage={userStore.verificationWords}
           onClickSubmitRequest={async (values) => {
-            const { name, email, pointName, pointSymbol, description, decimal } = values;
+            const {
+              name,
+              email,
+              pointName,
+              pointSymbol,
+              description,
+              decimal,
+            } = values;
             if (!userStore.verificationWords) return;
 
             if (!activeAccount) return;
@@ -65,8 +78,14 @@ const SubmitRequestPage: React.FC = () => {
                 onSuccess: (res) => {
                   const { company, tokens } = res.data;
                   toast.success("Wallet verified successfully");
-                  setAccessToken(tokens.access);
-                  setRefreshToken(tokens.refresh);
+                  setAccessTokenData({
+                    token: tokens.access.token,
+                    expiry: tokens.access.expires,
+                  });
+                  setRefreshTokenData({
+                    token: tokens.refresh.token,
+                    expiry: tokens.refresh.expires,
+                  });
                   companyStore.setCompany(company);
 
                   if (company) {

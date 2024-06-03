@@ -58,17 +58,16 @@ import { pointsTableData } from "@/data";
 type Props = {};
 
 const TradesView: React.FC<Props> = () => {
-  const [isGridActive, setIsGridActive] = useState(false);
+  const [viewType, setViewType] = useState<"list" | "grid">("list");
   return (
     <div className="bg-muted/40 w-full">
       <Tabs defaultValue="list">
         <div className="flex items-center">
           <TabsList>
-            <TabsTrigger onClick={() => setIsGridActive(false)} value="list">
-              {" "}
+            <TabsTrigger onClick={() => setViewType("list")} value="list">
               <ListIcon />
             </TabsTrigger>
-            <TabsTrigger onClick={() => setIsGridActive(true)} value="grid">
+            <TabsTrigger onClick={() => setViewType("grid")} value="grid">
               <GridIcon />
             </TabsTrigger>
           </TabsList>
@@ -96,17 +95,15 @@ const TradesView: React.FC<Props> = () => {
           </div>
         </div>
         <TabsContent value="list">
-          <Card className="w-full">
-            <CardContent className="flex flex-col md:flex-row gap-4">
-              <TradeListComponent Points={pointsTableData} isLoading={false} />
-              <TradeListComponent Points={pointsTableData} isLoading={false} />
-            </CardContent>
-          </Card>
+          <div className="flex gap-2">
+          <TradeListComponent Points={pointsTableData} isLoading={false} />
+          <TradeListComponent Points={pointsTableData} isLoading={false} />
+          </div>
         </TabsContent>
 
         <TabsContent value="grid">
           <Tabs defaultValue="All">
-            {isGridActive && (
+            {viewType === "grid" && (
               <TabsList className="duration-200 transition">
                 <TabsTrigger defaultChecked value="All">
                   {" "}

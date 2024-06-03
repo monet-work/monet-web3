@@ -19,21 +19,15 @@ const SubmitRequestPage: React.FC = () => {
   const adminStore = useAdminStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
+
+  const [accessTokenData, setAccessTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
-  const [accessTokenExpiry, setAccessTokenExpiry] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN_EXPIRY,
-    0
-  );
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    ""
-  );
-  const [refreshTokenExpiry, setRefreshTokenExpiry] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN_EXPIRY,
-    0
+
+  const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
 
   const walletSignatureVerficationMutation = useMutation({
@@ -71,10 +65,14 @@ const SubmitRequestPage: React.FC = () => {
                 onSuccess: (res) => {
                   const { admin, tokens } = res.data;
                   toast.success("Wallet verified successfully");
-                  setAccessToken(tokens.access);
-                  setRefreshToken(tokens.refresh);
-                  setAccessTokenExpiry(tokens.access.expires);
-                  setRefreshTokenExpiry(tokens.refresh.expires);
+                  setAccessTokenData({
+                    token: tokens.access.token,
+                    expiry: tokens.access.expires,
+                  });
+                  setRefreshTokenData({
+                    token: tokens.refresh.token,
+                    expiry: tokens.refresh.expires,
+                  });
                   adminStore.setAdmin(admin);
 
                   if (admin) {

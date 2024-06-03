@@ -21,7 +21,7 @@ import { Input } from "./ui/input";
 
 const TradeDetails: React.FC<Props> = ({ isActive, Data }) => {
   return (
-    <Card className="w-full max-w-96">
+    <Card className="w-full">
       <CardContent className="flex flex-col pt-4 w-full ">
         <div className="flex pt-4 w-full justify-between">
           <div className="flex flex-col gap-1 items-start">
@@ -63,10 +63,10 @@ const TradeDetails: React.FC<Props> = ({ isActive, Data }) => {
             <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
           </div>
         </div>
-      </CardContent>
-      <CardFooter className="flex border pt-4 pb-4 justify-between">
         <Button className="w-full">Connect Wallet</Button>
-      </CardFooter>
+      </CardContent>
+
+     
     </Card>
   );
 };

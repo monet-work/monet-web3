@@ -22,24 +22,17 @@ const useAuth = () => {
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
   const pathname = usePathname();
-  // console.log(pathname);
   const queryClient = useQueryClient();
   const [thirdwebConnected, setThirdwebConnected] = useState(false);
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
+
+  const [accessTokenData, setAccessTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
-  const [accessTokenExpiry, setAccessTokenExpiry] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN_EXPIRY,
-    0
-  );
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    ""
-  );
-  const [refreshTokenExpiry, setRefreshTokenExpiry] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN_EXPIRY,
-    0
+
+  const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
 
   const [userRoles, setUserRoles] = useState<any>([]);
@@ -78,11 +71,15 @@ const useAuth = () => {
   const { mutate: refreshTokens } = useMutation({
     mutationFn: apiService.refreshToken,
     onSuccess: (response) => {
-      console.log(response);
-      setAccessToken(response.data.access);
-      setAccessTokenExpiry(response.data.access);
-      setRefreshToken(response.data.refresh_token);
-      setRefreshTokenExpiry(response.data.refresh_token_expiry);
+      console.log(response, "refresh token response");
+      setAccessTokenData({
+        token: response.data.access.token,
+        expiry: response.data.access.expires,
+      });
+      setRefreshTokenData({
+        token: response.data.refresh.token,
+        expiry: response.data.refresh.expires,
+      });
 
       queryClient.invalidateQueries(["auth"] as any);
     },
@@ -108,9 +105,7 @@ const useAuth = () => {
   }, [connectionStatus]);
 
   useEffect(() => {
-    // detect logout
     if (!activeAccount && thirdwebConnected) {
-      //logout
       console.log("no active account");
       logout();
     }
@@ -127,6 +122,7 @@ const useAuth = () => {
         roles,
         wallet_address,
       } = authResponse.data;
+
       setUserRoles(roles.map((role) => role.role));
     }
   }, [authResponse]);
@@ -134,7 +130,6 @@ const useAuth = () => {
   useEffect(() => {
     if (error) {
       console.log("authError", error);
-      // logout();
     }
   }, [error]);
 
@@ -147,34 +142,30 @@ const useAuth = () => {
 
   const checkAccess = async () => {
     const now = Date.now();
-    const accessTokenExpiryDate = new Date(accessTokenExpiry).getTime();
-    const refreshTokenExpiryDate = new Date(refreshTokenExpiry).getTime();
+    const accessTokenExpiryDate = new Date(accessTokenData.expiry).getTime();
+    const refreshTokenExpiryDate = new Date(refreshTokenData.expiry).getTime();
     console.log(now, accessTokenExpiryDate, refreshTokenExpiryDate);
 
     if (accessTokenExpiryDate > now) {
-      // Access token is valid
       console.log("Access token valid");
       if (userHasAccess()) {
         console.log("User has access");
-        // do nothing
         return;
       } else {
         showPageNotFound();
         console.log("show page not found");
       }
     } else {
-      // Access token is expired
       console.log("Access token expired");
       if (refreshTokenExpiryDate > now) {
-        // Refresh token is valid
-        refreshTokens(refreshToken);
+        refreshTokens(refreshTokenData.token);
       } else {
-        // Refresh token is expired, log out
         logout();
         console.log("Refresh token expired, log out");
       }
     }
   };
+
   const userHasAccess = () => {
     if ("/admin/dashboard" === pathname) {
       console.log("admin dashboard", userRoles.includes("ADMIN"), userRoles);
@@ -191,6 +182,7 @@ const useAuth = () => {
   const showPageNotFound = () => {
     router.replace("/404");
   };
+
   const logout = () => {
     const wallet = createWallet("io.metamask");
     disconnect(wallet);

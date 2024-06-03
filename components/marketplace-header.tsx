@@ -11,9 +11,12 @@ const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
   return (
     <nav className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
-      <Link href={"/"}>
-        <MonetWorkLogo className="text-primary w-24 h-24" />
-      </Link>
+      <div className="flex items-center gap-4">
+        <Link href={"/"}>
+          <MonetWorkLogo className="text-primary w-24 h-24" />
+        </Link>
+        <Link href={"/marketplace"} className="ml-8">Marketplace</Link>
+      </div>
       <div className="relative flex gap-2 items-center justify-between">
         <ConnectButton
           client={client}
