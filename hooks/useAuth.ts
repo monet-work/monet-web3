@@ -147,7 +147,7 @@ const useAuth = () => {
       if (refreshTokenExpiryDate > now) {
         refreshTokens(refreshTokenData.token);
       } else {
-        // logout();
+        logout();
         console.log("Refresh token expired, log out");
       }
     }
