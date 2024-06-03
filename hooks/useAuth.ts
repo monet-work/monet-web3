@@ -121,11 +121,11 @@ const useAuth = () => {
   }, [error]);
 
   useEffect(() => {
-    if (isPrivateRoute && userRoles.length > 0) {
+    if (!isPublicRoute && userRoles.length > 0) {
       console.log("check access");
       checkAccess();
     }
-  }, [pathname, isPrivateRoute, userRoles]);
+  }, [pathname, userRoles]);
 
   const checkAccess = async () => {
     const now = Date.now();
