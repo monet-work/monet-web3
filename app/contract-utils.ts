@@ -52,6 +52,6 @@ export const monetPointsContractFactory = (address: string) => {
 export const monetMarketplaceContract = getContract({
   client,
   chain: baseSepolia,
-  address: process.env.NEXT_PUBLIC_ELP_MARKETPLACE_CONTRACT || "",
+  address: process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT || "",
   abi: MONET_MARKET_PLACE_ABI,
 });
