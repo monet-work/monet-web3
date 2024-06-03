@@ -161,7 +161,7 @@ const useAuth = () => {
     if ("/company/dashboard" === pathname) {
       return userRoles.includes("COMPANY");
     }
-    if ("/customer/profile" === pathname) {
+    if ("/customer/dashboard" === pathname) {
       return userRoles.includes("CUSTOMER");
     }
   };
