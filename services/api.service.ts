@@ -42,7 +42,7 @@ axios.interceptors.request.use(
       // Add token to request header
       if (isSecuredRoute) {
         const accessToken = JSON.parse(
-          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
+          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA) ?? ""
         ) as Token;
         if (typeof accessToken === "object" && accessToken !== null) {
           config.headers.Authorization = `Bearer ${accessToken.token}`;
@@ -64,10 +64,9 @@ const authenticate = async () => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  return axios.post<AuthResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
-    { refreshToken }
-  );
+  return axios.post(`${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`, {
+    refreshToken,
+  });
 };
 
 const companyVerifyWalletStep1 = async (wallet: string) => {
@@ -177,7 +176,9 @@ const customerRedeemPoints = async (payload: {
 };
 
 const getMarketplacePointsList = async () => {
-  return axios.get<PointsListResponse>(`${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`);
+  return axios.get<PointsListResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`
+  );
 };
 
 export const apiService = {
@@ -195,5 +196,6 @@ export const apiService = {
   fetchAdminCompanies,
   approveAdminCompany,
   customerRedeemPoints,
+  refreshToken,
   getMarketplacePointsList,
 };

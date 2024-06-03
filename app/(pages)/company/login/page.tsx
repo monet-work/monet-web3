@@ -14,8 +14,6 @@ import { useActiveAccount, useConnect } from "thirdweb/react";
 const CompanyLoginPage = () => {
   const { connect } = useConnect();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage(LOCALSTORAGE_KEYS.ACCESS_TOKEN, "");
-  const [refreshToken, setRefreshToken] = useLocalStorage(LOCALSTORAGE_KEYS.REFRESH_TOKEN, "");
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();

@@ -16,14 +16,6 @@ const VerifyConpanyWalletPage = () => {
   const activeAccount = useActiveAccount();
   const userStore = useUserStore();
   const router = useRouter();
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
-  );
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    ""
-  );
 
   useEffect(() => {
     if (!activeAccount) {

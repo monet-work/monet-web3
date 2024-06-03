@@ -1,4 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+} from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -17,16 +22,21 @@ const useAuth = () => {
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
   const pathname = usePathname();
-
+  const queryClient = useQueryClient();
   const [thirdwebConnected, setThirdwebConnected] = useState(false);
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
+
+  const [accessTokenData, setAccessTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    ""
+
+  const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
+
+  const [userRoles, setUserRoles] = useState<any>([]);
+  console.log(userRoles);
   const router = useRouter();
 
   const publicRoutes = [
@@ -58,6 +68,23 @@ const useAuth = () => {
     enabled: !isPublicRoute,
   });
 
+  const { mutate: refreshTokens } = useMutation({
+    mutationFn: apiService.refreshToken,
+    onSuccess: (response) => {
+      console.log(response, "refresh token response");
+      setAccessTokenData({
+        token: response.data.access.token,
+        expiry: response.data.access.expires,
+      });
+      setRefreshTokenData({
+        token: response.data.refresh.token,
+        expiry: response.data.refresh.expires,
+      });
+
+      queryClient.invalidateQueries(["auth"] as any);
+    },
+  });
+
   useEffect(() => {
     if (connectionStatus === "connected") {
       setThirdwebConnected(true);
@@ -65,9 +92,7 @@ const useAuth = () => {
   }, [connectionStatus]);
 
   useEffect(() => {
-    // detect logout
     if (!activeAccount && thirdwebConnected) {
-      //logout
       console.log("no active account");
       logout();
     }
@@ -84,15 +109,66 @@ const useAuth = () => {
         roles,
         wallet_address,
       } = authResponse.data;
+
+      setUserRoles(roles.map((role) => role.role));
     }
   }, [authResponse]);
 
   useEffect(() => {
     if (error) {
       console.log("authError", error);
-      logout();
     }
   }, [error]);
+
+  useEffect(() => {
+    if (isPrivateRoute && userRoles.length > 0) {
+      console.log("check access");
+      checkAccess();
+    }
+  }, [pathname, isPrivateRoute, userRoles]);
+
+  const checkAccess = async () => {
+    const now = Date.now();
+    const accessTokenExpiryDate = new Date(accessTokenData.expiry).getTime();
+    const refreshTokenExpiryDate = new Date(refreshTokenData.expiry).getTime();
+    console.log(now, accessTokenExpiryDate, refreshTokenExpiryDate);
+
+    if (accessTokenExpiryDate > now) {
+      console.log("Access token valid");
+      if (userHasAccess()) {
+        console.log("User has access");
+        return;
+      } else {
+        showPageNotFound();
+        console.log("show page not found");
+      }
+    } else {
+      console.log("Access token expired");
+      if (refreshTokenExpiryDate > now) {
+        refreshTokens(refreshTokenData.token);
+      } else {
+        logout();
+        console.log("Refresh token expired, log out");
+      }
+    }
+  };
+
+  const userHasAccess = () => {
+    if ("/admin/dashboard" === pathname) {
+      console.log("admin dashboard", userRoles.includes("ADMIN"), userRoles);
+      return userRoles.includes("ADMIN");
+    }
+    if ("/company/dashboard" === pathname) {
+      return userRoles.includes("COMPANY");
+    }
+    if ("/customer/profile" === pathname) {
+      return userRoles.includes("CUSTOMER");
+    }
+  };
+
+  const showPageNotFound = () => {
+    router.replace("/404");
+  };
 
   const logout = () => {
     const wallet = createWallet("io.metamask");
