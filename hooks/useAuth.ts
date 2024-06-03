@@ -173,9 +173,9 @@ const useAuth = () => {
   const logout = () => {
     const wallet = createWallet("io.metamask");
     disconnect(wallet);
-    router.replace("/");
-    localStorage.clear();
-    window.location.reload();
+    // router.replace("/");
+    // localStorage.clear();
+    // window.location.reload();
   };
 
   return {

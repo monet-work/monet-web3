@@ -1,9 +1,5 @@
-"use client";
-
 import { ArrowDownRightSquareIcon, ListIcon, GridIcon } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -13,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GridViewComponent from "./grid-view-component";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
 import { DataTable } from "./data-table/data-table";
@@ -26,13 +22,16 @@ type Props = {
 
 const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
   const buyListings = assetListings.filter(
-    (listing) => listing.listingType === String(ListingType.BUY)
-  );
-  const sellListings = assetListings.filter(
-    (listing) => listing.listingType === String(ListingType.SELL)
+    (listing) => listing.listingType === ListingType.BUY
   );
 
+  const sellListings = assetListings.filter(
+    (listing) => listing.listingType === ListingType.SELL
+  );
+
+
   const [viewType, setViewType] = useState<"list" | "grid">("list");
+
   return (
     <div className="bg-muted/40 w-full">
       <Tabs defaultValue="list">
@@ -49,7 +48,7 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className=" gap-1">
+                <Button variant="outline" className="gap-1">
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                     Fill Type
                   </span>

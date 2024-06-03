@@ -36,10 +36,6 @@ const PointPage = () => {
     enabled: !!pointName && !!pointAddress,
   });
 
-  useEffect(() => {
-    console.log(pointAssetInfoData?.data, "pointAssetInfoData");
-  }, [pointAssetInfoData]);
-
   return (
     <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-4 w-full container">

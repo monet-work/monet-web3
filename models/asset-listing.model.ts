@@ -6,9 +6,9 @@ export interface AssetListing {
   owner: string;
   asset: string;
   paymentToken: string;
-  listingType: string;
-  paymentType: string;
-  fillType: string;
+  listingType: number;
+  paymentType: number;
+  fillType: number;
   status: string;
 }
 
