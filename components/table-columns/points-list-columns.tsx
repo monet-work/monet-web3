@@ -14,7 +14,7 @@ export const PointsListColumns: ColumnDef<{
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="w-[80px] cursor-pointer">{row.getValue("name")}</div>,
     enableSorting: false,
     enableHiding: false,
   },

@@ -9,7 +9,7 @@ type Props = {
 
 const TradeListComponent: React.FC<Props> = ({ Points, isLoading }) => {
   return (
-    <div className="container">
+    <div className="">
       <DataTable columns={TradeListColumns} data={Points} loading={isLoading} />
     </div>
   );

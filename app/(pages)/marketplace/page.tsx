@@ -33,7 +33,8 @@ const MarketplacePage = () => {
             loading={isLoading}
             onRowClick={(rowData) => {
               const pointName = rowData.name;
-              const urlEncodedPointName = encodeURIComponent(pointName);
+              const pointAddress = rowData.address;
+              const urlEncodedPointName = encodeURIComponent(`${pointName}-${pointAddress}`);
               router.push(`/marketplace/${urlEncodedPointName}`);
             }}
           />

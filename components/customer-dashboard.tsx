@@ -15,6 +15,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import RedeemPointsForm from "./forms/redeem-points-form";
 import { Point } from "@/models/point.model";
 import { monetPointsContractFactory } from "@/app/contract-utils";
+import { ExternalLink } from "lucide-react";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
@@ -151,6 +152,17 @@ const CustomerDashboard = () => {
                                 {point?.company?.point_name} (
                                 {point?.company?.point_symbol})
                               </span>
+                            </div>
+                            <div className="text-xs mt-1 text-muted-foreground hover:underline">
+                              <a
+                                href={`https://sepolia.basescan.org/tx/${point?.company?.point_contract_address}`}
+                                target="_blank"
+                                className="flex items-center gap-1"
+                              >
+                                {point?.company?.point_contract_address}
+
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
                             </div>
                           </div>
                         </div>
