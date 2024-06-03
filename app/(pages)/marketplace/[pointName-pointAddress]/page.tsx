@@ -7,6 +7,8 @@ import { pointsTableData } from "@/data";
 import { AssetListing } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
+import { ExternalLinkIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toTokens } from "thirdweb";
@@ -74,13 +76,29 @@ const PointPage = () => {
           {isLoading ? (
             <Skeleton className="h-20 w-full" />
           ) : (
-            <div>
-              <h2 className="text-2xl pb-2">
-                {pointAssetInfoData?.data.name}{" "}
-                <span className="text-muted-foreground">
-                  ({pointAssetInfoData?.data.symbol})
-                </span>
-              </h2>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl pb-2">
+                  {pointAssetInfoData?.data.name}{" "}
+                  <span className="text-muted-foreground">
+                    ({pointAssetInfoData?.data.symbol})
+                  </span>
+                </h2>
+                <Link
+                  className="flex gap-2"
+                  href={`https://sepolia.basescan.org/tx/${pointAddress}`}
+                >
+                  <p className="text-sm text-muted-foreground hover:underline">
+                    {pointAddress}
+                  </p>
+                  <ExternalLinkIcon className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              </div>
+
+              <div className="text-muted-foreground text-2xl">
+                <span className="font-bold mr-2">{pointAssetInfoData?.data.points}</span>
+                <span className="font-light">{pointAssetInfoData?.data.symbol}</span>
+              </div>
             </div>
           )}
           <div>
@@ -90,7 +108,7 @@ const PointPage = () => {
               loading={isLoading}
             />
           </div>
-          <div>
+          <div className="mt-8">
             <h3 className="mb-4">Your Listings</h3>
             <TradesView
               assetListings={ownerListings || []}

@@ -112,12 +112,12 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Total Price"
+        title="Price"
         className="text-xs"
       />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">{row.getValue("totalPrice")}</div>
+      <div className="text-xs">{row.getValue("totalPrice")} ETH</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -133,11 +133,13 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     ),
     cell: ({ row }) => (
       <div className="text-xs">
-        {row.getValue("status") === ListingStatus.LIVE
-          ? <span className="text-blue-400 text-semibold">Live</span>
-          : row.getValue("status") === ListingStatus.BOUGHT
-            ? <span className="text-muted-foreground">Bought</span>
-            : "Sold"}
+        {row.getValue("status") === ListingStatus.LIVE ? (
+          <span className="text-blue-400 text-semibold">Live</span>
+        ) : row.getValue("status") === ListingStatus.BOUGHT ? (
+          <span className="text-muted-foreground">Bought</span>
+        ) : (
+          "Sold"
+        )}
       </div>
     ),
     enableSorting: false,
