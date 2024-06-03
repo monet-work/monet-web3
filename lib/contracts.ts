@@ -1,7 +1,6 @@
 import { MONET_POINT_CONTRACT_ABI } from "@/models/abi";
-import { createThirdwebClient, defineChain, getContract } from "thirdweb";
+import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
-import { privateKeyAccount } from "thirdweb/wallets";
 
 export const CONTRACTS = {
   ELP_CONTRACT: process.env.NEXT_PUBLIC_EIGENLAYER_POINTS_CONTRACT || "",
@@ -26,11 +25,3 @@ export const client = createThirdwebClient({
 });
 
 
-export const monetPointsContractFactory = (address: string) => {
-  return getContract({
-    client,
-    chain: baseSepolia,
-    address,
-    abi: MONET_POINT_CONTRACT_ABI,
-  });
-}

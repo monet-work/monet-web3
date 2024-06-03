@@ -1,6 +1,0 @@
-{
-  "databaseURL": "https://Arindam-Dawn-s-workspace-8dhin7.us-east-1.xata.sh/db/monet-points",
-  "codegen": {
-    "output": "xata.ts"
-  }
-}

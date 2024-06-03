@@ -1,6 +1,6 @@
 import { Customer } from "./customer.model";
 import { AuthTokens, Company } from "./company.model";
-import { Point } from "./point.model";
+import { Point, PointAsset } from "./point.model";
 import { Admin } from "./admin.model";
 import { User } from "./user.model";
 
@@ -41,4 +41,8 @@ export interface CustomerRedeemPointsResponse {
     offChainPoints: number;
     amount: number;
   }
+}
+
+export interface PointsListResponse {
+  pointsAssets: PointAsset[];
 }

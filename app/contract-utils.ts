@@ -1,6 +1,6 @@
 "use client";
 
-import { CONTRACTS } from "@/lib/contracts";
+import { MONET_MARKET_PLACE_ABI, MONET_POINT_CONTRACT_ABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { Wallet, createWallet, injectedProvider } from "thirdweb/wallets";
@@ -15,45 +15,6 @@ export const client = createThirdwebClient({
   clientId: clientId,
 });
 export { ThirdwebProvider, ConnectButton } from "thirdweb/react";
-
-// export const elpContract = getContract({
-//   // the client you have created via `createThirdwebClient()`
-//   client,
-//   // the chain the contract is deployed on
-//   chain: baseSepolia,
-//   // the contract's address
-//   address: CONTRACTS.ELP_CONTRACT,
-//   // OPTIONAL: the contract's abi
-//   abi: eigenLayerPointsContractABI,
-// });
-
-// export const elpMarketplaceContract = getContract({
-//   client,
-//   chain: baseSepolia,
-//   address: CONTRACTS.ELP_MARKETPLACE_CONTRACT,
-//   abi: elpMarketplaceContractABI,
-// });
-
-// export const airdropContract = getContract({
-//   client,
-//   chain: baseSepolia,
-//   address: CONTRACTS.AIRDROP_CONTRACT,
-//   abi: airdropContractABI,
-// });
-
-// export const eigenLayerTokenContract = getContract({
-//   client,
-//   chain: baseSepolia,
-//   address: CONTRACTS.EIGENLAYER_TOKEN_CONTRACT,
-//   abi: eigenLayerTokenContractABI,
-// });
-
-// export const monetPointsFactoryContract = getContract({
-//   client,
-//   chain: baseSepolia,
-//   address: CONTRACTS.MONET_POINTS_FACTORY_CONTRACT,
-//   abi: monetPointsFactoryContractABI
-// });
 
 export const connectWallet = async (
   connect: (options: Wallet | (() => Promise<Wallet>)) => Promise<Wallet | null>
@@ -78,3 +39,19 @@ export const connectWallet = async (
     return metamask;
   });
 };
+
+export const monetPointsContractFactory = (address: string) => {
+  return getContract({
+    client,
+    chain: baseSepolia,
+    address,
+    abi: MONET_POINT_CONTRACT_ABI,
+  });
+};
+
+export const monetMarketplaceContract = getContract({
+  client,
+  chain: baseSepolia,
+  address: process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT || "",
+  abi: MONET_MARKET_PLACE_ABI,
+});

@@ -1,10 +1,8 @@
 "use client";
 
-import { Company, User } from "@/xata";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { Button } from "../ui/button";
-import { approveCompany, rejectCompany } from "@/lib/api-requests";
 import CompanyTableRowActions from "../company-table/data-table-row-actions";
 
 export const TradeListColumns: ColumnDef<{
@@ -13,15 +11,15 @@ export const TradeListColumns: ColumnDef<{
   Collateral: string;
   FillType: any;
 }>[] = [
-  {
-    accessorKey: "Price",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price" />
-    ),
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("price")}</div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
+  // {
+  //   accessorKey: "Price",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="Price" />
+  //   ),
+  //   cell: ({ row }) => <div className="w-[80px]">{row.getValue("price")}</div>,
+  //   enableSorting: false,
+  //   enableHiding: false,
+  // },
   {
     accessorKey: "Amount",
     header: ({ column }) => (

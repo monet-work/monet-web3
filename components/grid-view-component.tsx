@@ -1,12 +1,12 @@
 import React from "react";
-import { TradeGridCard } from "./trade-grid-card";
+import TradeCard from "./trade-card";
 
 type Props = {};
 
 function GridViewComponent({}: Props) {
   return (
-    <div className="flex flex-wrap">
-      <TradeGridCard
+    <div className="grid grid-cols-1   sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <TradeCard
         For="15"
         ForImg={"/images/For.svg"}
         ForPrice="$7.08"
@@ -14,7 +14,7 @@ function GridViewComponent({}: Props) {
         OfferImg={"/images/Offer.png"}
         OfferPrice="$106.1"
       />
-      <TradeGridCard
+      <TradeCard
         For="15"
         ForImg={"/images/For.svg"}
         ForPrice="$7.08"
@@ -22,7 +22,7 @@ function GridViewComponent({}: Props) {
         OfferImg={"/images/Offer.png"}
         OfferPrice="$106.1"
       />
-      <TradeGridCard
+      <TradeCard
         For="15"
         ForImg={"/images/For.svg"}
         ForPrice="$7.08"
@@ -30,7 +30,7 @@ function GridViewComponent({}: Props) {
         OfferImg={"/images/Offer.png"}
         OfferPrice="$106.1"
       />
-      <TradeGridCard
+      <TradeCard
         For="15"
         ForImg={"/images/For.svg"}
         ForPrice="$7.08"

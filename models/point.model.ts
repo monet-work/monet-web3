@@ -17,3 +17,15 @@ export interface CustomerPoint {
   points: number;
   name: string;
 }
+
+export interface PointAsset {
+  address: string;
+  name: string;
+  status: PointStatus;
+  symbol: string;
+}
+
+export enum PointStatus {
+  ACTIVE = 0,
+  INACTIVE = 1,
+}

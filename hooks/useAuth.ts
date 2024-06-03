@@ -15,6 +15,7 @@ import useLocalStorage from "./useLocalStorage";
 import { createWallet } from "thirdweb/wallets";
 import { apiService } from "@/services/api.service";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { matchesDynamicRoute } from "@/lib/utils";
 
 const useAuth = () => {
   const { disconnect } = useDisconnect();
@@ -50,9 +51,12 @@ const useAuth = () => {
     "/customer/submit-request",
     "/admin/submit-request",
     "/marketplace",
+    "/marketplace/:pointName",
   ];
 
-  const isPrivateRoute = !publicRoutes.includes(pathname);
+  const isPublicRoute = publicRoutes.some((route) =>
+    matchesDynamicRoute(pathname, route)
+  );
 
   const {
     data: authResponse,
@@ -61,7 +65,7 @@ const useAuth = () => {
   } = useQuery({
     queryKey: ["auth"],
     queryFn: apiService.authenticate,
-    enabled: isPrivateRoute,
+    enabled: !isPublicRoute,
   });
 
   const { mutate: refreshTokens } = useMutation({
