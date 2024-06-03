@@ -6,21 +6,39 @@ import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import CreateOfferDialog from "./create-offer-dialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateOfferForm from "./forms/create-offer-form";
+import { useParams, usePathname } from "next/navigation";
+import clsx from "clsx";
 
 const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
   const [showOfferDialog, setShowOfferDialog] = useState(false);
+  const pathname = usePathname();
+  const params = useParams();
+
+  const isRouteActive = (route: string) => {
+    return pathname.includes(route);
+  }
+
+  const isMarketplaceRoute = isRouteActive("/marketplace");
+  const isDashboardRoute = isRouteActive("/customer/dashboard");
+
   return (
     <nav className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-8 font-light">
         <Link href={"/"}>
           <MonetWorkLogo className="text-primary w-24 h-24" />
         </Link>
-        <Link href={"/marketplace"} className="ml-8">
+        <Link href={"/customer/dashboard"} className={clsx('text-muted-foreground hover:text-primary ml-8', {
+          'text-primary': isDashboardRoute,
+        })}>
+          Dashboard
+        </Link>
+        <Link href={"/marketplace"} className={clsx('text-muted-foreground hover:text-primary', {
+          'text-primary': isMarketplaceRoute,
+        })}>
           Marketplace
         </Link>
       </div>

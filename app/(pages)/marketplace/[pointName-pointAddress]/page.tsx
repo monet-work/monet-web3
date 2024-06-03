@@ -9,7 +9,7 @@ import { apiService } from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toEther, toTokens } from "thirdweb";
+import { toTokens } from "thirdweb";
 
 const PointPage = () => {
   const pathname = usePathname();
@@ -48,9 +48,8 @@ const PointPage = () => {
       pointAssetInfoData.data.listings.assetListings.map((listing) => {
         return {
           ...listing,
-          amount: toTokens(BigInt(listing.amount), pointDecimals),
-          price: toTokens(BigInt(listing.totalPrice), pointDecimals),
-          pricePerPoint: toTokens(BigInt(listing.pricePerPoint), pointDecimals),
+          price: toTokens(BigInt(listing.totalPrice), 18),
+          pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
         };
       });
 

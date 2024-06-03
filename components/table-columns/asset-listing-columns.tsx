@@ -9,8 +9,20 @@ import {
   PaymentType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
+import { ListingStatus } from "@/models/listing";
 
 export const AssetListingColumns: ColumnDef<AssetListing>[] = [
+  {
+    accessorKey: "Id",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Id" className="text-xs" />
+    ),
+    cell: ({ row }) => {
+      return <div className="text-xs">{row.getValue("Id")}</div>;
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "amount",
     header: ({ column }) => (
@@ -75,7 +87,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     cell: ({ row }) => (
       <div className="text-xs">
         {row.getValue("paymentType") === PaymentType.NATIVE_TOKEN
-          ? "Native"
+          ? "ETH"
           : "Custom"}
       </div>
     ),
@@ -106,6 +118,27 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     ),
     cell: ({ row }) => (
       <div className="text-xs">{row.getValue("totalPrice")}</div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Status"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs">
+        {row.getValue("status") === ListingStatus.LIVE
+          ? <span className="text-blue-400 text-semibold">Live</span>
+          : row.getValue("status") === ListingStatus.BOUGHT
+            ? "Bought"
+            : "Sold"}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
