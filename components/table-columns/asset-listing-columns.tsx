@@ -112,7 +112,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Price"
+        title="Total Price"
         className="text-xs"
       />
     ),
@@ -136,7 +136,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
         {row.getValue("status") === ListingStatus.LIVE
           ? <span className="text-blue-400 text-semibold">Live</span>
           : row.getValue("status") === ListingStatus.BOUGHT
-            ? "Bought"
+            ? <span className="text-muted-foreground">Bought</span>
             : "Sold"}
       </div>
     ),

@@ -10,8 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toTokens } from "thirdweb";
+import { useActiveAccount } from "thirdweb/react";
 
 const PointPage = () => {
+  const activeAccount = useActiveAccount();
+  const walletAddress = activeAccount?.address;
   const pathname = usePathname();
   const pointNameWithAddress = pathname.split("/")[2];
 
@@ -56,6 +59,14 @@ const PointPage = () => {
     setFormattedAssetListings(formattedListings);
   }, [pointAssetInfoData]);
 
+  const publicListings = formattedAssetListings.filter(
+    (listing) => listing.owner !== walletAddress
+  );
+
+  const ownerListings = formattedAssetListings.filter(
+    (listing) => listing.owner === walletAddress
+  );
+
   return (
     <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-4 w-full container">
@@ -75,16 +86,14 @@ const PointPage = () => {
           <div>
             <h3 className="mb-4">Public Listings</h3>
             <TradesView
-              assetListings={formattedAssetListings || []}
+              assetListings={publicListings || []}
               loading={isLoading}
             />
           </div>
           <div>
             <h3 className="mb-4">Your Listings</h3>
             <TradesView
-              assetListings={
-                pointAssetInfoData?.data.listings.ownerAndAssetListings || []
-              }
+              assetListings={ownerListings || []}
               loading={isLoading}
             />
           </div>
