@@ -1,9 +1,9 @@
 import React from "react";
 import { DataTable } from "./data-table/data-table";
-import { TradeListColumns } from "./table-columns/trade-list-columns";
+import { TradeListColumns } from "./table-columns/asset-listing-columns";
 
 type Props = {
-  Points: any[];
+  data: AssetList[];
   isLoading: boolean;
 };
 

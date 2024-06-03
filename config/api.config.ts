@@ -29,6 +29,8 @@ const API_ENDPOINTS = {
 
   // marketplace
   MARKETPLACE_POINTS_LIST: "marketplace",
+  MARKETPLACE_POINT_ASSET_INFO: (pointAddress: string) =>
+    `marketplace/${pointAddress}`,
 };
 
 export { API_BASE_URL, API_ENDPOINTS };

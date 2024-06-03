@@ -9,6 +9,7 @@ import {
   CompanyDashboardResponse,
   CustomerPointResponse,
   CustomerRedeemPointsResponse,
+  MarketplacePointAssetInfoResponse,
   PointsListResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
@@ -28,6 +29,7 @@ const securedRoutes = [
   `${API_BASE_URL}/companies/:companyId/upload-points`,
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
   `${API_BASE_URL}/marketplace`,
+  `${API_BASE_URL}/marketplace/:pointAddress`,
 ];
 
 // axios interceptors
@@ -181,6 +183,12 @@ const getMarketplacePointsList = async () => {
   );
 };
 
+const getMarketplacePointAssetInfo = async (pointAddress: string) => {
+  return axios.get<MarketplacePointAssetInfoResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINT_ASSET_INFO(pointAddress)}`
+  );
+};
+
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -198,4 +206,5 @@ export const apiService = {
   customerRedeemPoints,
   refreshToken,
   getMarketplacePointsList,
+  getMarketplacePointAssetInfo,
 };

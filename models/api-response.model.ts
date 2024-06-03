@@ -3,6 +3,7 @@ import { AuthTokens, Company } from "./company.model";
 import { Point, PointAsset } from "./point.model";
 import { Admin } from "./admin.model";
 import { User } from "./user.model";
+import { AssetListing } from "./asset-listing.model";
 
 export interface VerifyWalletResponse {
   words: string;
@@ -22,7 +23,7 @@ export interface VerifyAdminSubmitRequestResponse {
   admin: Admin;
   tokens: AuthTokens;
 }
-export interface AuthResponse extends User{}
+export interface AuthResponse extends User {}
 
 export interface CustomerPointResponse {
   points: Point[];
@@ -40,9 +41,19 @@ export interface CustomerRedeemPointsResponse {
     signature: string;
     offChainPoints: number;
     amount: number;
-  }
+  };
 }
 
 export interface PointsListResponse {
   pointsAssets: PointAsset[];
+}
+
+export interface MarketplacePointAssetInfoResponse {
+  listings: {
+    listings: any[];
+    ownerListings: any[];
+    assetListings: AssetListing[];
+    ownerAndAssetListings: AssetListing[];
+  };
+  points: number;
 }

@@ -1,63 +1,37 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import {
-  File,
-  Home,
-  LineChart,
-  ListFilter,
-  MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Users2,
-  ArrowDownRightSquareIcon,
-  ListIcon,
-  GridIcon,
-} from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
+import { ArrowDownRightSquareIcon, ListIcon, GridIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useState } from "react";
 import GridViewComponent from "./grid-view-component";
-import TradeListComponent from "./trade-list-table";
-import { pointsTableData } from "@/data";
+import { AssetListing, ListingType } from "@/models/asset-listing.model";
+import { DataTable } from "./data-table/data-table";
+import { AssetListingColumns } from "./table-columns/asset-listing-columns";
 
-type Props = {};
+type Props = {
+  assetListings: AssetListing[];
+  loading?: boolean;
+};
 
-const TradesView: React.FC<Props> = () => {
+const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
+  const buyListings = assetListings.filter(
+    (listing) => listing.listingType === String(ListingType.BUY)
+  );
+  const sellListings = assetListings.filter(
+    (listing) => listing.listingType === String(ListingType.SELL)
+  );
+
   const [viewType, setViewType] = useState<"list" | "grid">("list");
   return (
     <div className="bg-muted/40 w-full">
@@ -96,8 +70,16 @@ const TradesView: React.FC<Props> = () => {
         </div>
         <TabsContent value="list">
           <div className="flex gap-2">
-          <TradeListComponent Points={pointsTableData} isLoading={false} />
-          <TradeListComponent Points={pointsTableData} isLoading={false} />
+            <DataTable
+              columns={AssetListingColumns}
+              data={buyListings}
+              loading={loading}
+            />
+            <DataTable
+              columns={AssetListingColumns}
+              data={sellListings}
+              loading={loading}
+            />
           </div>
         </TabsContent>
 
