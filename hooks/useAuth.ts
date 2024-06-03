@@ -117,6 +117,7 @@ const useAuth = () => {
   useEffect(() => {
     if (error) {
       console.log("authError", error);
+      logout();
     }
   }, [error]);
 
@@ -125,7 +126,7 @@ const useAuth = () => {
       console.log("check access");
       checkAccess();
     }
-  }, [pathname, userRoles]);
+  }, [pathname, accessTokenData, refreshTokenData, userRoles]);
 
   const checkAccess = async () => {
     const now = Date.now();
@@ -147,8 +148,13 @@ const useAuth = () => {
       if (refreshTokenExpiryDate > now) {
         refreshTokens(refreshTokenData.token);
       } else {
-        logout();
-        console.log("Refresh token expired, log out");
+        if (accessTokenExpiryDate === 0) {
+          // to prevent unidentified bug where access token is set to 0
+          router.refresh();
+        } else {
+          logout();
+          console.log("Refresh token expired, log out");
+        }
       }
     }
   };

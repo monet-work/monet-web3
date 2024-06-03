@@ -6,6 +6,18 @@ import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import CreateOfferDialog from "./create-offer-dialog";
 
 const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
@@ -15,7 +27,9 @@ const MarketplaceHeader = () => {
         <Link href={"/"}>
           <MonetWorkLogo className="text-primary w-24 h-24" />
         </Link>
-        <Link href={"/marketplace"} className="ml-8">Marketplace</Link>
+        <Link href={"/marketplace"} className="ml-8">
+          Marketplace
+        </Link>
       </div>
       <div className="relative flex gap-2 items-center justify-between">
         <ConnectButton
@@ -28,7 +42,16 @@ const MarketplaceHeader = () => {
           wallets={[createWallet("io.metamask")]}
         />
 
-        {activeAccount ? <Button>Create Offer</Button> : null}
+        <AlertDialog>
+          {activeAccount ? (
+            <AlertDialogTrigger>
+              {" "}
+              <Button>Create Offer</Button>
+            </AlertDialogTrigger>
+          ) : null}
+
+          <CreateOfferDialog />
+        </AlertDialog>
       </div>
     </nav>
   );
