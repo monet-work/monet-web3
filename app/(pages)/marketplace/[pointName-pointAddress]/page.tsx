@@ -116,7 +116,7 @@ const PointPage = () => {
             />
           </div>
         </div>
-        <div className="border w-1/3">
+        <div className="w-1/3">
           <TradeDetails isActive={true} Data={pointsTableData} />
         </div>
       </div>

@@ -39,9 +39,9 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
             <TabsTrigger onClick={() => setViewType("list")} value="list">
               <ListIcon />
             </TabsTrigger>
-            <TabsTrigger onClick={() => setViewType("grid")} value="grid">
+            {/* <TabsTrigger onClick={() => setViewType("grid")} value="grid">
               <GridIcon />
-            </TabsTrigger>
+            </TabsTrigger> */}
           </TabsList>
 
           <div className="ml-auto flex items-center gap-2">
@@ -75,7 +75,7 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
           />
         </TabsContent>
 
-        <TabsContent value="grid">
+        {/* <TabsContent value="grid">
           <Tabs defaultValue="All">
             {viewType === "grid" && (
               <TabsList className="duration-200 transition">
@@ -96,7 +96,7 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
             </TabsContent>
             <TabsContent value="Buy">Buy</TabsContent>
           </Tabs>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </div>
   );
