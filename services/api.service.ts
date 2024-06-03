@@ -59,7 +59,7 @@ axios.interceptors.request.use(
       // Add token to request header
       if (isSecuredRoute) {
         const accessToken = JSON.parse(
-          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
+          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA) ?? ""
         ) as Token;
         if (typeof accessToken === "object" && accessToken !== null) {
           config.headers.Authorization = `Bearer ${accessToken.token}`;

@@ -18,13 +18,14 @@ const SubmitRequestPage: React.FC = () => {
   const customerStore = useCustomerStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    ""
+  const [accessTokenData, setAccessTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
-  const [refreshToken, setRefreshToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    ""
+
+  const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
+    { token: "", expiry: 0 }
   );
 
   const walletSignatureVerficationMutation = useMutation({
@@ -65,8 +66,14 @@ const SubmitRequestPage: React.FC = () => {
                 onSuccess: (res) => {
                   const { customer, tokens } = res.data;
                   toast.success("Wallet verified successfully");
-                  setAccessToken(tokens.access);
-                  setRefreshToken(tokens.refresh);
+                  setAccessTokenData({
+                    token: tokens.access.token,
+                    expiry: tokens.access.expires,
+                  });
+                  setRefreshTokenData({
+                    token: tokens.refresh.token,
+                    expiry: tokens.refresh.expires,
+                  });
                   customerStore.setCustomer(customer);
 
                   if (customer) {
