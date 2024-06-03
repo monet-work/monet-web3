@@ -2,7 +2,12 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
-import { AssetListing } from "@/models/asset-listing.model";
+import {
+  AssetListing,
+  ListingFillType,
+  ListingType,
+} from "@/models/asset-listing.model";
+import clsx from "clsx";
 
 export const AssetListingColumns: ColumnDef<AssetListing>[] = [
   {
@@ -30,7 +35,15 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => {
-      return <div className="text-xs">{row.getValue("listingType")}</div>;
+      return (
+        <div className={clsx("text-xs")}>
+          {row.getValue("listingType") === ListingType.BUY ? (
+            <span className="text-green-500">Buy</span>
+          ) : (
+            <span className="text-red-500">Sell</span>
+          )}
+        </div>
+      );
     },
     enableSorting: false,
     enableHiding: false,
@@ -42,7 +55,9 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       <DataTableColumnHeader column={column} title="Fill" className="text-xs" />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">{row.getValue("fillType")}</div>
+      <div className="text-xs">
+        {row.getValue("fillType") === ListingFillType.FULL ? "Full" : "Partial"}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,

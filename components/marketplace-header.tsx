@@ -6,21 +6,14 @@ import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import CreateOfferDialog from "./create-offer-dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useState } from "react";
+import CreateOfferForm from "./forms/create-offer-form";
 
 const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
+  const [showOfferDialog, setShowOfferDialog] = useState(false);
   return (
     <nav className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
       <div className="flex items-center gap-4">
@@ -41,17 +34,15 @@ const MarketplaceHeader = () => {
           }}
           wallets={[createWallet("io.metamask")]}
         />
+        {activeAccount ? (
+          <Button onClick={() => setShowOfferDialog(true)}>Create Offer</Button>
+        ) : null}
 
-        <AlertDialog>
-          {activeAccount ? (
-            <AlertDialogTrigger>
-              {" "}
-              <Button>Create Offer</Button>
-            </AlertDialogTrigger>
-          ) : null}
-
-          <CreateOfferDialog />
-        </AlertDialog>
+        <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
+          <DialogContent>
+            <CreateOfferForm onCanceled={() => setShowOfferDialog(false)} />
+          </DialogContent>
+        </Dialog>
       </div>
     </nav>
   );

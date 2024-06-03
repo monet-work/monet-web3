@@ -12,10 +12,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AlertDialogCancel } from "../ui/alert-dialog";
 import { Info } from "lucide-react";
 
-type Props = {};
+type Props = {
+  onCanceled: () => void;
+};
 
 const formSchema = z.object({
   offerType: z.string(),
@@ -24,7 +25,7 @@ const formSchema = z.object({
   fillType: z.string(),
 });
 
-const CreateOfferForm: React.FC<Props> = () => {
+const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -109,10 +110,12 @@ const CreateOfferForm: React.FC<Props> = () => {
               </FormItem>
             )}
           />
-          <div className="flex flex-col gap-2 pt-2">
-            <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
+          <div className="flex gap-2 pt-2">
             <Button type="submit" className="w-full">
               Create Offer
+            </Button>
+            <Button variant={"secondary"} onClick={() => onCanceled()}>
+              Cancel
             </Button>
           </div>
         </form>

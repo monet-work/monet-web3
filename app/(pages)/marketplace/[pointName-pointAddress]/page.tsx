@@ -39,7 +39,7 @@ const PointPage = () => {
   return (
     <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-4 w-full container">
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 flex-1">
           <div>
             <h3 className="mb-2">Public Trades</h3>
             <TradesView
