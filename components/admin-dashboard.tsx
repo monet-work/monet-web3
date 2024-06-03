@@ -6,6 +6,7 @@ import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { apiService } from "@/services/api.service";
 import CompanyList from "./company-list";
 
+
 type Props = {};
 
 const AdminDashboard: React.FC<Props> = () => {
