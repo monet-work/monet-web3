@@ -3,6 +3,7 @@ import { AlertDialogContent } from "./ui/alert-dialog";
 import BuyOfferComponent from "./buy-offer-component";
 import SellOfferComponent from "./sell-offer-component";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CreateOfferForm from "./forms/create-offer-form";
 
 type Props = {};
 
@@ -23,10 +24,12 @@ function CreateOfferDialog({}: Props) {
         </TabsList>
         <TabsContent value="sell">
           {" "}
-          <SellOfferComponent />
+          {/* <SellOfferComponent />
+           */}
+          <CreateOfferForm />
         </TabsContent>
         <TabsContent value="buy">
-          <BuyOfferComponent />{" "}
+          <CreateOfferForm />
         </TabsContent>
       </Tabs>
     </AlertDialogContent>
