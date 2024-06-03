@@ -85,19 +85,6 @@ const useAuth = () => {
     },
   });
 
-  const { mutate: refreshTokens } = useMutation({
-    mutationFn: apiService.refreshToken,
-    onSuccess: (response) => {
-      console.log(response);
-      setAccessToken(response.data.access);
-      setAccessTokenExpiry(response.data.access);
-      setRefreshToken(response.data.refresh_token);
-      setRefreshTokenExpiry(response.data.refresh_token_expiry);
-
-      queryClient.invalidateQueries(["auth"] as any);
-    },
-  });
-
   useEffect(() => {
     if (connectionStatus === "connected") {
       setThirdwebConnected(true);
@@ -134,11 +121,11 @@ const useAuth = () => {
   }, [error]);
 
   useEffect(() => {
-    if (isPrivateRoute && userRoles.length > 0) {
+    if (!isPublicRoute && userRoles.length > 0) {
       console.log("check access");
       checkAccess();
     }
-  }, [pathname, isPrivateRoute, userRoles]);
+  }, [pathname, userRoles]);
 
   const checkAccess = async () => {
     const now = Date.now();
