@@ -1,4 +1,5 @@
 import { API_BASE_URL, API_ENDPOINTS } from "@/config/api.config";
+import { matchesDynamicRoute } from "@/lib/utils";
 import {
   CompanyUploadPointsPayload,
   CompanyVerifyWalletPayload,
@@ -8,6 +9,7 @@ import {
   CompanyDashboardResponse,
   CustomerPointResponse,
   CustomerRedeemPointsResponse,
+  PointsListResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
@@ -17,26 +19,6 @@ import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import axios from "axios";
 
-// Helper function to check if a URL matches a dynamic pattern
-const matchesDynamicRoute = (url: string, pattern: string) => {
-  // Strip query parameters if present
-  const [urlPath] = url.split("?");
-
-  // Replace dynamic segments with regex patterns specifically in the path part
-  const regexPattern = pattern
-    .split("/")
-    .map((segment) => (segment.startsWith(":") ? "([\\w-]+)" : segment))
-    .join("/");
-
-  // Create the final regex with start and end anchors
-  const regex = new RegExp(`^${regexPattern}$`);
-
-  // Test the URL against the regex pattern
-  const result = regex.test(urlPath);
-
-  return result;
-};
-
 const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
@@ -45,6 +27,7 @@ const securedRoutes = [
   `${API_BASE_URL}/customers/:customerId/redeem`,
   `${API_BASE_URL}/companies/:companyId/upload-points`,
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
+  `${API_BASE_URL}/marketplace`,
 ];
 
 // axios interceptors
@@ -192,6 +175,12 @@ const customerRedeemPoints = async (payload: {
   );
 };
 
+const getMarketplacePointsList = async () => {
+  return axios.get<PointsListResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`
+  );
+};
+
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -208,4 +197,5 @@ export const apiService = {
   approveAdminCompany,
   customerRedeemPoints,
   refreshToken,
+  getMarketplacePointsList,
 };
