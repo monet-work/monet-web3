@@ -56,4 +56,7 @@ export interface MarketplacePointAssetInfoResponse {
     ownerAndAssetListings: AssetListing[];
   };
   points: number;
+  name: string;
+  symbol: string;
+  decimals: number;
 }

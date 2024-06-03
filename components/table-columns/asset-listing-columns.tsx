@@ -6,6 +6,7 @@ import {
   AssetListing,
   ListingFillType,
   ListingType,
+  PaymentType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
 
@@ -59,6 +60,38 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
         {row.getValue("fillType") === ListingFillType.FULL ? "Full" : "Partial"}
       </div>
     ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "paymentType",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Payment"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs">
+        {row.getValue("paymentType") === PaymentType.NATIVE_TOKEN
+          ? "Native"
+          : "Custom"}
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "owner",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Owner"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => <div className="text-xs">{row.getValue("owner")}</div>,
     enableSorting: false,
     enableHiding: false,
   },

@@ -68,20 +68,12 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
           </div>
         </div>
         <TabsContent value="list">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             <DataTable
               columns={AssetListingColumns}
-              data={buyListings}
+              data={assetListings}
               loading={loading}
               noResultsMessage="No listings available."
             />
-            <DataTable
-              columns={AssetListingColumns}
-              data={sellListings}
-              loading={loading}
-              noResultsMessage="No listings available."
-            />
-          </div>
         </TabsContent>
 
         <TabsContent value="grid">
