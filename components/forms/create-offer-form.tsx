@@ -134,10 +134,10 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
               <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
             </div>
             <p className="text-sm font-medium text-green-500 ">
-              $
+              {/* $
               {2400 *
                 form.getValues("pricePerPoint") *
-                (form.getValues("quantity") as any)}{" "}
+                (form.getValues("quantity") as any)}{" "} */}
               <span className="text-gray-300  text-xs font-normal">
                 {(form.getValues("quantity") as any) *
                   form.getValues("pricePerPoint")}{" "}
