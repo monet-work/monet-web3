@@ -126,7 +126,9 @@ const PointPage = () => {
             />
           </div>
           <div className="mt-8">
-            <h3 className="mb-4 text-muted-foreground">Recently completed listings</h3>
+            <h3 className="mb-4 text-muted-foreground">
+              Recently completed listings
+            </h3>
             <TradesView
               assetListings={completedPublicListings || []}
               loading={isLoading}
@@ -140,11 +142,13 @@ const PointPage = () => {
             />
           </div>
         </div>
-        <div className="w-full md:w-1/3">
-          <TradeDetails
-            assetListing={selectedListing}
-            onTradeSuccess={() => setSelectedListing(undefined)}
-          />
+        <div className="w-full md:w-1/3 relative">
+          <div className="sticky top-[100px] mt-8">
+            <TradeDetails
+              assetListing={selectedListing}
+              onTradeSuccess={() => setSelectedListing(undefined)}
+            />
+          </div>
         </div>
       </div>
     </main>
