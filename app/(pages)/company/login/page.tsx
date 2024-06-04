@@ -2,8 +2,6 @@
 
 import { connectWallet } from "@/app/contract-utils";
 import LoginCompany from "@/components/login-company";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -12,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useActiveAccount, useConnect } from "thirdweb/react";
 
 const CompanyLoginPage = () => {
-  const { connect } = useConnect();
+  const { connect, isConnecting } = useConnect();
   const activeAccount = useActiveAccount();
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
@@ -41,7 +39,7 @@ const CompanyLoginPage = () => {
     <main>
       <LoginCompany
         onClickConnectWallet={handleLoginCompany}
-        loading={verifyAddressStep1Mutation.isPending}
+        loading={verifyAddressStep1Mutation.isPending || isConnecting}
       />
     </main>
   );
