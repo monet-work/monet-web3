@@ -21,7 +21,11 @@ import { monetMarketplaceContract } from "@/app/contract-utils";
 import { toast } from "sonner";
 import { useSendTransaction } from "thirdweb/react";
 
-const TradeDetails: React.FC<Props> = ({ assetListing, onTradeError, onTradeSuccess }) => {
+const TradeDetails: React.FC<Props> = ({
+  assetListing,
+  onTradeError,
+  onTradeSuccess,
+}) => {
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
@@ -30,7 +34,10 @@ const TradeDetails: React.FC<Props> = ({ assetListing, onTradeError, onTradeSucc
         contract: monetMarketplaceContract,
         method: "trade",
         params: [BigInt(assetListing.Id), BigInt(assetListing.amount)],
-        value: BigInt(toWei(assetListing.totalPrice)),
+        value:
+          assetListing.listingType === ListingType.SELL
+            ? BigInt(toWei(assetListing.totalPrice))
+            : undefined,
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
