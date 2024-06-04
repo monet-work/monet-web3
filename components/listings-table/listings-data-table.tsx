@@ -16,7 +16,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { DataTablePagination } from "./data-table-pagination";
 import {
   Table,
   TableBody,
@@ -25,25 +24,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
   noResultsMessage?: string;
-  maxWidth?: string;
-  enablePagination?: boolean;
-  onRowClick?: (rowData: TData) => void; // Added prop for row click event
+  onRowClick?: (rowData: TData) => void; 
 }
 
-export function DataTable<TData, TValue>({
+export function ListingsDataTable<TData, TValue>({
   columns,
   data,
   loading,
   noResultsMessage,
-  maxWidth,
-  enablePagination = false,
   onRowClick, // Destructuring the new prop
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -78,13 +72,13 @@ export function DataTable<TData, TValue>({
 
   const handleRowClick = (rowData: TData) => {
     if (onRowClick) {
+        console.log(rowData, "rowData")
       onRowClick(rowData);
     }
   };
 
   return (
     <div className="space-y-4">
-      {/* <DataTableToolbar table={table} /> */}
       <div className="rounded-md border h-full">
         <Table>
           <TableHeader>
@@ -119,7 +113,7 @@ export function DataTable<TData, TValue>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      onClick={() => handleRowClick(row.original)} // Added onClick handler
+                      onClick={() => handleRowClick(row.original)}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
@@ -146,7 +140,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {enablePagination && <DataTablePagination table={table} />}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export const PointsListColumns: ColumnDef<{
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px] cursor-pointer">{row.getValue("name")}</div>
+      <div className="w-[80px] cursor-pointer text-xs">{row.getValue("name")}</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -26,7 +26,7 @@ export const PointsListColumns: ColumnDef<{
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Symbol" />
     ),
-    cell: ({ row }) => <div className="">{row.getValue("symbol")}</div>,
+    cell: ({ row }) => <div className="text-muted-foreground text-xs">{row.getValue("symbol")}</div>,
   },
   {
     accessorKey: "address",
@@ -34,7 +34,7 @@ export const PointsListColumns: ColumnDef<{
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => (
-      <div className="flex flex-col">{row.getValue("address")}</div>
+      <div className="text-muted-foreground text-xs">{row.getValue("address")}</div>
     ),
   },
   {

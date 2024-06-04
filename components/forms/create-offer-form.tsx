@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Form, FormProvider } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -20,6 +20,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Info } from "lucide-react";
@@ -53,7 +54,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   };
 
   return (
-    <FormProvider {...form}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
           <div className="flex py-4 w-full justify-between">
@@ -183,13 +183,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             <Button type="submit" className="w-full">
               Create Offer
             </Button>
-            <Button variant={"secondary"} onClick={() => onCanceled()}>
+            <Button type="button" variant={"secondary"} onClick={() => onCanceled()}>
               Cancel
             </Button>
           </div>
         </form>
       </Form>
-    </FormProvider>
   );
 };
 

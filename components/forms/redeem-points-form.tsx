@@ -38,6 +38,8 @@ const RedeemPointsForm: React.FC<Props> = ({ totalPoints, onSubmitForm }) => {
 
   const amount = form.watch("amount");
 
+  console.log(amount, "amount");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -57,7 +59,10 @@ const RedeemPointsForm: React.FC<Props> = ({ totalPoints, onSubmitForm }) => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={totalPoints < Number(amount)}>
+        <Button
+          type="submit"
+          disabled={!amount || totalPoints < Number(amount)}
+        >
           Redeem {Number(amount) > 0 ? amount : ""} points
         </Button>
       </form>

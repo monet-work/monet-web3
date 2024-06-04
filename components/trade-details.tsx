@@ -1,72 +1,69 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 
 type Props = {
-  isActive: boolean;
-  Data: any;
+  assetListing?: AssetListing;
 };
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
-import Image from "next/image";
-import { Info, TextSelectIcon } from "lucide-react";
-import { Input } from "./ui/input";
+import { Pointer } from "lucide-react";
+import { AssetListing, ListingType } from "@/models/asset-listing.model";
+import clsx from "clsx";
 
-const TradeDetails: React.FC<Props> = ({ isActive, Data }) => {
+const TradeDetails: React.FC<Props> = ({ assetListing }) => {
   return (
-    <Card className="w-full">
-      <CardContent className="flex flex-col pt-4 w-full ">
-        <div className="flex pt-4 w-full justify-between">
-          <div className="flex flex-col gap-1 items-start">
-            <p className="text-sm text-neutral-400">OFFER</p>
-            <div className="flex items-center text-xl gap-2">
-              HyperLiquid/ETH{" "}
-              <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
+    <Card
+      className={clsx("w-full bg-muted", {
+        "outline outline-2 outline-green-600":
+          assetListing?.listingType === ListingType.BUY,
+        "outline outline-2 outline-red-600":
+          assetListing?.listingType === ListingType.SELL,
+      })}
+    >
+      <CardContent className="flex flex-col pt-4 w-full min-h-[400px] h-full">
+        {!assetListing ? (
+          <div className="text-muted-foreground flex items-center justify-center h-full min-h-[400px]">
+            <div className="flex flex-col items-center gap-8">
+              <Pointer className="h-12 w-12" />
+              <p className="text-lg">Select an offer to view details</p>
             </div>
-            <p className="text-sm font-medium text-green-500 ">
-              $5.45{" "}
-              <span className="text-gray-300  text-xs font-normal">
-                0.000145 ETH
+          </div>
+        ) : null}
+
+        {assetListing ? (
+          <div className="flex flex-col flex-grow">
+            <div className="flex-grow">
+              <p className="text-2xl">
+                {assetListing.listingType === ListingType.BUY
+                  ? "Selling"
+                  : "Buying"}
+              </p>
+              <h3 className="font-bold text-4xl mt-2">
+                {assetListing.amount} <span className="font-thin">tokens</span>
+              </h3>
+              <p className="mt-2">for an offer price of</p>
+              <div className="mt-2">
+                <span className="text-3xl font-semibold">
+                  {assetListing.totalPrice}
+                </span>
+                <span className="text-sm font-normal">ETH</span>
+              </div>
+              <span className="text-xs mt-2 text-muted-foreground">
+                ({assetListing.pricePerPoint} ETH per point)
               </span>
-            </p>
-          </div>
-          <div>
-            <Button
-              className="items-center text-neutral-400 gap-1 "
-              variant={"outline"}
-            >
-              <Info className="w-4 h-4" /> Offer Info
-            </Button>
-          </div>
-        </div>
-        <div className="mt-4 rounded-lg bg-neutral-900 p-4 ">
-          <div className="w-full flex justify-between">
-            {" "}
-            <p className="text-base font-medium text-green-500">BUYING</p>{" "}
-            <p className="text-sm">
-              Max <span className="text-neutral-400">826 Pts</span>
-            </p>
-          </div>
+              <p className="mt-2">from</p>
+              <p className="text-xs mt-2">{assetListing.owner}</p>
+            </div>
 
-          <div className="flex items-center justify-between text-xl gap-2">
-            <Input
-              type="number"
-              className="bg-transparent text-xl outline-none my-1 border-none active:outline-none active:border-none focus:outline-none focus:border-none"
-            />
-            <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
+            <div className="mt-auto">
+              <Button className="mt-2 w-full" size={"lg"}>
+                {assetListing.listingType === ListingType.BUY ? "Sell" : "Buy"}
+              </Button>
+            </div>
           </div>
-        </div>
-        <Button className="w-full">Connect Wallet</Button>
+        ) : null}
       </CardContent>
-
-     
     </Card>
   );
 };

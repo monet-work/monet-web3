@@ -18,7 +18,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       <DataTableColumnHeader column={column} title="Id" className="text-xs" />
     ),
     cell: ({ row }) => {
-      return <div className="text-xs">{row.getValue("Id")}</div>;
+      return <div className="text-xs cursor-pointer">{row.getValue("Id")}</div>;
     },
     enableSorting: false,
     enableHiding: false,
@@ -33,7 +33,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => {
-      return <div className="text-xs">{row.getValue("amount")}</div>;
+      return <div className="text-xs cursor-pointer">{row.getValue("amount")}</div>;
     },
     enableSorting: false,
     enableHiding: false,
@@ -49,7 +49,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className={clsx("text-xs")}>
+        <div className={clsx("text-xs cursor-pointer")}>
           {row.getValue("listingType") === ListingType.BUY ? (
             <span className="text-green-500">Buy</span>
           ) : (
@@ -68,7 +68,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       <DataTableColumnHeader column={column} title="Fill" className="text-xs" />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">
+      <div className="text-xs cursor-pointer">
         {row.getValue("fillType") === ListingFillType.FULL ? "Full" : "Partial"}
       </div>
     ),
@@ -85,7 +85,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">
+      <div className="text-xs cursor-pointer">
         {row.getValue("paymentType") === PaymentType.NATIVE_TOKEN
           ? "ETH"
           : "Custom"}
@@ -103,7 +103,7 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
         className="text-xs"
       />
     ),
-    cell: ({ row }) => <div className="text-xs">{row.getValue("owner")}</div>,
+    cell: ({ row }) => <div className="text-xs cursor-pointer">{row.getValue("owner")}</div>,
     enableSorting: false,
     enableHiding: false,
   },
@@ -112,12 +112,12 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
-        title="Total Price"
+        title="Price"
         className="text-xs"
       />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">{row.getValue("totalPrice")}</div>
+      <div className="text-xs cursor-pointer">{row.getValue("totalPrice")} ETH</div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -132,12 +132,14 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="text-xs">
-        {row.getValue("status") === ListingStatus.LIVE
-          ? <span className="text-blue-400 text-semibold">Live</span>
-          : row.getValue("status") === ListingStatus.BOUGHT
-            ? <span className="text-muted-foreground">Bought</span>
-            : "Sold"}
+      <div className="text-xs cursor-pointer">
+        {row.getValue("status") === ListingStatus.LIVE ? (
+          <span className="text-blue-400 text-semibold">Live</span>
+        ) : row.getValue("status") === ListingStatus.BOUGHT ? (
+          <span className="text-muted-foreground">Bought</span>
+        ) : (
+          "Sold"
+        )}
       </div>
     ),
     enableSorting: false,

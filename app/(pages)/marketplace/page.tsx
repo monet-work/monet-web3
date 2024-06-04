@@ -22,8 +22,8 @@ const MarketplacePage = () => {
   return (
     <main className="w-full flex gap-8 py-16 flex-col items-center min-h-screen">
       <div className="container">
-        <h2 className="text-2xl pb-2">
-          Live Points Market. Buy and sell points.
+        <h2 className="font-light pb-2">
+          Live Points Market. Click on a point to start trading.
         </h2>
 
         <div className="mt-4">

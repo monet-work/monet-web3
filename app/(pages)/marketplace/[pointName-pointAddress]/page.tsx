@@ -7,6 +7,8 @@ import { pointsTableData } from "@/data";
 import { AssetListing } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
+import { ExternalLinkIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toTokens } from "thirdweb";
@@ -20,6 +22,9 @@ const PointPage = () => {
 
   const pointName = pointNameWithAddress.split("-")[0];
   const pointAddress = pointNameWithAddress.split("-")[1];
+  const [selectedListing, setSelectedListing] = useState<
+    AssetListing | undefined
+  >(undefined);
 
   const [formattedAssetListings, setFormattedAssetListings] = useState<
     AssetListing[]
@@ -69,18 +74,38 @@ const PointPage = () => {
 
   return (
     <main className="pt-16">
-      <div className="flex flex-col md:flex-row gap-4 w-full container">
+      <div className="flex flex-col md:flex-row gap-8 w-full container">
         <div className="flex flex-col gap-4 flex-1">
           {isLoading ? (
             <Skeleton className="h-20 w-full" />
           ) : (
-            <div>
-              <h2 className="text-2xl pb-2">
-                {pointAssetInfoData?.data.name}{" "}
-                <span className="text-muted-foreground">
-                  ({pointAssetInfoData?.data.symbol})
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl pb-2">
+                  {pointAssetInfoData?.data.name}{" "}
+                  <span className="text-muted-foreground">
+                    ({pointAssetInfoData?.data.symbol})
+                  </span>
+                </h2>
+                <Link
+                  className="flex gap-2"
+                  href={`https://sepolia.basescan.org/tx/${pointAddress}`}
+                >
+                  <p className="text-sm text-muted-foreground hover:underline">
+                    {pointAddress}
+                  </p>
+                  <ExternalLinkIcon className="h-4 w-4 text-muted-foreground" />
+                </Link>
+              </div>
+
+              <div className="text-muted-foreground text-2xl">
+                <span className="font-bold mr-2">
+                  {pointAssetInfoData?.data.points}
                 </span>
-              </h2>
+                <span className="font-light">
+                  {pointAssetInfoData?.data.symbol}
+                </span>
+              </div>
             </div>
           )}
           <div>
@@ -88,9 +113,10 @@ const PointPage = () => {
             <TradesView
               assetListings={publicListings || []}
               loading={isLoading}
+              onListingSelected={(listing) => setSelectedListing(listing)}
             />
           </div>
-          <div>
+          <div className="mt-8">
             <h3 className="mb-4">Your Listings</h3>
             <TradesView
               assetListings={ownerListings || []}
@@ -98,8 +124,8 @@ const PointPage = () => {
             />
           </div>
         </div>
-        <div className="border w-1/3">
-          <TradeDetails isActive={true} Data={pointsTableData} />
+        <div className="w-full md:w-1/3">
+          <TradeDetails assetListing={selectedListing} />
         </div>
       </div>
     </main>
