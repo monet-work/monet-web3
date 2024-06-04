@@ -25,9 +25,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Info } from "lucide-react";
 import { useSendTransaction } from "thirdweb/react";
-import { monetMarketplaceContract } from "@/app/contract-utils";
+import {
+  monetMarketplaceContract,
+  monetPointsContractFactory,
+} from "@/app/contract-utils";
 import { toast } from "sonner";
-import { prepareContractCall, PreparedTransaction } from "thirdweb";
+import { prepareContractCall, PreparedTransaction, toWei } from "thirdweb";
+import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 
 type Props = {
   onCanceled: () => void;
@@ -36,6 +40,7 @@ type Props = {
 const formSchema = z.object({
   offerType: z.string(),
   point: z.string(),
+  paymentToken: z.string(),
   pricePerPoint: z.coerce.number(),
   quantity: z.string(),
   fillType: z.string(),
@@ -47,6 +52,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     defaultValues: {
       quantity: "",
       point: "",
+      paymentToken: "",
       pricePerPoint: 0,
       offerType: "sell",
       fillType: "partial",
@@ -54,61 +60,62 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   });
 
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+
+  const { marketPlace, setMarketPlace } = useMarketPlaceStore();
+  console.log(marketPlace);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const performApproval = async () => {
+      const transaction = await prepareContractCall({
+        contract: monetPointsContractFactory(values.point),
+        method: "approve",
+        params: [
+          "0x3eb2486F57E6CB3d21C6406a8DbA0D0aCd1613a5",
+          BigInt(values.quantity),
+        ],
+      });
+      await sendTransaction(transaction as PreparedTransaction, {
+        onSuccess: async () => {
+          console.log("Approved");
+          await call();
+        },
+        onError: () => {
+          console.log("Error approving");
+        },
+      });
+    };
+
     console.log("submit", values);
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
         method: "createListing",
         params: [
-          "0x08Bb7B2b3f3aE90DB61d515A6FE0954aE24d9212",
+          values.point,
           BigInt(values.quantity),
-          BigInt(values.pricePerPoint),
-          "0x08Bb7B2b3f3aE90DB61d515A6FE0954aE24d9212",
+          toWei(values.pricePerPoint.toString()),
+          values.point,
           1,
-          1,
-          1,
+          values.fillType === "full" ? 1 : 0,
+          0,
         ],
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           toast.success("Successfully created offer");
+
+          onCanceled();
         },
 
         onError: (error) => {
+          console.log(error);
           toast.error(error.message);
         },
       });
     };
 
-    call();
-  };
-
-  const Sellcall = async () => {
-    const transaction = await prepareContractCall({
-      contract: monetMarketplaceContract,
-      method: "createListing",
-      params: [
-        "0xd263Fa230cCfa39FaE3A783f2f874ddD3f1294D3",
-        BigInt(10000),
-        BigInt(2),
-        "0xd263Fa230cCfa39FaE3A783f2f874ddD3f1294D3",
-        1,
-        1,
-        1,
-      ],
-    });
-
-    await sendTransaction(transaction as PreparedTransaction, {
-      onSuccess: (result) => {
-        toast.success("Successfully created offer");
-      },
-
-      onError: (error) => {
-        toast.error(error.message);
-      },
-    });
+    performApproval();
   };
 
   return (
@@ -118,13 +125,23 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           <div className="flex flex-col gap-1 items-start">
             <p className="text-sm text-neutral-400">OFFER</p>
             <div className="flex items-center text-xl gap-2">
-              HyperLiquid/ETH
+              {
+                marketPlace.find(
+                  (item: any) => item.address === form.getValues("point")
+                )?.name
+              }
+              /ETH
               <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
             </div>
             <p className="text-sm font-medium text-green-500 ">
-              $5.45{" "}
+              $
+              {2400 *
+                form.getValues("pricePerPoint") *
+                (form.getValues("quantity") as any)}{" "}
               <span className="text-gray-300  text-xs font-normal">
-                0.000145 ETH
+                {(form.getValues("quantity") as any) *
+                  form.getValues("pricePerPoint")}{" "}
+                ETH
               </span>
             </p>
           </div>
@@ -170,10 +187,29 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="ADB">ADB</SelectItem>
-                  <SelectItem value="TSTP">TSTP</SelectItem>
-                  <SelectItem value="NRG">NRG</SelectItem>
+                  {marketPlace.map((item: any) => (
+                    <SelectItem key={item.address} value={item.address}>
+                      {item.symbol}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
+              </Select>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="paymentToken"
+          disabled={true}
+          render={({ field }) => (
+            <FormItem className="bg-neutral-900 p-4 text-white rounded-lg">
+              <FormLabel>Select Payment Token</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue="ETH">
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="ETH" />
+                  </SelectTrigger>
+                </FormControl>
               </Select>
             </FormItem>
           )}
@@ -211,13 +247,13 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Partial" />
+                      <RadioGroupItem value="partial" />
                     </FormControl>
                     <FormLabel className="font-normal">Partial Fill</FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Full" />
+                      <RadioGroupItem value="full" />
                     </FormControl>
                     <FormLabel className="font-normal">Full Fill</FormLabel>
                   </FormItem>
