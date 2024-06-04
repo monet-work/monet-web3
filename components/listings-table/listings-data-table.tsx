@@ -25,13 +25,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
+import clsx from "clsx";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   loading?: boolean;
   noResultsMessage?: string;
-  onRowClick?: (rowData: TData) => void; 
+  onRowClick?: (rowData: TData) => void;
 }
 
 export function ListingsDataTable<TData, TValue>({
@@ -42,7 +43,9 @@ export function ListingsDataTable<TData, TValue>({
   onRowClick, // Destructuring the new prop
 }: DataTableProps<AssetListing, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [selectedRow, setSelectedRow] = React.useState<AssetListing | null>(null); // New state to track the selected row
+  const [selectedRow, setSelectedRow] = React.useState<AssetListing | null>(
+    null
+  ); // New state to track the selected row
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -75,7 +78,7 @@ export function ListingsDataTable<TData, TValue>({
   const handleRowClick = (rowData: AssetListing) => {
     setSelectedRow(rowData);
     if (onRowClick) {
-        console.log(rowData, "rowData")
+      console.log(rowData, "rowData");
       onRowClick(rowData);
     }
   };
@@ -117,11 +120,14 @@ export function ListingsDataTable<TData, TValue>({
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => handleRowClick(row.original)}
-                      className={selectedRow === row.original 
-                        ? row.original.listingType === ListingType.SELL
-                          ? "border-2 border-red-600 rounded-md" 
-                          : "border-2 border-green-600 rounded-md" 
-                        : ""}
+                      className={clsx(
+                        '[&_tr:last-child]:border-solid',
+                        selectedRow === row.original
+                          ? row.original.listingType === ListingType.SELL
+                            ? "border-2 border-red-600 rounded-md"
+                            : "border-2 border-green-600 rounded-md"
+                          : ""
+                      )}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
