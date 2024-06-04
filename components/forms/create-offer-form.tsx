@@ -40,7 +40,7 @@ type Props = {
 const formSchema = z.object({
   offerType: z.string(),
   point: z.string(),
-  paymentToken: z.string(),
+  // paymentToken: z.string(),
   pricePerPoint: z.coerce.number(),
   quantity: z.string(),
   fillType: z.string(),
@@ -52,7 +52,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     defaultValues: {
       quantity: "",
       point: "",
-      paymentToken: "",
+      // paymentToken: "",
       pricePerPoint: 0,
       offerType: "sell",
       fillType: "partial",
@@ -128,9 +128,9 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
               {
                 marketPlace.find(
                   (item: any) => item.address === form.getValues("point")
-                )?.name
-              }
-              /ETH
+                )?.symbol
+              }{" "}
+              / ETH
               <Image src={"/images/For.svg"} width={26} height={26} alt={""} />
             </div>
             <p className="text-sm font-medium text-green-500 ">
@@ -197,30 +197,30 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="paymentToken"
-          disabled={true}
-          render={({ field }) => (
-            <FormItem className="bg-neutral-900 p-4 text-white rounded-lg">
-              <FormLabel>Select Payment Token</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue="ETH">
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="ETH" />
-                  </SelectTrigger>
-                </FormControl>
-              </Select>
-            </FormItem>
-          )}
-        />
+
+        <div>
+          <FormItem className="bg-neutral-900 p-4  rounded-lg">
+            <FormLabel>Select Payment Token</FormLabel>
+            <Select defaultValue="ETH">
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="ETH" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="ETH">ETH</SelectItem>
+              </SelectContent>
+            </Select>
+          </FormItem>
+        </div>
+
         <FormField
           control={form.control}
           name="pricePerPoint"
           render={({ field }) => (
             <FormItem className="bg-neutral-900 p-4 rounded-lg">
               <FormLabel className="text-base font-medium text-neutral-200">
-                Price Per Point
+                Price Per Point (ETH)
               </FormLabel>
               <FormControl>
                 <Input
@@ -238,7 +238,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           name="fillType"
           render={({ field }) => (
             <FormItem className="space-y-2 bg-neutral-900 p-4 rounded-lg">
-              <FormLabel>Select FillType</FormLabel>
+              <FormLabel>Select Fill Type</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
