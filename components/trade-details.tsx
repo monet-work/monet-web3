@@ -16,19 +16,33 @@ import {
   ListingType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
-import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
-import { monetMarketplaceContract } from "@/app/contract-utils";
+import {
+  PreparedTransaction,
+  prepareContractCall,
+  readContract,
+  toTokens,
+  toUnits,
+  toWei,
+} from "thirdweb";
+import {
+  monetMarketplaceContract,
+  monetPointsContractFactory,
+} from "@/app/contract-utils";
 import { toast } from "sonner";
 import { useSendTransaction } from "thirdweb/react";
+import { usePathname } from "next/navigation";
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
   onTradeError,
   onTradeSuccess,
 }) => {
+  const pathname = usePathname();
+  const pointAddress = pathname.split("/")[2].split("-")[1];
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
+
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
@@ -36,16 +50,18 @@ const TradeDetails: React.FC<Props> = ({
         params: [BigInt(assetListing.Id), BigInt(assetListing.amount)],
         value:
           assetListing.listingType === ListingType.SELL
-            ? BigInt(toWei(assetListing.totalPrice))
+            ? toWei(assetListing.totalPrice)
             : undefined,
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
+          console.log({ result }, "result");
           onTradeSuccess && onTradeSuccess();
         },
 
         onError: (error) => {
+          console.log(error, "error");
           toast.error("Transaction failed");
           onTradeError && onTradeError();
         },
@@ -105,6 +121,7 @@ const TradeDetails: React.FC<Props> = ({
                 size={"lg"}
                 disabled={assetListing.status !== ListingStatus.LIVE}
                 onClick={handleListingTrade}
+                loading={isPending}
               >
                 {assetListing.status === ListingStatus.LIVE ? (
                   <span>
