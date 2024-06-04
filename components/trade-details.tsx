@@ -43,11 +43,16 @@ const TradeDetails: React.FC<Props> = ({
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
 
+    const decimals = await readContract({
+      contract: monetPointsContractFactory(assetListing.asset),
+      method: "decimals",
+    });
+
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
         method: "trade",
-        params: [BigInt(assetListing.Id), BigInt(assetListing.amount)],
+        params: [BigInt(assetListing.Id), toUnits(assetListing.amount, decimals)],
         value:
           assetListing.listingType === ListingType.SELL
             ? toWei(assetListing.totalPrice)
