@@ -5,6 +5,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { PointsListColumns } from "@/components/table-columns/points-list-columns";
 import { pointsTableData } from "@/data";
 import { apiService } from "@/services/api.service";
+import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -18,6 +19,12 @@ const MarketplacePage = () => {
       return await apiService.getMarketplacePointsList();
     },
   });
+
+  const marketPlaceStore = useMarketPlaceStore();
+
+  useEffect(() => {
+    marketPlaceStore.setMarketPlace(pointsListData?.data.pointsAssets || []);
+  }, [pointsListData]);
 
   return (
     <main className="w-full flex gap-8 py-16 flex-col items-center min-h-screen">
@@ -34,7 +41,9 @@ const MarketplacePage = () => {
             onRowClick={(rowData) => {
               const pointName = rowData.name;
               const pointAddress = rowData.address;
-              const urlEncodedPointName = encodeURIComponent(`${pointName}-${pointAddress}`);
+              const urlEncodedPointName = encodeURIComponent(
+                `${pointName}-${pointAddress}`
+              );
               router.push(`/marketplace/${urlEncodedPointName}`);
             }}
           />
