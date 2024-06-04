@@ -3,15 +3,51 @@ import React from "react";
 
 type Props = {
   assetListing?: AssetListing;
+  onTradeSuccess?: () => void;
+  onTradeError?: () => void;
 };
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
 import { Pointer } from "lucide-react";
-import { AssetListing, ListingType } from "@/models/asset-listing.model";
+import {
+  AssetListing,
+  ListingStatus,
+  ListingType,
+} from "@/models/asset-listing.model";
 import clsx from "clsx";
+import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
+import { monetMarketplaceContract } from "@/app/contract-utils";
+import { toast } from "sonner";
+import { useSendTransaction } from "thirdweb/react";
 
-const TradeDetails: React.FC<Props> = ({ assetListing }) => {
+const TradeDetails: React.FC<Props> = ({ assetListing, onTradeError, onTradeSuccess }) => {
+  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const handleListingTrade = async () => {
+    if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
+    const call = async () => {
+      const transaction = await prepareContractCall({
+        contract: monetMarketplaceContract,
+        method: "trade",
+        params: [BigInt(assetListing.Id), BigInt(assetListing.amount)],
+        value: BigInt(toWei(assetListing.totalPrice)),
+      });
+
+      await sendTransaction(transaction as PreparedTransaction, {
+        onSuccess: (result) => {
+          onTradeSuccess && onTradeSuccess();
+        },
+
+        onError: (error) => {
+          toast.error("Transaction failed");
+          onTradeError && onTradeError();
+        },
+      });
+    };
+
+    call();
+  };
+
   return (
     <Card
       className={clsx("w-full bg-muted", {
@@ -57,8 +93,30 @@ const TradeDetails: React.FC<Props> = ({ assetListing }) => {
             </div>
 
             <div className="mt-auto">
-              <Button className="mt-2 w-full" size={"lg"}>
-                {assetListing.listingType === ListingType.BUY ? "Sell" : "Buy"}
+              <Button
+                className="mt-2 w-full"
+                size={"lg"}
+                disabled={assetListing.status !== ListingStatus.LIVE}
+                onClick={handleListingTrade}
+              >
+                {assetListing.status === ListingStatus.LIVE ? (
+                  <span>
+                    {assetListing.listingType === ListingType.BUY
+                      ? "Sell"
+                      : "Buy"}
+                  </span>
+                ) : null}
+
+                {assetListing.status !== ListingStatus.LIVE ? (
+                  <span>
+                    {assetListing.status === ListingStatus.BOUGHT
+                      ? "Bought"
+                      : null}
+                    {assetListing.status === ListingStatus.CANCELLED
+                      ? "Cancelled"
+                      : null}
+                  </span>
+                ) : null}
               </Button>
             </div>
           </div>

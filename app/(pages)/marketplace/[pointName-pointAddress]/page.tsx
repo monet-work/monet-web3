@@ -4,7 +4,7 @@ import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import { pointsTableData } from "@/data";
-import { AssetListing } from "@/models/asset-listing.model";
+import { AssetListing, ListingStatus } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
@@ -68,6 +68,14 @@ const PointPage = () => {
     (listing) => listing.owner !== walletAddress
   );
 
+  const livePublicListings = publicListings.filter(
+    (listing) => listing.status === ListingStatus.LIVE
+  );
+
+  const completedPublicListings = publicListings.filter(
+    (listing) => listing.status === ListingStatus.BOUGHT
+  );
+
   const ownerListings = formattedAssetListings.filter(
     (listing) => listing.owner === walletAddress
   );
@@ -109,15 +117,22 @@ const PointPage = () => {
             </div>
           )}
           <div>
-            <h3 className="mb-4">Public Listings</h3>
+            <h3 className="mb-4">Live public listings</h3>
             <TradesView
-              assetListings={publicListings || []}
+              assetListings={livePublicListings || []}
               loading={isLoading}
               onListingSelected={(listing) => setSelectedListing(listing)}
             />
           </div>
           <div className="mt-8">
-            <h3 className="mb-4">Your Listings</h3>
+            <h3 className="mb-4 text-muted-foreground">Recently completed listings</h3>
+            <TradesView
+              assetListings={completedPublicListings || []}
+              loading={isLoading}
+            />
+          </div>
+          <div className="mt-8">
+            <h3 className="mb-4 text-muted-foreground">Your listings</h3>
             <TradesView
               assetListings={ownerListings || []}
               loading={isLoading}
@@ -125,7 +140,10 @@ const PointPage = () => {
           </div>
         </div>
         <div className="w-full md:w-1/3">
-          <TradeDetails assetListing={selectedListing} />
+          <TradeDetails
+            assetListing={selectedListing}
+            onTradeSuccess={() => setSelectedListing(undefined)}
+          />
         </div>
       </div>
     </main>

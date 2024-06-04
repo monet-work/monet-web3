@@ -31,5 +31,5 @@ export enum PaymentType {
 export enum ListingStatus {
   LIVE = 0,
   CANCELLED = 1,
-  SOLD = 2,
+  BOUGHT = 2,
 }
