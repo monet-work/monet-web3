@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "../ui/button";
-import { approveCompany, rejectCompany } from "@/lib/api-requests";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { apiService } from "@/services/api.service";
 

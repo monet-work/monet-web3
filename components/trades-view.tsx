@@ -12,15 +12,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import GridViewComponent from "./grid-view-component";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
-import { DataTable } from "./data-table/data-table";
 import { AssetListingColumns } from "./table-columns/asset-listing-columns";
+import { ListingsDataTable } from "./listings-table/listings-data-table";
 
 type Props = {
   assetListings: AssetListing[];
   loading?: boolean;
+  onListingSelected?: (listing: AssetListing) => void;
 };
 
-const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
+const TradesView: React.FC<Props> = ({
+  assetListings,
+  loading = true,
+  onListingSelected,
+}) => {
   const buyListings = assetListings.filter(
     (listing) => listing.listingType === ListingType.BUY
   );
@@ -30,6 +35,9 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
   );
 
   const [viewType, setViewType] = useState<"list" | "grid">("list");
+  const [selectedListing, setSelectedListing] = useState<
+    AssetListing | undefined
+  >(undefined);
 
   return (
     <div className="bg-muted/40 w-full">
@@ -67,11 +75,14 @@ const TradesView: React.FC<Props> = ({ assetListings, loading = true }) => {
           </div>
         </div>
         <TabsContent value="list">
-          <DataTable
+          <ListingsDataTable
             columns={AssetListingColumns}
             data={assetListings}
             loading={loading}
             noResultsMessage="No listings available."
+            onRowClick={(listing) =>
+              onListingSelected && onListingSelected(listing)
+            }
           />
         </TabsContent>
 

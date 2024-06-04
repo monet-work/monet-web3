@@ -22,6 +22,9 @@ const PointPage = () => {
 
   const pointName = pointNameWithAddress.split("-")[0];
   const pointAddress = pointNameWithAddress.split("-")[1];
+  const [selectedListing, setSelectedListing] = useState<
+    AssetListing | undefined
+  >(undefined);
 
   const [formattedAssetListings, setFormattedAssetListings] = useState<
     AssetListing[]
@@ -71,7 +74,7 @@ const PointPage = () => {
 
   return (
     <main className="pt-16">
-      <div className="flex flex-col md:flex-row gap-4 w-full container">
+      <div className="flex flex-col md:flex-row gap-8 w-full container">
         <div className="flex flex-col gap-4 flex-1">
           {isLoading ? (
             <Skeleton className="h-20 w-full" />
@@ -96,8 +99,12 @@ const PointPage = () => {
               </div>
 
               <div className="text-muted-foreground text-2xl">
-                <span className="font-bold mr-2">{pointAssetInfoData?.data.points}</span>
-                <span className="font-light">{pointAssetInfoData?.data.symbol}</span>
+                <span className="font-bold mr-2">
+                  {pointAssetInfoData?.data.points}
+                </span>
+                <span className="font-light">
+                  {pointAssetInfoData?.data.symbol}
+                </span>
               </div>
             </div>
           )}
@@ -106,6 +113,7 @@ const PointPage = () => {
             <TradesView
               assetListings={publicListings || []}
               loading={isLoading}
+              onListingSelected={(listing) => setSelectedListing(listing)}
             />
           </div>
           <div className="mt-8">
@@ -116,8 +124,8 @@ const PointPage = () => {
             />
           </div>
         </div>
-        <div className="w-1/3">
-          <TradeDetails isActive={true} Data={pointsTableData} />
+        <div className="w-full md:w-1/3">
+          <TradeDetails assetListing={selectedListing} />
         </div>
       </div>
     </main>
