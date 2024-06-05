@@ -29,7 +29,7 @@ import {
   monetPointsContractFactory,
 } from "@/app/contract-utils";
 import { toast } from "sonner";
-import { useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
 
 const TradeDetails: React.FC<Props> = ({
@@ -38,6 +38,7 @@ const TradeDetails: React.FC<Props> = ({
   onTradeSuccess,
 }) => {
   const pathname = usePathname();
+  const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const handleListingTrade = async () => {
@@ -50,32 +51,6 @@ const TradeDetails: React.FC<Props> = ({
       method: "decimals",
     });
 
-    if (isSelling) {
-      // When performing a sell trade, the marketplace needs to be approved
-      // to sell the assets on behalf of the seller
-      const performApproval = async () => {
-        const transaction = await prepareContractCall({
-          contract: monetPointsContractFactory(pointAddress),
-          method: "approve",
-          params: [
-            "0x3eb2486F57E6CB3d21C6406a8DbA0D0aCd1613a5",
-            BigInt(assetListing.amount),
-          ],
-        });
-        await sendTransaction(transaction as PreparedTransaction, {
-          onSuccess: async () => {
-            console.log("Approved");
-            await executeTrade();
-            return;
-          },
-          onError: () => {
-            console.log("Error approving");
-          },
-        });
-      };
-
-      await performApproval();
-    }
 
     const executeTrade = async () => {
       const transaction = await prepareContractCall({
@@ -94,6 +69,7 @@ const TradeDetails: React.FC<Props> = ({
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           console.log({ result }, "result");
+          toast.success("Trade executed successfully");
           onTradeSuccess && onTradeSuccess();
         },
 
@@ -105,7 +81,64 @@ const TradeDetails: React.FC<Props> = ({
       });
     };
 
-    executeTrade();
+    if (isSelling) {
+      // When performing a sell trade, the marketplace needs to be approved
+      // to sell the assets on behalf of the seller
+
+      const allowanceFunction = async () => {
+        if (!activeAccount) return;
+        const data = await readContract({
+          contract: monetPointsContractFactory(pointAddress),
+          method: "allowance",
+          params: [
+            activeAccount?.address,
+            process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT!,
+          ],
+        });
+        console.log(data, "allowance data");
+        return toTokens(data, decimals);
+      };
+
+      const allowanceValue = await allowanceFunction();
+      // console.log(
+      //   allowanceValue,
+      //   values.quantity,
+      //   Number(allowanceValue) < Number(values.quantity)
+      // );
+
+      const performApproval = async (amount: string) => {
+        const transaction = await prepareContractCall({
+          contract: monetPointsContractFactory(pointAddress),
+          method: "approve",
+          params: [
+            monetMarketplaceContract.address,
+            BigInt(toUnits(amount, decimals)),
+          ],
+        });
+        await sendTransaction(transaction as PreparedTransaction, {
+          onSuccess: async () => {
+            console.log("Approved");
+            await executeTrade();
+            return;
+          },
+          onError: () => {
+            console.log("Error approving");
+          },
+        });
+      };
+
+      if (Number(allowanceValue) < Number(assetListing.amount)) {
+        await performApproval(
+          (Number(assetListing.amount) - Number(allowanceValue)).toString()
+        );
+      } else {
+        await executeTrade();
+        return;
+      }
+    }
+
+
+    await executeTrade();
   };
 
   return (
