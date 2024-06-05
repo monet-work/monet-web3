@@ -57,12 +57,12 @@ const RedeemPointsForm: React.FC<Props> = ({
               <FormControl>
                 <Input placeholder="Enter points" {...field} />
               </FormControl>
-              <FormDescription>
-                Total points available: {totalPoints}
+              <FormDescription className="font-light">
+                <span>Total points available: {totalPoints}</span>
                 <br />
                 Total points on chain: {onChainPoints}
                 <br />
-                Redeemable points: {totalPoints - onChainPoints}
+                <span className="font-semibold">Redeemable points: {totalPoints - onChainPoints}</span>
               </FormDescription>
               <FormMessage />
             </FormItem>
