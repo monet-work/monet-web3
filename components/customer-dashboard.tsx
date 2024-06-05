@@ -152,7 +152,7 @@ const CustomerDashboard = () => {
                       </div>
                       <div className="text-xs mt-1 text-muted-foreground hover:underline">
                         <a
-                          href={`https://sepolia.basescan.org/tx/${point?.company?.point_contract_address}`}
+                          href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
                           target="_blank"
                           className="flex items-center gap-1"
                         >

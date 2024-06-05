@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   noResultsMessage?: string;
   maxWidth?: string;
   enablePagination?: boolean;
+  cursorPointer?: boolean;
   onRowClick?: (rowData: TData) => void; // Added prop for row click event
 }
 
@@ -45,6 +46,7 @@ export function DataTable<TData, TValue>({
   maxWidth,
   enablePagination = false,
   onRowClick, // Destructuring the new prop
+  cursorPointer,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -118,6 +120,7 @@ export function DataTable<TData, TValue>({
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
+                      style={{ cursor: cursorPointer ? "pointer" : "default" }}
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => handleRowClick(row.original)} // Added onClick handler
                     >
