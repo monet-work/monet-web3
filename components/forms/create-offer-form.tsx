@@ -29,10 +29,17 @@ import {
   monetPointsContractFactory,
 } from "@/app/contract-utils";
 import { toast } from "sonner";
-import { prepareContractCall, PreparedTransaction, toWei } from "thirdweb";
+import {
+  prepareContractCall,
+  PreparedTransaction,
+  readContract,
+  toUnits,
+  toWei,
+} from "thirdweb";
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import { ListingFillType } from "@/models/asset-listing.model";
+import clsx from "clsx";
 
 type Props = {
   onCanceled: () => void;
@@ -64,14 +71,18 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const decimals = await readContract({
+      contract: monetPointsContractFactory(values.point),
+      method: "decimals",
+    });
     const performApproval = async () => {
       const transaction = await prepareContractCall({
         contract: monetPointsContractFactory(values.point),
         method: "approve",
         params: [
-          "0x3eb2486F57E6CB3d21C6406a8DbA0D0aCd1613a5",
-          BigInt(values.amount),
+          monetMarketplaceContract.address,
+          BigInt(toUnits(values.amount, decimals)),
         ],
       });
       await sendTransaction(transaction as PreparedTransaction, {
@@ -92,11 +103,13 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
         method: "createListing",
         params: [
           values.point,
-          BigInt(values.amount),
+          BigInt(toUnits(values.amount, decimals)),
           toWei(values.pricePerPoint.toString()),
           values.point,
           1,
-          values.fillType === "full" ? ListingFillType.FULL : ListingFillType.PARTIAL,
+          values.fillType === "full"
+            ? ListingFillType.FULL
+            : ListingFillType.PARTIAL,
           0,
         ],
       });
@@ -138,13 +151,17 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 >
                   <ToggleGroupItem
                     value="buy"
-                    className="w-full uppercase text-green-600"
+                    className={clsx("w-full uppercase", {
+                      "text-green-600": field.value === "buy",
+                    })}
                   >
                     Buy Offer
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="sell"
-                    className="w-full uppercase text-red-600"
+                    className={clsx("w-full uppercase", {
+                      "text-red-600": field.value === "sell",
+                    })}
                   >
                     Sell Offer
                   </ToggleGroupItem>
