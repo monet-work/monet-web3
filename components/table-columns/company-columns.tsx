@@ -1,12 +1,17 @@
 "use client";
 
-
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { Button } from "../ui/button";
 import CompanyTableRowActions from "../company-table/data-table-row-actions";
 import { Company } from "@/models/company.model";
 import { User } from "@/models/user.model";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const columns: ColumnDef<Company>[] = [
   {
@@ -35,7 +40,21 @@ export const columns: ColumnDef<Company>[] = [
     cell: ({ row }) => {
       return (
         <div className="w-[200px]">
-          {row.getValue("point_contract_address")}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                {" "}
+                {row.getValue<string>("point_contract_address").slice(0, 6) +
+                  "........." +
+                  row.getValue<string>("point_contract_address").slice(-5)}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="cursor-text">
+                  {row.getValue<string>("point_contract_address")}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
     },
@@ -65,7 +84,21 @@ export const columns: ColumnDef<Company>[] = [
           className="w-[200px]"
           title={row.getValue<any>("user")?.wallet_address || ""}
         >
-          {row.getValue<any>("user")?.wallet_address?.slice(0, 10) + "..."}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                {" "}
+                {row.getValue<any>("user")?.wallet_address.slice(0, 6) +
+                  "........." +
+                  row.getValue<any>("user")?.wallet_address.slice(-5)}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="cursor-text">
+                  {row.getValue<any>("user")?.wallet_address}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       );
     },
@@ -76,11 +109,7 @@ export const columns: ColumnDef<Company>[] = [
       <DataTableColumnHeader column={column} title="Approved" />
     ),
     cell: ({ row }) => (
-      <div>
-        {row.getValue("is_approved")
-          ? `${row.getValue("is_approved")}`
-          : `Pending`}
-      </div>
+      <div>{row.getValue("is_approved") ? `Yes` : `Pending`}</div>
     ),
   },
   {
