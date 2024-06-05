@@ -9,6 +9,7 @@ export interface Point {
   company_id: string;
   wallet_address: string;
   company?: Company;
+  name?: string;
 }
 
 

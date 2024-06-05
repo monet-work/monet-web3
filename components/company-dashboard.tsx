@@ -162,14 +162,14 @@ const CompanyDashboard: React.FC<Props> = ({
         <div className="container">
           <div className="py-4">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <PointContractInfo contract={companyContract} />
-                <DisableBlockIfNoContract disabled={!isCompanyApproved}>
+                {/* <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-2">
                       <CardDescription>Points On Chain</CardDescription>
                       <CardTitle className="text-4xl">
-                        {/* {customerPoints.length || 0} */}
+                        0
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -187,7 +187,7 @@ const CompanyDashboard: React.FC<Props> = ({
                       </div>
                     </CardContent>
                   </Card>
-                </DisableBlockIfNoContract>
+                </DisableBlockIfNoContract> */}
 
                 <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
@@ -235,7 +235,7 @@ const CompanyDashboard: React.FC<Props> = ({
                     <CardContent>
                       <UserPointsTable data={dashboardData.map(item => (
                         {
-                          name: "",
+                          name: item.name || '-',
                           wallet_address: item.wallet_address || '',
                           points: item.points.toString(),
                         }

@@ -43,71 +43,19 @@ const TradesView: React.FC<Props> = ({
     <div className="bg-muted/40 w-full">
       <Tabs defaultValue="list">
         <div className="flex items-center">
-          <TabsList>
-            <TabsTrigger onClick={() => setViewType("list")} value="list">
-              <ListIcon />
-            </TabsTrigger>
-            {/* <TabsTrigger onClick={() => setViewType("grid")} value="grid">
-              <GridIcon />
-            </TabsTrigger> */}
-          </TabsList>
-
           <div className="ml-auto flex items-center gap-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="gap-1">
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Fill Type
-                  </span>
-                  <ArrowDownRightSquareIcon className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Fill Type</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem checked>All</DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
-                  Partial Fill
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Full Fill</DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </div>
-        <TabsContent value="list">
-          <ListingsDataTable
-            columns={AssetListingColumns}
-            data={assetListings}
-            loading={loading}
-            noResultsMessage="No listings available."
-            onRowClick={(listing) =>
-              onListingSelected && onListingSelected(listing)
-            }
-          />
-        </TabsContent>
 
-        {/* <TabsContent value="grid">
-          <Tabs defaultValue="All">
-            {viewType === "grid" && (
-              <TabsList className="duration-200 transition">
-                <TabsTrigger defaultChecked value="All">
-                  {" "}
-                  <div>All</div>
-                </TabsTrigger>
-                <TabsTrigger value="Buy">
-                  <div>Buy</div>
-                </TabsTrigger>
-                <TabsTrigger value="Sell">
-                  <div>Sell</div>
-                </TabsTrigger>
-              </TabsList>
-            )}
-            <TabsContent value="All">
-              <GridViewComponent assetListings={assetListings || []} />
-            </TabsContent>
-            <TabsContent value="Buy">Buy</TabsContent>
-          </Tabs>
-        </TabsContent> */}
+        <ListingsDataTable
+          columns={AssetListingColumns}
+          data={assetListings}
+          loading={loading}
+          noResultsMessage="No listings available."
+          onRowClick={(listing) =>
+            onListingSelected && onListingSelected(listing)
+          }
+        />
       </Tabs>
     </div>
   );
