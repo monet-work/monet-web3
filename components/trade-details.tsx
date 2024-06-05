@@ -43,16 +43,48 @@ const TradeDetails: React.FC<Props> = ({
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
 
+    const isSelling = assetListing.listingType === ListingType.BUY;
+
     const decimals = await readContract({
       contract: monetPointsContractFactory(assetListing.asset),
       method: "decimals",
     });
 
-    const call = async () => {
+    if (isSelling) {
+      // When performing a sell trade, the marketplace needs to be approved
+      // to sell the assets on behalf of the seller
+      const performApproval = async () => {
+        const transaction = await prepareContractCall({
+          contract: monetPointsContractFactory(pointAddress),
+          method: "approve",
+          params: [
+            "0x3eb2486F57E6CB3d21C6406a8DbA0D0aCd1613a5",
+            BigInt(assetListing.amount),
+          ],
+        });
+        await sendTransaction(transaction as PreparedTransaction, {
+          onSuccess: async () => {
+            console.log("Approved");
+            await executeTrade();
+            return;
+          },
+          onError: () => {
+            console.log("Error approving");
+          },
+        });
+      };
+
+      await performApproval();
+    }
+
+    const executeTrade = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
         method: "trade",
-        params: [BigInt(assetListing.Id), toUnits(assetListing.amount, decimals)],
+        params: [
+          BigInt(assetListing.Id),
+          toUnits(assetListing.amount, decimals),
+        ],
         value:
           assetListing.listingType === ListingType.SELL
             ? toWei(assetListing.totalPrice)
@@ -73,7 +105,7 @@ const TradeDetails: React.FC<Props> = ({
       });
     };
 
-    call();
+    executeTrade();
   };
 
   return (
