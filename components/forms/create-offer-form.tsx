@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
@@ -24,7 +23,6 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Info } from "lucide-react";
 import { useSendTransaction } from "thirdweb/react";
 import {
   monetMarketplaceContract,
@@ -34,6 +32,7 @@ import { toast } from "sonner";
 import { prepareContractCall, PreparedTransaction, toWei } from "thirdweb";
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import { ListingFillType } from "@/models/asset-listing.model";
 
 type Props = {
   onCanceled: () => void;
@@ -97,7 +96,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           toWei(values.pricePerPoint.toString()),
           values.point,
           1,
-          values.fillType === "full" ? 1 : 0,
+          values.fillType === "full" ? ListingFillType.FULL : ListingFillType.PARTIAL,
           0,
         ],
       });
