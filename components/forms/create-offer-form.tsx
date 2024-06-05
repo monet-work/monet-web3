@@ -38,7 +38,11 @@ import {
 } from "thirdweb";
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
-import { ListingFillType } from "@/models/asset-listing.model";
+import {
+  ListingFillType,
+  ListingType,
+  PaymentType,
+} from "@/models/asset-listing.model";
 import clsx from "clsx";
 
 type Props = {
@@ -96,7 +100,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       });
     };
 
-    console.log("submit", values);
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
@@ -106,11 +109,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           BigInt(toUnits(values.amount, decimals)),
           toWei(values.pricePerPoint.toString()),
           values.point,
-          1,
+          values.offerType === "buy" ? ListingType.BUY : ListingType.SELL,
           values.fillType === "full"
             ? ListingFillType.FULL
             : ListingFillType.PARTIAL,
-          0,
+          PaymentType.NATIVE_TOKEN,
         ],
       });
 
@@ -130,8 +133,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
 
     performApproval();
   };
-
-  const offerType = form.watch("offerType");
 
   return (
     <Form {...form}>
