@@ -107,23 +107,34 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       18
     );
 
-    console.log(totalPriceInEth, "totalPriceInEth", 'params');
+    console.log(totalPriceInEth, "totalPriceInEth", "params");
+
+    const buyOfferParams = [
+      values.point,
+      BigInt(toUnits(values.amount, decimals)),
+      toWei(values.pricePerPoint.toString()),
+      values.fillType === "full"
+        ? ListingFillType.FULL
+        : ListingFillType.PARTIAL,
+    ];
+
+    const sellOfferParams = [
+      values.point,
+      BigInt(toUnits(values.amount, decimals)),
+      toWei(values.pricePerPoint.toString()),
+      values.point,
+      values.offerType === "buy" ? ListingType.BUY : ListingType.SELL,
+      values.fillType === "full"
+        ? ListingFillType.FULL
+        : ListingFillType.PARTIAL,
+      PaymentType.NATIVE_TOKEN,
+    ];
 
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
-        method: "createListing",
-        params: [
-          values.point,
-          BigInt(toUnits(values.amount, decimals)),
-          toWei(values.pricePerPoint.toString()),
-          values.point,
-          values.offerType === "buy" ? ListingType.BUY : ListingType.SELL,
-          values.fillType === "full"
-            ? ListingFillType.FULL
-            : ListingFillType.PARTIAL,
-          PaymentType.NATIVE_TOKEN,
-        ],
+        method: values.offerType === "buy" ? "createBuyListingNative" : "createListing",
+        params: values.offerType === "buy" ? buyOfferParams : sellOfferParams as any,
         value: values.offerType === "buy" ? totalPriceInEth : undefined,
       });
 
