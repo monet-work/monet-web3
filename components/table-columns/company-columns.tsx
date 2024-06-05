@@ -42,12 +42,16 @@ export const columns: ColumnDef<Company>[] = [
         <div className="w-[200px]">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                {" "}
-                {row.getValue<string>("point_contract_address").slice(0, 6) +
-                  "........." +
-                  row.getValue<string>("point_contract_address").slice(-5)}
-              </TooltipTrigger>
+              {row.getValue("point_contract_address") ? (
+                <TooltipTrigger>
+                  {" "}
+                  {row.getValue<string>("point_contract_address").slice(0, 6) +
+                    "........." +
+                    row.getValue<string>("point_contract_address").slice(-5)}
+                </TooltipTrigger>
+              ) : (
+                ""
+              )}
               <TooltipContent>
                 <p className="cursor-text">
                   {row.getValue<string>("point_contract_address")}
@@ -86,12 +90,16 @@ export const columns: ColumnDef<Company>[] = [
         >
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                {" "}
-                {row.getValue<any>("user")?.wallet_address.slice(0, 6) +
-                  "........." +
-                  row.getValue<any>("user")?.wallet_address.slice(-5)}
-              </TooltipTrigger>
+              {row.getValue("user") ? (
+                <TooltipTrigger>
+                  {" "}
+                  {row.getValue<any>("user")?.wallet_address.slice(0, 6) +
+                    "........." +
+                    row.getValue<any>("user")?.wallet_address.slice(-5)}
+                </TooltipTrigger>
+              ) : (
+                ""
+              )}
               <TooltipContent>
                 <p className="cursor-text">
                   {row.getValue<any>("user")?.wallet_address}
