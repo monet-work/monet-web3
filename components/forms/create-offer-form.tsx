@@ -120,6 +120,15 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       });
     };
 
+    const totalPriceInEth = toUnits(
+      String(
+        Number(toUnits(values.amount, decimals)) * Number(values.pricePerPoint)
+      ),
+      18
+    );
+
+    console.log(totalPriceInEth, "totalPriceInEth", "params");
+
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
@@ -135,6 +144,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             : ListingFillType.PARTIAL,
           PaymentType.NATIVE_TOKEN,
         ],
+        value: values.offerType === "buy" ? totalPriceInEth : undefined,
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
