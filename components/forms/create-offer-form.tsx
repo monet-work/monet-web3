@@ -1,3 +1,4 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -23,7 +24,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction } from "thirdweb/react";
 import {
   monetMarketplaceContract,
   monetPointsContractFactory,
@@ -33,6 +34,7 @@ import {
   prepareContractCall,
   PreparedTransaction,
   readContract,
+  toTokens,
   toUnits,
   toWei,
 } from "thirdweb";
@@ -44,6 +46,8 @@ import {
   PaymentType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Props = {
   onCanceled: () => void;
@@ -74,19 +78,35 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
+  const account = useActiveAccount();
+
+  const [isPointDetailPage, setIsPointDetailPage] = useState(false);
+  const [selectedPoint, setSelectedPoint] = useState<string>("");
+
+  const pathName = usePathname();
+
+  useEffect(() => {
+    if (pathName === "/marketplace") {
+      setIsPointDetailPage(false);
+    } else {
+      const pointAddress = pathName?.split("-");
+      setSelectedPoint(pointAddress?.[1]);
+      setIsPointDetailPage(true);
+    }
+  }, [pathName]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const decimals = await readContract({
       contract: monetPointsContractFactory(values.point),
       method: "decimals",
     });
-    const performApproval = async () => {
+    const performApproval = async (amount: string) => {
       const transaction = await prepareContractCall({
         contract: monetPointsContractFactory(values.point),
         method: "approve",
         params: [
           monetMarketplaceContract.address,
-          BigInt(toUnits(values.amount, decimals)),
+          BigInt(toUnits(amount, decimals)),
         ],
       });
       await sendTransaction(transaction as PreparedTransaction, {
@@ -135,7 +155,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
         contract: monetMarketplaceContract,
         method: values.offerType === "buy" ? "createBuyListingNative" : "createListing",
         params: values.offerType === "buy" ? buyOfferParams : sellOfferParams as any,
-        value: values.offerType === "buy" ? totalPriceInEth : undefined,
+        value: values.offerType === "buy" ? totalPriceInEth + BigInt(1) : undefined, // change this later
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
@@ -152,10 +172,31 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       });
     };
 
-    if (values.offerType === "sell") {
-      await performApproval();
+    const allowanceFunction = async () => {
+      const data = await readContract({
+        contract: monetPointsContractFactory(values.point),
+        method: "allowance",
+        params: [
+          account?.address!,
+          process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT!,
+        ],
+      });
+      console.log(data, "allowance data");
+      return toTokens(data, decimals);
+    };
+
+    const allowanceValue = await allowanceFunction();
+    console.log(
+      allowanceValue,
+      values.amount,
+      Number(allowanceValue) < Number(values.amount)
+    );
+    if (Number(allowanceValue) < Number(values.amount)) {
+      await performApproval(
+        (Number(values.amount) - Number(allowanceValue)).toString()
+      );
     } else {
-      await call();
+      await call(); //directly call the function
     }
   };
 
@@ -247,16 +288,39 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a Point" />
+                      {isPointDetailPage ? (
+                        <SelectValue
+                          placeholder={
+                            marketPlace.find(
+                              (item: any) => item.address === selectedPoint
+                            )?.symbol
+                          }
+                        />
+                      ) : (
+                        <SelectValue placeholder="Select a Point" />
+                      )}
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
-                    {marketPlace.map((item: any) => (
-                      <SelectItem key={item.address} value={item.address}>
-                        {item.symbol}
+                  {!isPointDetailPage && (
+                    <SelectContent>
+                      {marketPlace.map((item: any) => (
+                        <SelectItem key={item.address} value={item.address}>
+                          {item.symbol}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  )}
+                  {isPointDetailPage && (
+                    <SelectContent>
+                      <SelectItem value={selectedPoint}>
+                        {
+                          marketPlace.find(
+                            (item: any) => item.address === selectedPoint
+                          )?.symbol
+                        }
                       </SelectItem>
-                    ))}
-                  </SelectContent>
+                    </SelectContent>
+                  )}
                 </Select>
               </FormItem>
             )}
