@@ -131,6 +131,8 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     performApproval();
   };
 
+  const offerType = form.watch("offerType");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
@@ -146,22 +148,20 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 <ToggleGroup
                   type="single"
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    value && field.onChange(value);
+                  }}
                   className="border rounded"
                 >
                   <ToggleGroupItem
                     value="buy"
-                    className={clsx("w-full uppercase", {
-                      "text-green-600": field.value === "buy",
-                    })}
+                    className="w-full uppercase data-[state=on]:text-green-400 data-[state=on]:bg-background data-[state=on]:border data-[state=on]:border-green-400 text-muted-foreground"
                   >
                     Buy Offer
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="sell"
-                    className={clsx("w-full uppercase", {
-                      "text-red-600": field.value === "sell",
-                    })}
+                    className="w-full uppercase data-[state=on]:text-red-400 data-[state=on]:bg-background data-[state=on]:border data-[state=on]:border-red-400 text-muted-foreground"
                   >
                     Sell Offer
                   </ToggleGroupItem>
@@ -303,7 +303,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           >
             Cancel
           </Button>
-          <Button type="submit" className="w-full uppercase" size={"lg"}>
+          <Button
+            type="submit"
+            className="w-full uppercase"
+            size={"lg"}
+            loading={isPending}
+          >
             Create Offer
           </Button>
         </div>
