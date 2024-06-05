@@ -24,6 +24,7 @@ const CustomerDashboard = () => {
   const [activePointToRedeem, setActivePointToRedeem] = useState<Point | null>(
     null
   );
+  const [onChainPoints, setOnChainPoints] = useState(0);
 
   const {
     data: customerPointsResponse,
@@ -103,9 +104,14 @@ const CustomerDashboard = () => {
     );
   };
 
-  const handleRedeemPoints = (point: Point) => {
+  const handleRedeemPoints = async (point: Point) => {
     setActivePointToRedeem(point);
-
+    const pointsResponse = await apiService.getCustomerOnChainPoints(
+      customerStore?.customer?.id!,
+      point.company?.point_contract_address!
+    );
+    console.log(pointsResponse, "pointsResponse");
+    setOnChainPoints(pointsResponse.data.points as unknown as number);
     setShowRedeemForm(true);
   };
 
@@ -189,6 +195,7 @@ const CustomerDashboard = () => {
             </p>
             <RedeemPointsForm
               totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
+              onChainPoints={onChainPoints}
               onSubmitForm={(values) => {
                 const { amount } = values;
 

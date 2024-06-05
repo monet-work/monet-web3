@@ -16,6 +16,8 @@ const API_ENDPOINTS = {
   CUSTOMER_POINTS: (customerId: string) => `customers/${customerId}/points`,
   CUSTOMER_REDEEM_POINTS: (customerId: string) =>
     `customers/${customerId}/redeem`,
+  CUSTOMER_ONCHAIN_POINTS: (customerId: string, pointAddress: string) =>
+    `customers/${customerId}/points/${pointAddress}`,
 
   // admins
   ADMIN_VERIFY_WALLET_1: "admins/verify-wallet-1",
