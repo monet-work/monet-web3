@@ -2,6 +2,10 @@
 import React from "react";
 
 type Props = {
+  pointInfo?: {
+    name: string;
+    symbol: string;
+  };
   assetListing?: AssetListing;
   onTradeSuccess?: () => void;
   onTradeError?: () => void;
@@ -34,9 +38,11 @@ import { usePathname } from "next/navigation";
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
+  pointInfo,
   onTradeError,
   onTradeSuccess,
 }) => {
+  const { name, symbol } = pointInfo || { name: "", symbol: "" };
   const pathname = usePathname();
   const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
@@ -50,7 +56,6 @@ const TradeDetails: React.FC<Props> = ({
       contract: monetPointsContractFactory(assetListing.asset),
       method: "decimals",
     });
-
 
     const executeTrade = async () => {
       const transaction = await prepareContractCall({
@@ -137,7 +142,6 @@ const TradeDetails: React.FC<Props> = ({
       }
     }
 
-
     await executeTrade();
   };
 
@@ -169,7 +173,7 @@ const TradeDetails: React.FC<Props> = ({
                   : "Buying"}
               </p>
               <h3 className="font-bold text-4xl mt-2">
-                {assetListing.amount} <span className="font-thin">tokens</span>
+                {assetListing.amount} <span className="font-thin">{symbol || 'points'}</span>
               </h3>
               <p className="mt-2">for an offer price of</p>
               <div className="mt-2">

@@ -145,6 +145,10 @@ const PointPage = () => {
         <div className="w-full md:w-1/3 relative">
           <div className="sticky top-[100px] mt-8">
             <TradeDetails
+              pointInfo={{
+                name: pointAssetInfoData?.data.name || "",
+                symbol: pointAssetInfoData?.data.symbol || "",
+              }}
               assetListing={selectedListing}
               onTradeSuccess={() => setSelectedListing(undefined)}
             />
