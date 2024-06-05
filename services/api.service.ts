@@ -30,6 +30,7 @@ const securedRoutes = [
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
   `${API_BASE_URL}/marketplace`,
   `${API_BASE_URL}/marketplace/:pointAddress`,
+  `${API_BASE_URL}/customers/:customerId/points/:pointAddress`,
 ];
 
 // axios interceptors
@@ -189,6 +190,14 @@ const getMarketplacePointAssetInfo = async (pointAddress: string) => {
   );
 };
 
+const getCustomerOnChainPoints = async (
+  customerId: string,
+  pointAddress: string
+) => {
+  return axios.get<CustomerPointResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_ONCHAIN_POINTS(customerId, pointAddress)}`
+  );
+};
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -207,4 +216,5 @@ export const apiService = {
   refreshToken,
   getMarketplacePointsList,
   getMarketplacePointAssetInfo,
+  getCustomerOnChainPoints,
 };

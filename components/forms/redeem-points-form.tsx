@@ -18,13 +18,18 @@ import { Button } from "../ui/button";
 type Props = {
   totalPoints: number;
   onSubmitForm: (values: z.infer<typeof formSchema>) => void;
+  onChainPoints: number;
 };
 
 const formSchema = z.object({
   amount: z.string(),
 });
 
-const RedeemPointsForm: React.FC<Props> = ({ totalPoints, onSubmitForm }) => {
+const RedeemPointsForm: React.FC<Props> = ({
+  totalPoints,
+  onSubmitForm,
+  onChainPoints,
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,6 +59,10 @@ const RedeemPointsForm: React.FC<Props> = ({ totalPoints, onSubmitForm }) => {
               </FormControl>
               <FormDescription>
                 Total points available: {totalPoints}
+                <br />
+                Total points on chain: {onChainPoints}
+                <br />
+                Redeemable points: {totalPoints - onChainPoints}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -61,7 +70,11 @@ const RedeemPointsForm: React.FC<Props> = ({ totalPoints, onSubmitForm }) => {
         />
         <Button
           type="submit"
-          disabled={!amount || totalPoints < Number(amount)}
+          disabled={
+            !amount ||
+            totalPoints < Number(amount) ||
+            Number(totalPoints) - onChainPoints < Number(amount)
+          }
         >
           Redeem {Number(amount) > 0 ? amount : ""} points
         </Button>
