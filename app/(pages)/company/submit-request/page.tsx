@@ -10,7 +10,7 @@ import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -19,6 +19,7 @@ const SubmitRequestPage: React.FC = () => {
   const companyStore = useCompanyStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
+  const [loader, setLoader] = useState(false);
   const [accessTokenData, setAccessTokenData] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
     { token: "", expiry: 0 }
@@ -44,7 +45,7 @@ const SubmitRequestPage: React.FC = () => {
       <FloatingConnect />
       {userStore.verificationWords ? (
         <CompanySubmitRequest
-          loading={walletSignatureVerficationMutation.isPending}
+          loading={walletSignatureVerficationMutation.isPending || loader}
           verificationMessage={userStore.verificationWords}
           onClickSubmitRequest={async (values) => {
             const {
@@ -58,6 +59,8 @@ const SubmitRequestPage: React.FC = () => {
             if (!userStore.verificationWords) return;
 
             if (!activeAccount) return;
+
+            setLoader(true);
             const walletSignature = await activeAccount?.signMessage({
               message: userStore.verificationWords!,
             });
@@ -88,11 +91,16 @@ const SubmitRequestPage: React.FC = () => {
                   });
                   companyStore.setCompany(company);
 
+                  setLoader(false);
+
                   if (company) {
                     router.push("/company/dashboard");
                   }
                 },
-                onError: (error) => {},
+                onError: (error) => {
+                  setLoader(false);
+                  toast.error(error.message);
+                },
               }
             );
           }}

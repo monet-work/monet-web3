@@ -29,7 +29,7 @@ const VerifyAdminWalletPage = () => {
     requestWalletVerificationMutation.mutate(activeAccount.address, {
       onSuccess: (response) => {
         const { words } = response.data;
-
+        toast.success("Wallet verified successfully");
         userStore.setVerificationWords(words);
         router.push("/admin/submit-request");
       },

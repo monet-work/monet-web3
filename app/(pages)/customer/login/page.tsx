@@ -20,7 +20,6 @@ const CustomerLoginPage = () => {
   const router = useRouter();
   const userStore = useUserStore();
 
-
   const handleLoginCustomer = async () => {
     setLoginRequested(true);
     await connectWallet(connect);
@@ -32,9 +31,7 @@ const CustomerLoginPage = () => {
 
   useEffect(() => {
     if (activeAccount && loginRequested) {
-      if (!accessToken) {
-        redirectToVerfication();
-      }
+      redirectToVerfication();
     }
   }, [activeAccount]);
 

@@ -23,8 +23,16 @@ type Props = {
 
 const getFormSchema = (isRegistered: boolean) => {
   return z.object({
-    name: isRegistered ? z.string().min(3).optional() : z.string().min(3),
-    email: isRegistered ? z.string().email().optional() : z.string().email(),
+    name: isRegistered
+      ? z.string().min(3).optional()
+      : z.string().min(3, {
+          message: "Name must be at least 3 characters",
+        }),
+    email: isRegistered
+      ? z.string().email().optional()
+      : z.string().email({
+          message: "Please enter a valid email",
+        }),
   });
 };
 

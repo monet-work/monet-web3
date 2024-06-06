@@ -46,6 +46,7 @@ import {
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
   onCanceled: () => void;
@@ -53,11 +54,13 @@ type Props = {
 
 const formSchema = z.object({
   offerType: z.string(),
-  point: z.string(),
+  point: z.string().min(1, "Point is required"),
   // paymentToken: z.string(),
-  pricePerPoint: z.coerce.number(),
-  amount: z.string(),
-  fillType: z.string(),
+  pricePerPoint: z.coerce.number().positive({
+    message: "Price must be greater than 0",
+  }),
+  amount: z.string().min(1, "Amount is required"),
+  fillType: z.string().min(1, "Fill type is required"),
 });
 
 const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
@@ -123,6 +126,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("submit", values);
     const performApproval = async (amount: string) => {
       const transaction = await prepareContractCall({
         contract: monetPointsContractFactory(values.point),
@@ -221,7 +225,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const pointSymbol = marketPlace.find(
     (item: any) => item.address === selectedPoint
   )?.symbol;
+  console.log(marketPlace, "marketPlace");
 
+  if (marketPlace.length === 0)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
@@ -301,7 +312,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 </FormControl>
                 <FormDescription className="text-xs">
                   {!!pricePerPoint && !!point && !!amount
-                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits('1', decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
+                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits("1", decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
                     : ""}
                 </FormDescription>
                 <FormMessage />
