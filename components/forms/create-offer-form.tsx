@@ -63,11 +63,15 @@ const formSchema = z.object({
 });
 
 const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
+  const [isPointDetailPage, setIsPointDetailPage] = useState(false);
+  const [selectedPoint, setSelectedPoint] = useState<string>("");
+  const [decimals, setDecimals] = useState<number>(0);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: "",
-      point: "",
+      point: isPointDetailPage ? selectedPoint : "",
       // paymentToken: "",
       pricePerPoint: 0,
       offerType: "sell",
@@ -75,15 +79,35 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     },
   });
 
+  const point = form.watch("point");
+  const amount = form.watch("amount");
+  const pricePerPoint = form.watch("pricePerPoint");
+
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
 
-  const [isPointDetailPage, setIsPointDetailPage] = useState(false);
-  const [selectedPoint, setSelectedPoint] = useState<string>("");
-
   const pathName = usePathname();
+
+  useEffect(() => {
+    if (isPointDetailPage) {
+      form.setValue("point", selectedPoint);
+    }
+  }, [isPointDetailPage, selectedPoint, form]);
+
+  useEffect(() => {
+    if (!point) return;
+    const fetchDecimals = async () => {
+      const decimals = await readContract({
+        contract: monetPointsContractFactory(point),
+        method: "decimals",
+      });
+      setDecimals(Number(decimals));
+    };
+
+    fetchDecimals();
+  }, [point]);
 
   useEffect(() => {
     if (pathName === "/marketplace") {
@@ -95,11 +119,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     }
   }, [pathName]);
 
+  const totalPriceInEth = toUnits(
+    String(Number(toUnits(amount, decimals)) * Number(pricePerPoint)),
+    18
+  );
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const decimals = await readContract({
-      contract: monetPointsContractFactory(values.point),
-      method: "decimals",
-    });
     const performApproval = async (amount: string) => {
       const transaction = await prepareContractCall({
         contract: monetPointsContractFactory(values.point),
@@ -111,23 +136,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       });
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: async () => {
-          console.log("Approved");
+          toast.success("Successfully approved");
           await call();
         },
         onError: () => {
-          console.log("Error approving");
+          toast.error("Error approving");
         },
       });
     };
-
-    const totalPriceInEth = toUnits(
-      String(
-        Number(toUnits(values.amount, decimals)) * Number(values.pricePerPoint)
-      ),
-      18
-    );
-
-    console.log(totalPriceInEth, "totalPriceInEth", "params");
 
     const buyOfferParams = [
       values.point,
@@ -153,9 +169,16 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     const call = async () => {
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
-        method: values.offerType === "buy" ? "createBuyListingNative" : "createListing",
-        params: values.offerType === "buy" ? buyOfferParams : sellOfferParams as any,
-        value: values.offerType === "buy" ? totalPriceInEth + BigInt(1) : undefined, // change this later
+        method:
+          values.offerType === "buy"
+            ? "createBuyListingNative"
+            : "createListing",
+        params:
+          values.offerType === "buy"
+            ? buyOfferParams
+            : (sellOfferParams as any),
+        value:
+          values.offerType === "buy" ? totalPriceInEth + BigInt(1) : undefined, // change this later
       });
 
       await sendTransaction(transaction as PreparedTransaction, {
@@ -167,7 +190,9 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
 
         onError: (error) => {
           console.log(error);
-          toast.error(error.message);
+          toast.error(
+            "Error creating offer. Please make sure you have enough balance"
+          );
         },
       });
     };
@@ -181,16 +206,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT!,
         ],
       });
-      console.log(data, "allowance data");
       return toTokens(data, decimals);
     };
 
     const allowanceValue = await allowanceFunction();
-    console.log(
-      allowanceValue,
-      values.amount,
-      Number(allowanceValue) < Number(values.amount)
-    );
+
     if (Number(allowanceValue) < Number(values.amount)) {
       await performApproval(
         (Number(values.amount) - Number(allowanceValue)).toString()
@@ -199,6 +219,10 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       await call(); //directly call the function
     }
   };
+
+  const pointSymbol = marketPlace.find(
+    (item: any) => item.address === selectedPoint
+  )?.symbol;
 
   return (
     <Form {...form}>
@@ -252,6 +276,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="text-xs">
+                {!!pricePerPoint && !!point
+                  ? `1 Point = ${toUnits("1", decimals)} ${pointSymbol}`
+                  : ""}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -272,6 +301,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                     {...field}
                   />
                 </FormControl>
+                <FormDescription className="text-xs">
+                  {!!pricePerPoint && !!point && !!amount
+                    ? `Total Price: ${toTokens(totalPriceInEth, 18)} ETH`
+                    : ""}
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -283,21 +317,16 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             render={({ field }) => (
               <FormItem className="p-4 rounded-lg">
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  onValueChange={isPointDetailPage ? () => {} : field.onChange}
+                  value={isPointDetailPage ? selectedPoint : field.value}
+                  disabled={isPointDetailPage}
                 >
                   <FormControl>
                     <SelectTrigger>
                       {isPointDetailPage ? (
-                        <SelectValue
-                          placeholder={
-                            marketPlace.find(
-                              (item: any) => item.address === selectedPoint
-                            )?.symbol
-                          }
-                        />
+                        <SelectValue>{pointSymbol}</SelectValue>
                       ) : (
-                        <SelectValue placeholder="Select a Point" />
+                        <SelectValue placeholder="Select a point" />
                       )}
                     </SelectTrigger>
                   </FormControl>
