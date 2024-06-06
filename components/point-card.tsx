@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Button } from "./ui/button";
-import { useCustomerStore } from "@/store/customerStore";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { collectPoints } from "@/lib/api-requests";
@@ -15,7 +14,7 @@ type Props = {
 };
 
 const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
-  const customerStore = useCustomerStore();
+  // const customerStore = useCustomerStore();
   const account = useActiveAccount();
   const walletAddress = account?.address;
   const collectPointsMutation = useMutation({
@@ -36,7 +35,7 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
       {
         onSuccess: (data) => {
           // update points in store and invaliate cache
-          customerStore.setCustomer(data.data);
+          // customerStore.setCustomer(data.data);
           toast.message(successMessageBasedOnKey(id), {
             description: `You have successfully collected ${points} points!`,
           })

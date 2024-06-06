@@ -1,6 +1,5 @@
 "use client";
 
-import { useCustomerStore } from "@/store/customerStore";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -19,7 +18,7 @@ import {
   airdropContract,
   eigenLayerTokenContract,
   elpContract,
-} from "@/app/thirdweb";
+} from "@/app/contract-utils";
 import { Dialog, DialogContent } from "./ui/dialog";
 
 type CLAIM_AIRDROP_STATE = "PENDING" | "CLAIMING" | "CLAIMED";
@@ -27,7 +26,7 @@ type CLAIM_AIRDROP_STATE = "PENDING" | "CLAIMING" | "CLAIMED";
 const ClaimAirdrop = () => {
   const account = useActiveAccount();
   const wallet = account?.address;
-  const { onChainPoints, customer } = useCustomerStore();
+  // const { onChainPoints, customer } = useCustomerStore();
   const [showDialog, setShowDialog] = useState(false);
   const [airdropState, setAirdropState] =
     useState<CLAIM_AIRDROP_STATE>("PENDING");
@@ -71,77 +70,37 @@ const ClaimAirdrop = () => {
     isPending,
   } = useSendTransaction();
 
-  const callClaimAirdrop = async () => {
-    if (!onChainPoints) return;
-    console.log("Claiming airdrop", onChainPoints, toUnits(onChainPoints, 4));
-    const transaction = await prepareContractCall({
-      contract: airdropContract,
-      method: "exchangeTokens",
-      params: [toUnits(onChainPoints, 4)],
-    });
-    await sendClaimAirdropTransaction(transaction as PreparedTransaction, {
-      onSuccess: () => {
-        setAirdropState("CLAIMED");
-        setShowDialog(false);
-        toast.message("Airdrop claimed successfully", {
-          description: "Your airdrop has been claimed successfully",
-        });
-      },
-      onError: (error) => {
-        console.error(error);
-      },
-    });
-  };
+  // const callClaimAirdrop = async () => {
+  //   // if (!onChainPoints) return;
+  //   // console.log("Claiming airdrop", onChainPoints, toUnits(onChainPoints, 4));
+  //   const transaction = await prepareContractCall({
+  //     contract: airdropContract,
+  //     method: "exchangeTokens",
+  //     params: [toUnits(onChainPoints, 4)],
+  //   });
+  //   await sendClaimAirdropTransaction(transaction as PreparedTransaction, {
+  //     onSuccess: () => {
+  //       setAirdropState("CLAIMED");
+  //       setShowDialog(false);
+  //       toast.message("Airdrop claimed successfully", {
+  //         description: "Your airdrop has been claimed successfully",
+  //       });
+  //     },
+  //     onError: (error) => {
+  //       console.error(error);
+  //     },
+  //   });
+  // };
 
-  const handleClaimAirdrop = async () => {
-    await callClaimAirdrop();
-  };
+  // const handleClaimAirdrop = async () => {
+  //   await callClaimAirdrop();
+  // };
 
   return (
     <div>
-      <div className="container py-16">
-        <div className="p-4">
-          <WalletConnectWrapper>
-            {onChainPoints ? (
-              <div className="text-center">
-                <p>You are eligible for the airdrop!</p>
-                <p>
-                  You have <span className="font-bold">{onChainPoints}</span>{" "}
-                  $ELP
-                </p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <p>
-                  You are not eligible for the airdrop. Please redeem your
-                  points to be eligible.
-                </p>
-              </div>
-            )}
-          </WalletConnectWrapper>
-        </div>
+    
 
-        {onChainPoints && (
-          <div className="text-center mt-16 max-w-lg mx-auto">
-            {/* allow user to claim airdrop */}
-            <BackgroundGradient className="rounded-[22px] bg-black h-full relative overflow-hidden">
-              <Button
-                className="w-full"
-                loading={isPending}
-                disabled={isApprovalPending || airdropState === "CLAIMED"}
-                onClick={() => {
-                  setShowDialog(true);
-                  performApproval(airdropContract.address, onChainPoints!);
-                }}
-              >
-                Claim Airdrop
-              </Button>
-            </BackgroundGradient>
-          </div>
-        )}
-      </div>
-
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+      {/* <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <div>
             {airdropState === "PENDING" && (
@@ -161,7 +120,7 @@ const ClaimAirdrop = () => {
             )}
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   );
 };

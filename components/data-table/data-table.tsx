@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "@/components/ui/table";
 import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
@@ -32,13 +32,21 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   loading?: boolean;
   noResultsMessage?: string;
+  maxWidth?: string;
+  enablePagination?: boolean;
+  cursorPointer?: boolean;
+  onRowClick?: (rowData: TData) => void; // Added prop for row click event
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   loading,
-  noResultsMessage
+  noResultsMessage,
+  maxWidth,
+  enablePagination = false,
+  onRowClick, // Destructuring the new prop
+  cursorPointer,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -70,10 +78,16 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const handleRowClick = (rowData: TData) => {
+    if (onRowClick) {
+      onRowClick(rowData);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* <DataTableToolbar table={table} /> */}
-      <div className="rounded-md border">
+      <div className="rounded-md border h-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -106,7 +120,9 @@ export function DataTable<TData, TValue>({
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
+                      style={{ cursor: cursorPointer ? "pointer" : "default" }}
                       data-state={row.getIsSelected() && "selected"}
+                      onClick={() => handleRowClick(row.original)} // Added onClick handler
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
@@ -133,7 +149,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* <DataTablePagination table={table} /> */}
+      {enablePagination && <DataTablePagination table={table} />}
     </div>
   );
 }

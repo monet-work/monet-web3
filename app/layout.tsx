@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThirdwebProvider } from "@/app/thirdweb";
+import { ThirdwebProvider } from "@/app/contract-utils";
 import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
-import AuthWrapper from "@/components/customer-auth-wrapper";
+import AuthWrapper from "@/components/auth-wrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,11 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth dark">
       <body className={inter.className}>
         <ReactQueryProvider>
           <ThirdwebProvider>
-            {children}
+            <AuthWrapper>{children}</AuthWrapper>
             <Footer />
           </ThirdwebProvider>
         </ReactQueryProvider>

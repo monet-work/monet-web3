@@ -1,19 +1,20 @@
+import Link from "next/link";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 
 const currrentYear = new Date().getFullYear();
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-white">
-      <div className="flex w-screen flex-col px-6 py-20 lg:px-10 xl:px-24">
+    <footer className="bg-background text-white w-full">
+      <div className="flex w-full flex-col px-6 py-20 lg:px-10 xl:px-24">
         {/* TOP CONTAINER */}
         <div className="flex flex-col lg:flex-row lg:justify-between">
           {/* LEFT DIV */}
           <div className="flex flex-col lg:mr-20">
             {/* LOGO */}
-            <a href="#" className="inline-block max-w-full font-bold">
-              <MonetWorkLogo />
-            </a>
+            <Link href="/" className="inline-block max-w-full font-bold">
+              <MonetWorkLogo className="w-40 h-40 lg:w-1/3" />
+            </Link>
             <p className="font-inter my-4 max-w-[350px] text-base text-slate-400 hover:text-slate-300 font-light">
               Monet Work is a platform that helps businesses to grow their
               customer base, increase revenue and improve customer loyalty.
