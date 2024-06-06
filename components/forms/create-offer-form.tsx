@@ -328,7 +328,10 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 <Select
                   onValueChange={
                     isPointDetailPage
-                      ? () => {}
+                      ? (value) => {
+                          field.onChange(value === "" ? null : value);
+                          setSelectedPoint(value);
+                        }
                       : (value) => {
                           field.onChange(value);
                           setSelectedPoint(value);
@@ -340,7 +343,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   <FormControl>
                     <SelectTrigger>
                       {isPointDetailPage ? (
-                        <SelectValue>{pointSymbol}</SelectValue>
+                        <SelectValue placeholder={pointSymbol} />
                       ) : (
                         <SelectValue placeholder="Select a point" />
                       )}
@@ -355,7 +358,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                       ))}
                     </SelectContent>
                   )}
-                  {isPointDetailPage && (
+                  {isPointDetailPage && selectedPoint && (
                     <SelectContent>
                       <SelectItem value={selectedPoint}>
                         {
