@@ -36,7 +36,11 @@ const MarketplacePage = () => {
         <div className="mt-4">
           <DataTable
             columns={PointsListColumns}
-            data={pointsListData?.data.pointsAssets || []}
+            data={
+              pointsListData?.data.pointsAssets ||
+              marketPlaceStore.marketPlace ||
+              []
+            }
             loading={isLoading}
             cursorPointer={true}
             onRowClick={(rowData) => {
