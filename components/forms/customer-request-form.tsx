@@ -92,7 +92,7 @@ const CustomerRequestForm: React.FC<Props> = ({
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter company email"
+                      placeholder="Enter your email"
                       {...field}
                       type="email"
                       className="bg-transparent"
