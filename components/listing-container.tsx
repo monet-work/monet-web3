@@ -4,7 +4,7 @@ import { Listing, ListingStatus } from "@/models/listing";
 import ListingCard from "./listing-card";
 import { useSendTransaction } from "thirdweb/react";
 import { PreparedTransaction, prepareContractCall, toWei } from "thirdweb";
-import { elpMarketplaceContract } from "@/app/contract-utils";
+// import { elpMarketplaceContract } from "@/app/contract-utils";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -32,42 +32,42 @@ const ListingContainer: React.FC<Props> = ({
     isPending: isCancelLoading,
   } = useSendTransaction();
 
-  const performBuyTransaction = async (listingId: string, amount: string) => {
-    const transaction = await prepareContractCall({
-      contract: elpMarketplaceContract,
-      method: "buyListing",
-      params: [BigInt(listingId)],
-      value: toWei(amount),
-    });
-    await sendBuyTransaction(transaction as PreparedTransaction, {
-      onSuccess: () => {
-        onListingUpdated && onListingUpdated();
-      },
-      onError: () => {
-        console.log("Error buying");
-      },
-    });
+  // const performBuyTransaction = async (listingId: string, amount: string) => {
+  //   const transaction = await prepareContractCall({
+  //     contract: elpMarketplaceContract,
+  //     method: "buyListing",
+  //     params: [BigInt(listingId)],
+  //     value: toWei(amount),
+  //   });
+  //   await sendBuyTransaction(transaction as PreparedTransaction, {
+  //     onSuccess: () => {
+  //       onListingUpdated && onListingUpdated();
+  //     },
+  //     onError: () => {
+  //       console.log("Error buying");
+  //     },
+  //   });
 
-    console.log(transaction, "transaction");
-  };
-  const performCancelTransaction = async (listingId: string) => {
-    const transaction = await prepareContractCall({
-      contract: elpMarketplaceContract,
-      method: "cancelListing",
-      params: [BigInt(listingId)],
-    });
-    await sendCancelTransaction(transaction as PreparedTransaction, {
-      onSuccess: () => {
-        onListingUpdated && onListingUpdated();
-      },
-      onError: () => {
-        console.log("Error cancelling");
-      },
+  //   console.log(transaction, "transaction");
+  // };
+  // const performCancelTransaction = async (listingId: string) => {
+  //   const transaction = await prepareContractCall({
+  //     contract: elpMarketplaceContract,
+  //     method: "cancelListing",
+  //     params: [BigInt(listingId)],
+  //   });
+  //   await sendCancelTransaction(transaction as PreparedTransaction, {
+  //     onSuccess: () => {
+  //       onListingUpdated && onListingUpdated();
+  //     },
+  //     onError: () => {
+  //       console.log("Error cancelling");
+  //     },
     
-    });
+  //   });
 
-    console.log(transaction, "transaction");
-  };
+  //   console.log(transaction, "transaction");
+  // };
 
   const allowBuy = (listing: Listing) =>
     !!activeWalletAddress && listing.address !== activeWalletAddress;
@@ -84,7 +84,7 @@ const ListingContainer: React.FC<Props> = ({
           <p className="text-white">No listings found</p>
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {listings.map((listing) => (
           <ListingCard
             key={listing.id}
@@ -99,7 +99,7 @@ const ListingContainer: React.FC<Props> = ({
             }}
           />
         ))}
-      </div>
+      </div> */}
     </div>
   );
 };
