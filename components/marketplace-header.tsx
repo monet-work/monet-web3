@@ -52,6 +52,11 @@ const MarketplaceHeader = () => {
           </Link>
         </div>
         <div className="relative flex gap-2 items-center justify-between">
+          {activeAccount ? (
+            <Button onClick={() => setShowOfferDialog(true)}>
+              Create Offer
+            </Button>
+          ) : null}
           <ConnectButton
             client={client}
             connectButton={{
@@ -61,11 +66,6 @@ const MarketplaceHeader = () => {
             }}
             wallets={[createWallet("io.metamask")]}
           />
-          {activeAccount ? (
-            <Button onClick={() => setShowOfferDialog(true)}>
-              Create Offer
-            </Button>
-          ) : null}
 
           <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
             <DialogContent>

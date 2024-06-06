@@ -140,7 +140,7 @@ const useAuth = () => {
         console.log("User has access");
         return;
       } else {
-        showPageNotFound();
+        // showPageNotFound();
         console.log("show page not found");
       }
     } else {
@@ -160,14 +160,14 @@ const useAuth = () => {
   };
 
   const userHasAccess = () => {
-    if ("/admin/dashboard" === pathname) {
+    if (pathname === "/admin/dasboard") {
       console.log("admin dashboard", userRoles.includes("ADMIN"), userRoles);
       return userRoles.includes("ADMIN");
     }
-    if ("/company/dashboard" === pathname) {
+    if (pathname === "/company/dashboard") {
       return userRoles.includes("COMPANY");
     }
-    if ("/customer/dashboard" === pathname) {
+    if (pathname === "/customer/dashboard") {
       return userRoles.includes("CUSTOMER");
     }
   };

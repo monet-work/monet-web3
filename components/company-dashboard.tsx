@@ -34,7 +34,8 @@ import { apiService } from "@/services/api.service";
 import { CustomerPoint, Point } from "@/models/point.model";
 
 type Props = {
-  company: Company;
+  loading?: boolean;
+  company?: Company;
   dashboardData: Point[];
   onUploadSuccess: () => void;
 };
@@ -66,6 +67,7 @@ const CompanyDashboard: React.FC<Props> = ({
   });
 
   const handleCustomerPointsUpload = () => {
+    if (!company) return;
     uploadCustomerDataMutation.mutate(
       {
         companyId: company.id,
@@ -163,7 +165,10 @@ const CompanyDashboard: React.FC<Props> = ({
           <div className="py-4">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <PointContractInfo contract={companyContract} />
+                <PointContractInfo
+                  contract={companyContract}
+                  isApproved={isCompanyApproved}
+                />
                 {/* <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
                     <CardHeader className="pb-2">
@@ -233,13 +238,13 @@ const CompanyDashboard: React.FC<Props> = ({
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <UserPointsTable data={dashboardData.map(item => (
-                        {
-                          name: item.name || '-',
-                          wallet_address: item.wallet_address || '',
+                      <UserPointsTable
+                        data={dashboardData.map((item) => ({
+                          name: item.name || "-",
+                          wallet_address: item.wallet_address || "",
                           points: item.points.toString(),
-                        }
-                      ))} />
+                        }))}
+                      />
                     </CardContent>
                   </Card>
                 </DisableBlockIfNoContract>

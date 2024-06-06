@@ -29,15 +29,11 @@ const CompanyDashboardPage = () => {
 
   return (
     <main>
-      {isLoading || !dashboardDataResponse?.data.company ? (
-        "Loading..."
-      ) : (
-        <CompanyDashboard
-          company={dashboardDataResponse?.data.company}
-          dashboardData={dashboardDataResponse?.data.dashboard}
-          onUploadSuccess={() => refetch()}
-        />
-      )}
+      <CompanyDashboard
+        company={dashboardDataResponse?.data.company}
+        dashboardData={dashboardDataResponse?.data.dashboard || []}
+        onUploadSuccess={() => refetch()}
+      />
     </main>
   );
 };
