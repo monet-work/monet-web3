@@ -32,6 +32,7 @@ const VerifyCustomerWalletPage = () => {
 
         userStore.setVerificationWords(words);
         userStore.setIsRegistered(isRegistered);
+        toast.success("Wallet verified successfully");
         router.push("/customer/submit-request");
       },
       onError: () => {

@@ -46,30 +46,34 @@ import {
 import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Spinner } from "../ui/spinner";
 
 type Props = {
   onCanceled: () => void;
 };
 
-const formSchema = z.object({
-  offerType: z.string(),
-  point: z.string(),
-  // paymentToken: z.string(),
-  pricePerPoint: z.coerce.number(),
-  amount: z.string(),
-  fillType: z.string(),
-});
-
 const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const [isPointDetailPage, setIsPointDetailPage] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<string>("");
+  console.log(selectedPoint, "selectedPoint");
   const [decimals, setDecimals] = useState<number>(0);
+
+  const formSchema = z.object({
+    offerType: z.string(),
+    point: z.string().min(1, "Point is required"),
+    // paymentToken: z.string(),
+    pricePerPoint: z.coerce.number().positive({
+      message: "Price must be greater than 0",
+    }),
+    amount: z.string().min(1, "Amount is required"),
+    fillType: z.string().min(1, "Fill type is required"),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: "",
-      point: isPointDetailPage ? selectedPoint : "",
+      point: "",
       // paymentToken: "",
       pricePerPoint: 0,
       offerType: "sell",
@@ -89,7 +93,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const pathName = usePathname();
 
   useEffect(() => {
-    if (isPointDetailPage) {
+    if (isPointDetailPage && selectedPoint !== "") {
       form.setValue("point", selectedPoint);
     }
   }, [isPointDetailPage, selectedPoint, form]);
@@ -112,10 +116,13 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       setIsPointDetailPage(false);
     } else {
       const pointAddress = pathName?.split("-");
+      // console.log(pointAddress?.[1]);
+      form.setValue("point", pointAddress?.[1]);
       setSelectedPoint(pointAddress?.[1]);
+
       setIsPointDetailPage(true);
     }
-  }, [pathName]);
+  }, [form, pathName]);
 
   const totalPriceInEth = toUnits(
     String(Number(toUnits(amount, decimals)) * Number(pricePerPoint)),
@@ -123,6 +130,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log("submit", values);
     const performApproval = async (amount: string) => {
       const transaction = await prepareContractCall({
         contract: monetPointsContractFactory(values.point),
@@ -221,7 +229,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const pointSymbol = marketPlace.find(
     (item: any) => item.address === selectedPoint
   )?.symbol;
+  // console.log(marketPlace, "marketPlace");
 
+  if (marketPlace.length === 0)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
@@ -301,7 +316,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 </FormControl>
                 <FormDescription className="text-xs">
                   {!!pricePerPoint && !!point && !!amount
-                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits('1', decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
+                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits("1", decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
                     : ""}
                 </FormDescription>
                 <FormMessage />
@@ -317,10 +332,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 <Select
                   onValueChange={
                     isPointDetailPage
-                      ? () => {}
+                      ? (value) => {
+                          field.onChange(value === "" ? null : null);
+                        }
                       : (value) => {
                           field.onChange(value);
-                          setSelectedPoint(value);
+                          value && setSelectedPoint(value);
                         }
                   }
                   value={isPointDetailPage ? selectedPoint : field.value}
@@ -329,7 +346,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   <FormControl>
                     <SelectTrigger>
                       {isPointDetailPage ? (
-                        <SelectValue>{pointSymbol}</SelectValue>
+                        <SelectValue placeholder={pointSymbol} />
                       ) : (
                         <SelectValue placeholder="Select a point" />
                       )}
@@ -344,7 +361,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                       ))}
                     </SelectContent>
                   )}
-                  {isPointDetailPage && (
+                  {isPointDetailPage && selectedPoint !== "" && (
                     <SelectContent>
                       <SelectItem value={selectedPoint}>
                         {

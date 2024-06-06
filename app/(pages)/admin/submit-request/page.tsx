@@ -10,7 +10,7 @@ import { useAdminStore } from "@/store/adminStore";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -19,6 +19,7 @@ const SubmitRequestPage: React.FC = () => {
   const adminStore = useAdminStore();
   const router = useRouter();
   const activeAccount = useActiveAccount();
+  const [loader, setLoader] = useState(false);
 
   const [accessTokenData, setAccessTokenData] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
@@ -45,12 +46,13 @@ const SubmitRequestPage: React.FC = () => {
       <FloatingConnect />
       {userStore.verificationWords ? (
         <AdminSubmitRequest
-          loading={walletSignatureVerficationMutation.isPending}
+          loading={walletSignatureVerficationMutation.isPending || loader}
           verificationMessage={userStore.verificationWords}
           onClickSubmitRequest={async () => {
             if (!userStore.verificationWords) return;
 
             if (!activeAccount) return;
+            setLoader(true);
             const walletSignature = await activeAccount?.signMessage({
               message: userStore.verificationWords!,
             });
@@ -74,12 +76,16 @@ const SubmitRequestPage: React.FC = () => {
                     expiry: tokens.refresh.expires,
                   });
                   adminStore.setAdmin(admin);
+                  setLoader(false);
 
                   if (admin) {
                     router.push("/admin/dashboard");
                   }
                 },
-                onError: (error) => {},
+                onError: (error) => {
+                  toast.error(error.message);
+                  setLoader(false);
+                },
               }
             );
           }}

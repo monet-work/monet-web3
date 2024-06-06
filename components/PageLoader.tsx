@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 
 type Props = {};
 
-function loading({}: Props) {
+function PageLoader({}: Props) {
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <Loader2 className=" h-8 w-8 animate-spin" />
@@ -12,4 +12,4 @@ function loading({}: Props) {
   );
 }
 
-export default loading;
+export default PageLoader;
