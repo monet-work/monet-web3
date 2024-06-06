@@ -8,9 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -278,7 +276,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
               </FormControl>
               <FormDescription className="text-xs">
                 {!!pricePerPoint && !!point
-                  ? `1 Point = ${toUnits("1", decimals)} ${pointSymbol}`
+                  ? `1 ${pointSymbol} = ${toUnits("1", decimals)} points`
                   : ""}
               </FormDescription>
               <FormMessage />
@@ -303,7 +301,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 </FormControl>
                 <FormDescription className="text-xs">
                   {!!pricePerPoint && !!point && !!amount
-                    ? `Total Price: ${toTokens(totalPriceInEth, 18)} ETH`
+                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits('1', decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
                     : ""}
                 </FormDescription>
                 <FormMessage />
@@ -317,7 +315,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             render={({ field }) => (
               <FormItem className="p-4 rounded-lg">
                 <Select
-                  onValueChange={isPointDetailPage ? () => {} : field.onChange}
+                  onValueChange={
+                    isPointDetailPage
+                      ? () => {}
+                      : (value) => {
+                          field.onChange(value);
+                          setSelectedPoint(value);
+                        }
+                  }
                   value={isPointDetailPage ? selectedPoint : field.value}
                   disabled={isPointDetailPage}
                 >

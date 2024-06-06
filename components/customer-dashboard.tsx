@@ -10,7 +10,7 @@ import useCustomerStore from "@/store/customerStore";
 import { toast } from "sonner";
 import { PreparedTransaction, prepareContractCall } from "thirdweb";
 import { useActiveAccount, useSendTransaction } from "thirdweb/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import RedeemPointsForm from "./forms/redeem-points-form";
 import { Point } from "@/models/point.model";
@@ -27,20 +27,40 @@ const CustomerDashboard = () => {
   const [onChainPoints, setOnChainPoints] = useState(0);
 
   const {
-    data: customerPointsResponse,
-    isLoading,
-    error,
+    data: customerOnChainPointsResponse,
+    isLoading: isLoadingCustomerOnChainPoints,
+    isError: isErrorCustomerOnChainPoints,
     refetch: refetchCustomerPoints,
   } = useQuery({
-    queryKey: ["customers/points", { customerId: customerStore?.customer?.id }],
+    queryKey: [
+      "customer/onChainPoints",
+      { customerId: customerStore?.customer?.id },
+    ],
     queryFn: () => {
-      return apiService.fetchCustomerPoints(customerStore?.customer?.id!);
+      return apiService.getCustomerOnChainPoints(
+        customerStore?.customer?.id!,
+        activePointToRedeem?.company?.point_contract_address!
+      );
     },
-    enabled: !!customerStore?.customer?.id,
+    enabled:
+      !!customerStore?.customer?.id &&
+      !!activePointToRedeem?.company?.point_contract_address,
   });
 
   const redeemPointsMutation = useMutation({
     mutationFn: apiService.customerRedeemPoints,
+  });
+
+  const {
+    data: customerPointsResponse,
+    isLoading: isLoadingCustomerPoints,
+    isError: isErrorCustomerPoints,
+  } = useQuery({
+    queryKey: ["customer/points", { customerId: customerStore?.customer?.id }],
+    queryFn: () => {
+      return apiService.fetchCustomerPoints(customerStore?.customer?.id!);
+    },
+    enabled: !!customerStore?.customer?.id,
   });
 
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
@@ -104,14 +124,20 @@ const CustomerDashboard = () => {
     );
   };
 
+  useEffect(() => {
+    if (isErrorCustomerOnChainPoints) {
+      toast.error("Failed to fetch customer on-chain points");
+    }
+
+    if (customerOnChainPointsResponse?.data) {
+      setOnChainPoints(
+        customerOnChainPointsResponse?.data.points as unknown as number
+      );
+    }
+  }, [customerOnChainPointsResponse]);
+
   const handleRedeemPoints = async (point: Point) => {
     setActivePointToRedeem(point);
-    const pointsResponse = await apiService.getCustomerOnChainPoints(
-      customerStore?.customer?.id!,
-      point.company?.point_contract_address!
-    );
-    console.log(pointsResponse, "pointsResponse");
-    setOnChainPoints(pointsResponse.data.points as unknown as number);
     setShowRedeemForm(true);
   };
 
@@ -121,7 +147,9 @@ const CustomerDashboard = () => {
         <div className="w-full">
           <h2 className="">Your points archive</h2>
           <div className="h-full py-4">
-            {isLoading && <Skeleton className="w-full h-[100px]" />}
+            {isLoadingCustomerPoints && (
+              <Skeleton className="w-full h-[100px]" />
+            )}
 
             {customerPointsResponse?.data &&
             !(customerPointsResponse?.data.points.length > 0) ? (
@@ -169,7 +197,11 @@ const CustomerDashboard = () => {
                     </div>
                     <Button
                       variant={"outline"}
-                      loading={redeemPointsMutation.isPending || isPending}
+                      loading={
+                        redeemPointsMutation.isPending ||
+                        isPending ||
+                        isLoadingCustomerOnChainPoints
+                      }
                       onClick={() => {
                         handleRedeemPoints(point);
                       }}
@@ -189,13 +221,11 @@ const CustomerDashboard = () => {
       >
         <DialogContent>
           <div className="p-8">
-            <h1 className="text-2xl font-bold">Redeem Points</h1>
-            <p className="text-sm mt-2 max-w-sm text-muted-foreground">
-              Enter the amount of points you want to redeem.
-            </p>
+            <h1 className="text-2xl font-bold text-center">Redeem Points</h1>
             <RedeemPointsForm
               totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
               onChainPoints={onChainPoints}
+              isLoading={isLoadingCustomerOnChainPoints}
               onSubmitForm={(values) => {
                 const { amount } = values;
 
