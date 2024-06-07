@@ -3,7 +3,7 @@ import { BackgroundGradient } from "./ui/background-gradient";
 import { Button } from "./ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { collectPoints } from "@/lib/api-requests";
+// import { collectPoints } from "@/lib/api-requests";
 import { useActiveAccount } from "thirdweb/react";
 
 type Props = {
@@ -17,9 +17,9 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
   // const customerStore = useCustomerStore();
   const account = useActiveAccount();
   const walletAddress = account?.address;
-  const collectPointsMutation = useMutation({
-    mutationFn: collectPoints,
-  });
+  // const collectPointsMutation = useMutation({
+  //   mutationFn: collectPoints,
+  // });
   const [loading, setLoading] = useState(false);
 
   const handleCollectPoints = async (id: Props['id'], points: number) => {
@@ -27,26 +27,26 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
 
     if(!walletAddress) return;
 
-    collectPointsMutation.mutate(
-      {
-        walletAddress: walletAddress || "",
-        points: Number(points),
-      },
-      {
-        onSuccess: (data) => {
-          // update points in store and invaliate cache
-          // customerStore.setCustomer(data.data);
-          toast.message(successMessageBasedOnKey(id), {
-            description: `You have successfully collected ${points} points!`,
-          })
-          setLoading(false);
-        },
-        onError: () => {
-          toast("Failed to collect points, please try again!");
-          setLoading(false);
-        },
-      }
-    );
+    // collectPointsMutation.mutate(
+    //   {
+    //     walletAddress: walletAddress || "",
+    //     points: Number(points),
+    //   },
+    //   {
+    //     onSuccess: (data) => {
+    //       // update points in store and invaliate cache
+    //       // customerStore.setCustomer(data.data);
+    //       toast.message(successMessageBasedOnKey(id), {
+    //         description: `You have successfully collected ${points} points!`,
+    //       })
+    //       setLoading(false);
+    //     },
+    //     onError: () => {
+    //       toast("Failed to collect points, please try again!");
+    //       setLoading(false);
+    //     },
+    //   }
+    // );
   };
 
   const successMessageBasedOnKey = (key: Props['id']) => {

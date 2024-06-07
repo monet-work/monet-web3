@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const API_ENDPOINTS = {
   // auth
   AUTHENTICATE: "auth",

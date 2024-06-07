@@ -14,11 +14,7 @@ import LoadingMessage from "./loading-message";
 import { BackgroundGradient } from "./ui/background-gradient";
 import { Button } from "./ui/button";
 import WalletConnectWrapper from "./wallet-connect-wrapper";
-import {
-  airdropContract,
-  eigenLayerTokenContract,
-  elpContract,
-} from "@/app/contract-utils";
+
 import { Dialog, DialogContent } from "./ui/dialog";
 
 type CLAIM_AIRDROP_STATE = "PENDING" | "CLAIMING" | "CLAIMED";
@@ -31,15 +27,15 @@ const ClaimAirdrop = () => {
   const [airdropState, setAirdropState] =
     useState<CLAIM_AIRDROP_STATE>("PENDING");
 
-  const fetchEigenLayerTokens = async () => {
-    if (!wallet) return;
-    const data = await readContract({
-      contract: eigenLayerTokenContract,
-      method: "balanceOf",
-      params: [wallet],
-    });
-    return data;
-  };
+  // const fetchEigenLayerTokens = async () => {
+  //   if (!wallet) return;
+  //   const data = await readContract({
+  //     contract: eigenLayerTokenContract,
+  //     method: "balanceOf",
+  //     params: [wallet],
+  //   });
+  //   return data;
+  // };
 
   const {
     mutate: sendApproveTransaction,
@@ -48,20 +44,20 @@ const ClaimAirdrop = () => {
   } = useSendTransaction();
 
   const performApproval = async (address: string, quantity: string) => {
-    const transaction = await prepareContractCall({
-      contract: elpContract,
-      method: "approve",
-      params: [address, toUnits(quantity, 4)],
-    });
-    await sendApproveTransaction(transaction as PreparedTransaction, {
-      onSuccess: () => {
-        console.log("Approved");
-        setAirdropState("CLAIMING");
-      },
-      onError: () => {
-        console.log("Error approving");
-      },
-    });
+    // const transaction = await prepareContractCall({
+    //   contract: elpContract,
+    //   method: "approve",
+    //   params: [address, toUnits(quantity, 4)],
+    // });
+    // await sendApproveTransaction(transaction as PreparedTransaction, {
+    //   onSuccess: () => {
+    //     console.log("Approved");
+    //     setAirdropState("CLAIMING");
+    //   },
+    //   onError: () => {
+    //     console.log("Error approving");
+    //   },
+    // });
   };
 
   const {
