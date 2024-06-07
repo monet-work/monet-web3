@@ -25,6 +25,7 @@ const API_ENDPOINTS = {
   ADMIN_GET_COMPANIES: "admins/companies",
   ADMIN_COMPANY_APPROVE: (companyId: string) =>
     `admins/companies/${companyId}/approve`,
+  ADMIN_CUSTOMER_DETAILS: "admins/customers",
 
   // auth
   REFRESH_TOKENS: "auth/refresh-tokens",

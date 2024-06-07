@@ -160,7 +160,12 @@ const useAuth = () => {
   };
 
   const userHasAccess = () => {
-    if (pathname === "/admin/dasboard") {
+    if (
+      pathname === "/admin/dashboard" ||
+      pathname === "/admin/dashboard/customers" ||
+      pathname === "/admin/dashboard/rewardpoints" ||
+      pathname === "/admin/dashboard/listings"
+    ) {
       console.log("admin dashboard", userRoles.includes("ADMIN"), userRoles);
       return userRoles.includes("ADMIN");
     }

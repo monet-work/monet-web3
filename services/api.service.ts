@@ -25,6 +25,7 @@ const securedRoutes = [
   `${API_BASE_URL}/customers/:customerId/points`,
   `${API_BASE_URL}/companies/:companyId/dashboard`,
   `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_GET_COMPANIES}`,
+  `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_CUSTOMER_DETAILS}`,
   `${API_BASE_URL}/customers/:customerId/redeem`,
   `${API_BASE_URL}/companies/:companyId/upload-points`,
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
@@ -198,6 +199,10 @@ const getCustomerOnChainPoints = async (
     `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_ONCHAIN_POINTS(customerId, pointAddress)}`
   );
 };
+
+const getAdminCustomerDetails = async () => {
+  return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_CUSTOMER_DETAILS}`);
+};
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -217,4 +222,5 @@ export const apiService = {
   getMarketplacePointsList,
   getMarketplacePointAssetInfo,
   getCustomerOnChainPoints,
+  getAdminCustomerDetails,
 };
