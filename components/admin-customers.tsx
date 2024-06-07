@@ -27,7 +27,7 @@ const AdminCustomers: React.FC<Props> = () => {
         <div className="py-4">
           {data && (
             <div>
-              <h2 className="mb-4 font-semibold text-slate-600p">Companies</h2>
+              <h2 className="mb-4 font-semibold text-slate-600p">Customers</h2>
               <DataTable
                 columns={CustomerColumns}
                 data={data.data.customers}

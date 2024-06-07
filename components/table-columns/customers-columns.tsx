@@ -26,34 +26,50 @@ export const CustomerColumns: ColumnDef<Company>[] = [
   {
     accessorKey: "id",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="id" />
+      <DataTableColumnHeader column={column} title="Id" />
     ),
     cell: ({ row }) => {
       return <div className="w-[200px]">{row.getValue("id")}</div>;
     },
   },
   {
+    accessorKey: "description",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Description" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="w-[200px]">
+          {row.getValue<string>("description") &&
+            row.getValue<string>("description").slice(0, 15) + "..."}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "userId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="User Id" />
+      <DataTableColumnHeader column={column} title="Wallet Address" />
     ),
     cell: ({ row }) => {
       return (
         <div className="w-[200px]">
           <TooltipProvider>
             <Tooltip>
-              {row.getValue("userId") ? (
+              {row.getValue<User>("user") ? (
                 <TooltipTrigger>
                   {" "}
-                  {row.getValue<string>("userId").slice(0, 6) +
+                  {row.getValue<User>("user").wallet_address.slice(0, 6) +
                     "........." +
-                    row.getValue<string>("userId").slice(-5)}
+                    row.getValue<User>("user").wallet_address.slice(-5)}
                 </TooltipTrigger>
               ) : (
                 ""
               )}
               <TooltipContent>
-                <p className="cursor-text">{row.getValue<string>("userId")}</p>
+                <p className="cursor-text">
+                  {row.getValue<User>("user").wallet_address}
+                </p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
