@@ -3,7 +3,7 @@
 import FloatingConnect from "@/components/floating-connect";
 import VerifyWallet from "@/components/verify-wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";

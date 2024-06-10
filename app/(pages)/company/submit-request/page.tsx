@@ -4,7 +4,7 @@ import CompanySubmitRequest from "@/components/company-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { apiService } from "@/services/api.service";
 import { useCompanyStore } from "@/store/companyStore";
 import { useUserStore } from "@/store/userStore";

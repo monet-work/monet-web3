@@ -1,5 +1,5 @@
 import { Customer } from "@/models/customer.model";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 

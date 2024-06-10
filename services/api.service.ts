@@ -11,13 +11,14 @@ import {
   CustomerRedeemPointsResponse,
   MarketplacePointAssetInfoResponse,
   PointsListResponse,
+  RefreshTokensResponse,
   VerifyAdminSubmitRequestResponse,
   VerifyCompanySubmitRequestResponse,
   VerifyCustomerSubmitRequestResponse,
   VerifyWalletResponse,
 } from "@/models/api-response.model";
 import { Token } from "@/models/company.model";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import axios from "axios";
 
 const securedRoutes = [
@@ -69,7 +70,7 @@ const authenticate = async () => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  return axios.post(`${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`, {
+  return axios.post<RefreshTokensResponse>(`${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`, {
     refreshToken,
   });
 };

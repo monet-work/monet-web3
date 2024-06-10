@@ -14,7 +14,7 @@ import {
 import useLocalStorage from "./useLocalStorage";
 import { createWallet } from "thirdweb/wallets";
 import { apiService } from "@/services/api.service";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { matchesDynamicRoute } from "@/lib/utils";
 
 const useAuth = () => {
