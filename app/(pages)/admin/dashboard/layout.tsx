@@ -44,10 +44,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           ) : null}
           <Button
             loading={SyncApiMutation.isPending}
-            className="p-6"
+            className=""
             onClick={handleClick}
           >
-            Sync
+            Sync Reward Points
           </Button>
         </div>
       </header>
