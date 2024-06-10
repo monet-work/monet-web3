@@ -1,19 +1,36 @@
 "use client";
 import { client } from "@/app/contract-utils";
 import { MonetWorkLogo } from "@/components/icons/monet-work-logo";
+import { Button } from "@/components/ui/button";
+import { apiService } from "@/services/api.service";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 import { ConnectButton, useActiveAccount } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const activeAccount = useActiveAccount();
   const pathname = usePathname();
+  const syncApiMutation = useMutation({
+    mutationFn: apiService.syncPoints,
+  });
+  const handleClick = () => {
+    syncApiMutation.mutate(pathname as unknown as void, {
+      onSuccess: () => {
+        toast.success("Synced successfully");
+      },
+      onError: () => {
+        toast.error("Failed to sync");
+      },
+    });
+  };
   return (
     <section>
       <header className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
         <MonetWorkLogo className="text-primary w-24 h-24" />
-        <div className="relative ml-auto">
+        <div className="relative ml-auto flex gap-4 items-center">
           {activeAccount ? (
             <ConnectButton
               client={client}
@@ -25,6 +42,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               wallets={[createWallet("io.metamask")]}
             />
           ) : null}
+          <Button
+            loading={syncApiMutation.isPending}
+            className=""
+            onClick={handleClick}
+          >
+            Sync Reward Points
+          </Button>
         </div>
       </header>
       <div className="flex flex-row w-full max-w-7xl justify-center mx-auto  py-2">

@@ -23,20 +23,13 @@ export default function RewardPoints() {
       address: string;
       status: number;
     }[]
-  >([
-    {
-      symbol: "",
-      name: "",
-      address: "",
-      status: 0,
-    },
-  ]);
+  >([]);
 
   // console.log(rewardPointsData, "rewardPointsData");
 
   const { data, isLoading } = useReadContract({
-    contract: rewardPointsFactoryAddress,
-    method: "getRewardPoints",
+    contract: monetMarketplaceContract,
+    method: "getAssetAddresses",
     params: [],
   });
   // console.log(data, "data");
