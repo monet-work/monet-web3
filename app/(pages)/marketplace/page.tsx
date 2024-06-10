@@ -39,6 +39,7 @@ const MarketplacePage = () => {
             data={pointsListData?.data.pointsAssets || []}
             loading={isLoading}
             cursorPointer={true}
+            enablePagination={true}
             onRowClick={(rowData) => {
               const pointName = rowData.name;
               const pointAddress = rowData.address;
