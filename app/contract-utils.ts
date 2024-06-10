@@ -1,6 +1,10 @@
 "use client";
 
-import { MONET_MARKET_PLACE_ABI, MONET_POINT_CONTRACT_ABI } from "@/models/abi";
+import {
+  MONET_MARKET_PLACE_ABI,
+  MONET_POINT_CONTRACT_ABI,
+  MONET_REWARD_POINTS_FACTORY_ABI,
+} from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
 import { baseSepolia } from "thirdweb/chains";
 import { Wallet, createWallet, injectedProvider } from "thirdweb/wallets";
@@ -54,4 +58,11 @@ export const monetMarketplaceContract = getContract({
   chain: baseSepolia,
   address: process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT || "",
   abi: MONET_MARKET_PLACE_ABI,
+});
+
+export const rewardPointsFactoryAddress = getContract({
+  client,
+  chain: baseSepolia,
+  address: process.env.NEXT_PUBLIC_REWARD_POINTS_FACTORY_ADDRESS!,
+  abi: MONET_REWARD_POINTS_FACTORY_ABI,
 });
