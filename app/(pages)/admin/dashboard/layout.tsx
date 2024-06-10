@@ -13,11 +13,11 @@ import { createWallet } from "thirdweb/wallets";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const activeAccount = useActiveAccount();
   const pathname = usePathname();
-  const SyncApiMutation = useMutation({
+  const syncApiMutation = useMutation({
     mutationFn: apiService.syncPoints,
   });
   const handleClick = () => {
-    SyncApiMutation.mutate(pathname as unknown as void, {
+    syncApiMutation.mutate(pathname as unknown as void, {
       onSuccess: () => {
         toast.success("Synced successfully");
       },
@@ -43,7 +43,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             />
           ) : null}
           <Button
-            loading={SyncApiMutation.isPending}
+            loading={syncApiMutation.isPending}
             className=""
             onClick={handleClick}
           >
