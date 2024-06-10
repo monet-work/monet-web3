@@ -1190,3 +1190,19 @@ export const MONET_MARKET_PLACE_ABI = [
     inputs: [],
   },
 ] as const;
+
+export const MONET_REWARD_POINTS_FACTORY_ABI = [
+  {
+    type: "function",
+    name: "getRewardPoints",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address[]",
+        internalType: "address[]",
+      },
+    ],
+    stateMutability: "view", // Add the stateMutability property
+  },
+] as const;

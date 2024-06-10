@@ -98,7 +98,7 @@ const PointPage = () => {
                 </h2>
                 <Link
                   className="flex gap-2"
-                  href={`https://sepolia.basescan.org/tx/${pointAddress}`}
+                  href={`https://sepolia.basescan.org/address/${pointAddress}`}
                 >
                   <p className="text-sm text-muted-foreground hover:underline">
                     {pointAddress}
