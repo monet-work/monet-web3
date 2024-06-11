@@ -48,7 +48,7 @@ axios.interceptors.request.use(
       // Add token to request header
       if (isSecuredRoute) {
         const accessToken = JSON.parse(
-          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA) ?? ""
+          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
         ) as Token;
         if (typeof accessToken === "object" && accessToken !== null) {
           config.headers.Authorization = `Bearer ${accessToken.token}`;
@@ -59,7 +59,8 @@ axios.interceptors.request.use(
   },
   (error) => {
     // Do something with request error
-    return Promise.reject(error);
+    console.log(error, 'error');
+    return Promise.reject(error.response);
   }
 );
 
@@ -70,9 +71,12 @@ const authenticate = async () => {
 };
 
 const refreshToken = async (refreshToken: string) => {
-  return axios.post<RefreshTokensResponse>(`${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`, {
-    refreshToken,
-  });
+  return axios.post<RefreshTokensResponse>(
+    `${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`,
+    {
+      refreshToken,
+    }
+  );
 };
 
 const companyVerifyWalletStep1 = async (wallet: string) => {

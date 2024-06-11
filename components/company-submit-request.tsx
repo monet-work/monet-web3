@@ -68,7 +68,6 @@ const CompanySubmitRequest: React.FC<Props> = ({
                     loading={loading}
                     isRegistered={userStore.isRegistered}
                     onSubmitForm={(values) => {
-                      console.log("on sumbit form", values);
                       onClickSubmitRequest(values);
                     }}
                   />

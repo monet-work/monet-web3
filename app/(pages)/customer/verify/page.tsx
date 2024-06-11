@@ -35,7 +35,8 @@ const VerifyCustomerWalletPage = () => {
         toast.success("Wallet verified successfully");
         router.push("/customer/submit-request");
       },
-      onError: () => {
+      onError: (error) => {
+        console.log(error, 'error')
         toast.error("Failed to request verification");
       },
     });

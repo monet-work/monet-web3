@@ -1,3 +1,4 @@
 export interface Role {
-  role: any;
+  role: "ADMIN" | "COMPANY" | "CUSTOMER";
+  id: string;
 }
