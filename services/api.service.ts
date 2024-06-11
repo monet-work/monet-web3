@@ -21,6 +21,8 @@ import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import axios from "axios";
 
+// TODO: Convert this into a hook 
+
 const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   `${API_BASE_URL}/customers/:customerId/points`,
@@ -63,6 +65,39 @@ axios.interceptors.request.use(
     return Promise.reject(error.response);
   }
 );
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      const refreshToken = JSON.parse(
+        localStorage.getItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN) ?? ""
+      ) as Token;
+      const response = await axios.post<RefreshTokensResponse>(
+        `${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`,
+        {
+          refreshToken: refreshToken.token,
+        }
+      );
+      if (response.status === 200) {
+        localStorage.setItem(
+          LOCALSTORAGE_KEYS.ACCESS_TOKEN,
+          JSON.stringify(response.data.access)
+        );
+        localStorage.setItem(
+          LOCALSTORAGE_KEYS.REFRESH_TOKEN,
+          JSON.stringify(response.data.refresh)
+        );
+        return axios(originalRequest);
+      }
+    }
+    return Promise.reject(error);
+  }
+);  
 
 const authenticate = async () => {
   return axios.get<AuthResponse>(
