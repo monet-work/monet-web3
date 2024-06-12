@@ -131,7 +131,7 @@ export const AdminListingColumns: ColumnDef<AssetListing>[] = [
     ),
     cell: ({ row }) => (
       <div className="w-[200px]">
-        {row.getValue<number>("totalPrice").toString()}
+        {row.getValue<number>("totalPrice") && row.getValue<number>("totalPrice").toString()}
       </div>
     ),
   },
