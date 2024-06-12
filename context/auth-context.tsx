@@ -17,7 +17,9 @@ import { Role } from "@/models/role.model";
 import {
   AutoConnect,
   useActiveAccount,
+  useActiveWallet,
   useActiveWalletConnectionStatus,
+  useDisconnect,
 } from "thirdweb/react";
 import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
@@ -26,11 +28,13 @@ import useRole from "@/hooks/useRole";
 import UnauthorizedAccess from "@/components/unauthorized";
 import { useUserStore } from "@/store/userStore";
 import { AxiosError } from "axios";
+import AccountSwitcher from "@/components/account-switcher";
 
 interface AuthContextType {
   isAuthLoading: boolean;
   logout: () => void;
   hasRole: (requiredRoles: Role["role"][]) => boolean;
+  activeWalletChanged: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,9 +45,12 @@ const useAuthProvider = () => {
   const userStore = useUserStore();
   const { hasRole } = useRole();
   const router = useRouter();
+  const wallet = useActiveWallet();
+  const { disconnect } = useDisconnect();
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
 
+  const [activeWalletChanged, setActiveWalletChanged] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
   const [accessToken, setAccessToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
@@ -88,6 +95,7 @@ const useAuthProvider = () => {
   const logout = () => {
     localStorage.clear();
     router.replace("/");
+    wallet && disconnect(wallet);
   };
 
   useEffect(() => {
@@ -106,10 +114,21 @@ const useAuthProvider = () => {
   }, [authError]);
 
   useEffect(() => {
+    if (!walletConnected || !activeAccount) return;
+    setActiveWalletChanged(true);
+  }, [activeAccount]);
+
+  useEffect(() => {
     if (connectionStatus === "connected") {
       setWalletConnected(true);
     }
   }, [connectionStatus]);
+
+  useEffect(() => {
+    if (activeWalletChanged) {
+      setActiveWalletChanged(false);
+    }
+  }, [activeAccount]);
 
   useEffect(() => {
     if (!activeAccount && walletConnected) {
@@ -124,12 +143,19 @@ const useAuthProvider = () => {
     hasRole,
     isProtectedRoute,
     authResponse,
+    activeWalletChanged,
   };
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { isAuthLoading, logout, hasRole, isProtectedRoute, authResponse } =
-    useAuthProvider();
+  const {
+    isAuthLoading,
+    logout,
+    hasRole,
+    isProtectedRoute,
+    authResponse,
+    activeWalletChanged,
+  } = useAuthProvider();
 
   const userStore = useUserStore();
 
@@ -150,19 +176,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return <PageLoader />;
     }
 
+    if (activeWalletChanged) {
+      return <AccountSwitcher />;
+    }
+
     if (authResponse) {
-      if (userRoles && hasRole(userRoles)) {
+      const formattedRoles = authResponse.data.roles.map((role) => role.role);
+      if (formattedRoles && hasRole(formattedRoles)) {
         return children;
       }
-      console.log('unauthorized for no role match')
+      console.log("unauthorized for no role match");
       return <UnauthorizedAccess />;
     }
-    console.log('unauthorized as end of if')
     return <UnauthorizedAccess />;
   };
 
   return (
-    <AuthContext.Provider value={{ logout, isAuthLoading, hasRole }}>
+    <AuthContext.Provider
+      value={{ logout, isAuthLoading, hasRole, activeWalletChanged }}
+    >
       <AutoConnect wallets={wallets} client={client} />
       {renderContent()}
     </AuthContext.Provider>
