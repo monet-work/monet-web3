@@ -16,10 +16,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const syncApiMutation = useMutation({
     mutationFn: apiService.syncPoints,
   });
-  const handleClick = () => {
+  const syncListingsMutation = useMutation({
+    mutationFn: apiService.syncListings,
+  });
+  const handleSyncPoints = () => {
     syncApiMutation.mutate(pathname as unknown as void, {
       onSuccess: () => {
-        toast.success("Synced successfully");
+        toast.success("Points synced successfully");
+      },
+      onError: () => {
+        toast.error("Failed to sync");
+      },
+    });
+  };
+  const handleSyncListings = () => {
+    syncListingsMutation.mutate(pathname as unknown as void, {
+      onSuccess: () => {
+        toast.success("Listings synced successfully");
       },
       onError: () => {
         toast.error("Failed to sync");
@@ -31,6 +44,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <header className="sticky min-h-[70px] py-2 top-0 z-30 flex justify-between h-14 items-center gap-4 border-b bg-background w-full px-8">
         <MonetWorkLogo className="text-primary w-24 h-24" />
         <div className="relative ml-auto flex gap-4 items-center">
+          <Button
+            loading={syncApiMutation.isPending}
+            className=""
+            onClick={handleSyncPoints}
+          >
+            Sync Reward Points
+          </Button>
+          <Button
+            loading={syncListingsMutation.isPending}
+            className=""
+            onClick={handleSyncListings}
+          >
+            Sync Listings
+          </Button>
           {activeAccount ? (
             <ConnectButton
               client={client}
@@ -42,13 +69,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               wallets={[createWallet("io.metamask")]}
             />
           ) : null}
-          <Button
-            loading={syncApiMutation.isPending}
-            className=""
-            onClick={handleClick}
-          >
-            Sync Reward Points
-          </Button>
         </div>
       </header>
       <div className="flex flex-row w-full max-w-7xl justify-center mx-auto  py-2">

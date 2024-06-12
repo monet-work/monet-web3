@@ -30,6 +30,7 @@ const securedRoutes = [
   `${API_BASE_URL}/companies/:companyId/upload-points`,
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
   `${API_BASE_URL}/admins/sync-points`,
+  `${API_BASE_URL}/admins/sync-listings`,
   `${API_BASE_URL}/marketplace`,
   `${API_BASE_URL}/marketplace/:pointAddress`,
   `${API_BASE_URL}/customers/:customerId/points/:pointAddress`,
@@ -170,6 +171,10 @@ export const syncPoints = async () => {
   return axios.post(`${API_BASE_URL}/admins/sync-points`);
 };
 
+export const syncListings = async () => {
+  return axios.post(`${API_BASE_URL}/admins/sync-listings`);
+};
+
 const customerRedeemPoints = async (payload: {
   customerId: string;
   amount: string;
@@ -229,4 +234,5 @@ export const apiService = {
   getCustomerOnChainPoints,
   getAdminCustomerDetails,
   syncPoints,
+  syncListings,
 };
