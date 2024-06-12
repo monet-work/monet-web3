@@ -1,0 +1,19 @@
+{
+  "id": "mig_cot229ci8sbc1v0pc720",
+  "parentID": "mig_cot225si8sbc1v0pc710",
+  "checksum": "1:c8662513fbc46ba36e3434f1c34ce81a2508badc7bb687caf922bb5cbdfa3acb",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "offChainPoints",
+          "type": "link",
+          "link": {
+            "table": "Point"
+          }
+        },
+        "table": "Customer"
+      }
+    }
+  ]
+}

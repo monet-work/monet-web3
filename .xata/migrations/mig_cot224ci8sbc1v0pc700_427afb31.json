@@ -1,0 +1,19 @@
+{
+  "id": "mig_cot224ci8sbc1v0pc700",
+  "parentID": "mig_cot220jqmmd2mnsd1mf0",
+  "checksum": "1:427afb319b29557d9fee640b3bdcdb51b1f3d100d7fbc67c8564a8689ae22134",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "owner",
+          "type": "link",
+          "link": {
+            "table": "User"
+          }
+        },
+        "table": "Point"
+      }
+    }
+  ]
+}

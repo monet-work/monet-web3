@@ -1,0 +1,19 @@
+{
+  "id": "mig_coo7lvdsttk6euej7440",
+  "parentID": "mig_coo7lrdsttk6euej7430",
+  "checksum": "1:7f575d62611fadaf41e031b147c3a1881283c6e05a995077c0bd7a25fd79bfb6",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "userId",
+          "type": "link",
+          "link": {
+            "table": "User"
+          }
+        },
+        "table": "Customer"
+      }
+    }
+  ]
+}

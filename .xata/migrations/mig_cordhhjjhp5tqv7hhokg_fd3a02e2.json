@@ -1,0 +1,16 @@
+{
+  "id": "mig_cordhhjjhp5tqv7hhokg",
+  "parentID": "mig_cor58fnufjs7i8p7g910",
+  "checksum": "1:fd3a02e21735c8ce96a0d4952578bf08721a58d7c84a5fbb142961c77769fed2",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "pointsContractCreated",
+          "type": "bool"
+        },
+        "table": "Company"
+      }
+    }
+  ]
+}

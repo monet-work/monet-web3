@@ -1,0 +1,17 @@
+{
+  "id": "mig_co35st6pe2mbada2ts2g",
+  "parentID": "mig_co35s09ue7a71jh4ed80",
+  "checksum": "1:727d25588b83ef5286468e409eddef668aebea665743df8d7825fc61a08439e4",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "wallet_address",
+          "type": "string",
+          "unique": true
+        },
+        "table": "user"
+      }
+    }
+  ]
+}

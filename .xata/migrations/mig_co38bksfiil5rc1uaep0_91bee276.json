@@ -1,0 +1,16 @@
+{
+  "id": "mig_co38bksfiil5rc1uaep0",
+  "parentID": "mig_co38biepe2mbada2tt2g",
+  "checksum": "1:91bee276db3b24a4afc005fc375d0326936b0d9c5abadd2731bdcd4ed090fdce",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "foundedDate",
+          "type": "datetime"
+        },
+        "table": "Company"
+      }
+    }
+  ]
+}

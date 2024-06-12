@@ -1,0 +1,19 @@
+{
+  "id": "mig_co38caepe2mbada2tt3g",
+  "parentID": "mig_co38bscfiil5rc1uaer0",
+  "checksum": "1:e88f490c3636dbebd4882d5a3b98963873c883a0c4105152df5b0e2772ecf540",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "companyId",
+          "type": "link",
+          "link": {
+            "table": "Company"
+          }
+        },
+        "table": "Customer"
+      }
+    }
+  ]
+}

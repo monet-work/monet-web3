@@ -1,0 +1,16 @@
+{
+  "id": "mig_co38bscfiil5rc1uaer0",
+  "parentID": "mig_co38bnsfiil5rc1uaeq0",
+  "checksum": "1:018b6ce96676461d866ffd33d3c73ca6f5a28c557c663a806abb10e28cf84ea0",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "privateKey",
+          "type": "string"
+        },
+        "table": "Company"
+      }
+    }
+  ]
+}

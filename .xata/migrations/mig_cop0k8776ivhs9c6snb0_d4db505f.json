@@ -1,0 +1,16 @@
+{
+  "id": "mig_cop0k8776ivhs9c6snb0",
+  "parentID": "mig_cop0jvafhsoivpioa1r0",
+  "checksum": "1:d4db505f49ba99493bdade14e471a103eddde69178929c274e4d32baebe85174",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "role",
+          "type": "multiple"
+        },
+        "table": "User"
+      }
+    }
+  ]
+}

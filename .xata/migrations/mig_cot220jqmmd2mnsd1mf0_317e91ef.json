@@ -1,0 +1,19 @@
+{
+  "id": "mig_cot220jqmmd2mnsd1mf0",
+  "parentID": "mig_cot2174i8sbc1v0pc6v0",
+  "checksum": "1:317e91ef60bd60baf1e4a7c250fcc839302ac355b5bd534751a602c7d0545397",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "company",
+          "type": "link",
+          "link": {
+            "table": "Company"
+          }
+        },
+        "table": "Point"
+      }
+    }
+  ]
+}

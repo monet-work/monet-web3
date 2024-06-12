@@ -1,0 +1,13 @@
+{
+  "id": "mig_coou3n615cqh5q3m892g",
+  "parentID": "mig_coobkke582uctlhn0fug",
+  "checksum": "1:7d6e4f00b0e388ebeea77da1c5d07d72746764e1791a4c62a16dccfe85c93d81",
+  "operations": [
+    {
+      "removeColumn": {
+        "column": "walletAddress",
+        "table": "User"
+      }
+    }
+  ]
+}

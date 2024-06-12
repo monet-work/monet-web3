@@ -1,0 +1,14 @@
+{
+  "id": "mig_co3ab5mpe2mbada2tv10",
+  "parentID": "mig_co38caepe2mbada2tt3g",
+  "checksum": "1:5b78534414f69877d8dbd51392086526f45615f986e1e5ac923e08d4c71d88c9",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "walletAddress",
+        "oldName": "wallet_address",
+        "table": "Company"
+      }
+    }
+  ]
+}

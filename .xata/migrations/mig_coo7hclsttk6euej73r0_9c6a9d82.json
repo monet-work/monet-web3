@@ -1,0 +1,17 @@
+{
+  "id": "mig_coo7hclsttk6euej73r0",
+  "parentID": "mig_coo7gotsttk6euej73q0",
+  "checksum": "1:9c6a9d825fb15d84ac4e0a25939bf8335a69558e968a10cfebc9e2f8ab6c288d",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "approved",
+          "type": "bool",
+          "defaultValue": "false"
+        },
+        "table": "Company"
+      }
+    }
+  ]
+}

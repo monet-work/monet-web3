@@ -1,0 +1,14 @@
+{
+  "id": "mig_cooa5hkts4f2s938s340",
+  "parentID": "mig_cooa4srbom0poh6teg30",
+  "checksum": "1:77a1a48f2e137c09d93df6965cba5f07fc5de881502e77d5ccbf32b165433133",
+  "operations": [
+    {
+      "renameColumn": {
+        "newName": "role",
+        "oldName": "roleId",
+        "table": "User"
+      }
+    }
+  ]
+}
