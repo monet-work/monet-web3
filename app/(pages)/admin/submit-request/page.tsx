@@ -4,7 +4,7 @@ import AdminSubmitRequest from "@/components/admin-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { apiService } from "@/services/api.service";
 import { useAdminStore } from "@/store/adminStore";
 import { useUserStore } from "@/store/userStore";
@@ -22,13 +22,13 @@ const SubmitRequestPage: React.FC = () => {
   const [loader, setLoader] = useState(false);
 
   const [accessTokenData, setAccessTokenData] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
-    { token: "", expiry: 0 }
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
+    { token: "", expires: 0 }
   );
 
   const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
-    LOCALSTORAGE_KEYS.REFRESH_TOKEN_DATA,
-    { token: "", expiry: 0 }
+    LOCALSTORAGE_KEYS.REFRESH_TOKEN,
+    { token: "", expires: 0 }
   );
 
   const walletSignatureVerficationMutation = useMutation({
@@ -69,11 +69,11 @@ const SubmitRequestPage: React.FC = () => {
                   toast.success("Wallet verified successfully");
                   setAccessTokenData({
                     token: tokens.access.token,
-                    expiry: tokens.access.expires,
+                    expires: tokens.access.expires,
                   });
                   setRefreshTokenData({
                     token: tokens.refresh.token,
-                    expiry: tokens.refresh.expires,
+                    expires: tokens.refresh.expires,
                   });
                   adminStore.setAdmin(admin);
                   setLoader(false);

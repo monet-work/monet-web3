@@ -1,4 +1,4 @@
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { useState } from "react";
 
 const useLocalStorage = (key: LOCALSTORAGE_KEYS, initialValue: any) => {

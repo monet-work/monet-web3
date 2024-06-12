@@ -3,7 +3,7 @@
 import { connectWallet } from "@/app/contract-utils";
 import LoginCustomer from "@/components/login-customer";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -13,8 +13,8 @@ const CustomerLoginPage = () => {
   const { connect, isConnecting } = useConnect();
   const activeAccount = useActiveAccount();
   const [accessToken, setAccessToken] = useLocalStorage(
-    LOCALSTORAGE_KEYS.ACCESS_TOKEN_DATA,
-    ""
+    LOCALSTORAGE_KEYS.ACCESS_TOKEN,
+    { token: "", expires: 0 }
   );
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();

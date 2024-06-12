@@ -6,6 +6,7 @@ import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
 import AuthWrapper from "@/components/auth-wrapper";
+import { AuthProvider } from "@/context/auth-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReactQueryProvider>
           <ThirdwebProvider>
-            <AuthWrapper>{children}</AuthWrapper>
+            <AuthProvider>{children}</AuthProvider>
             <Footer />
           </ThirdwebProvider>
         </ReactQueryProvider>

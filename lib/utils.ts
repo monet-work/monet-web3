@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { USER_ROLE } from "@/models/role";
+import { Token } from "@/models/company.model";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -44,10 +45,15 @@ export const extractLoggedInUserRoles = (jwt: string) => {
   return parsedJWT.roles as (typeof USER_ROLE)[keyof typeof USER_ROLE][];
 };
 
-
 export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-// Helper function to check if a URL matches a dynamic pattern
+/**
+ * Helper function to check if a URL matches a dynamic pattern
+ * 
+ * @param url the URL to check
+ * @param pattern the dynamic pattern to match against
+ * @returns true if the URL matches the pattern, false otherwise
+ */
 export const matchesDynamicRoute = (url: string, pattern: string) => {
   // Decode the URL path
   const decodedUrl = decodeURIComponent(url).replace(/ /g, "");
@@ -68,4 +74,14 @@ export const matchesDynamicRoute = (url: string, pattern: string) => {
   const result = regex.test(urlPath);
 
   return result;
+};
+
+/**
+ * Check if a token is expired
+ * 
+ * @param token 
+ * @returns 
+ */
+export const isTokenExpired = (token: Token) => {
+  return new Date(token.expires).getTime() < Date.now();
 };

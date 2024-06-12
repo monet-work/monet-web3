@@ -1,5 +1,5 @@
 import { Customer } from "./customer.model";
-import { AuthTokens, Company } from "./company.model";
+import { AuthTokens, Company, Token } from "./company.model";
 import { Point, PointAsset } from "./point.model";
 import { Admin } from "./admin.model";
 import { User } from "./user.model";
@@ -13,6 +13,11 @@ export interface VerifyWalletResponse {
 export interface VerifyCompanySubmitRequestResponse {
   company: Company;
   tokens: AuthTokens;
+}
+
+export interface RefreshTokensResponse {
+  access: Token;
+  refresh: Token;
 }
 
 export interface VerifyCustomerSubmitRequestResponse {

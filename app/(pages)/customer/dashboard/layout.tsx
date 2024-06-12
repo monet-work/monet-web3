@@ -1,5 +1,5 @@
 import Navbar from "@/components/navbar";
-import PageLoader from "@/components/PageLoader";
+import PageLoader from "@/components/page-loader";
 import { Suspense } from "react";
 
 type Props = {
