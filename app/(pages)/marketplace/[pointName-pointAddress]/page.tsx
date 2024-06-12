@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  monetMarketplaceContract,
+  monetPointsContractFactory,
+} from "@/app/contract-utils";
 import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,14 +15,86 @@ import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toTokens } from "thirdweb";
-import { useActiveAccount } from "thirdweb/react";
+import { readContract, toTokens } from "thirdweb";
+import { useActiveAccount, useReadContract } from "thirdweb/react";
 
 const PointPage = () => {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
   const pathname = usePathname();
   const pointNameWithAddress = pathname.split("/")[2];
+  const [listingCount, setListingCount] = useState<number>(0);
+  const [isBlockchainLoading, setIsBlockchianLoading] = useState<boolean>(true);
+  const [listingData, setListingData] = useState<any[]>([]);
+  const [decimals, setDecimals] = useState<number>(0);
+  const [formattedBlockchainListings, setFormattedBlockchainListings] =
+    useState<AssetListing[]>([]);
+
+  console.log(formattedBlockchainListings, "formattedBlockchianListings");
+
+  const getDecimals = async () => {
+    const decimals = await readContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "decimals",
+    });
+    setDecimals(Number(decimals));
+  };
+  const ListingCount = async () => {
+    if (!activeAccount?.address) return;
+    const data = await readContract({
+      contract: monetMarketplaceContract,
+      method: "getListingCount",
+    });
+    setListingCount(Number(data));
+  };
+
+  useEffect(() => {
+    ListingCount();
+  }, [activeAccount?.address]);
+
+  const fetchListings = async () => {
+    for (let i = 1; i <= listingCount!; i++) {
+      const Listings = async () => {
+        const data = await readContract({
+          contract: monetMarketplaceContract,
+          method: "getListing",
+          params: [BigInt(i)],
+        });
+
+        if (data.asset === pointAddress) {
+          // console.log(data, "data", i);
+          setListingData((prev: any) => [...prev, data]);
+        }
+      };
+
+      await Listings();
+    }
+
+    setIsBlockchianLoading(false);
+  };
+
+  useEffect(() => {
+    const formattedListings = listingData.map((listing) => {
+      return {
+        ...listing,
+        Id: Number(listing.Id),
+        amount: toTokens(BigInt(listing.amount), decimals),
+        totalPrice: toTokens(BigInt(listing.totalPrice), 18),
+        pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
+      };
+    });
+    console.log(formattedListings, "formattedListings");
+    setFormattedBlockchainListings(formattedListings);
+  }, [isBlockchainLoading]);
+  useEffect(() => {
+    if (listingCount != 0) {
+      fetchListings();
+    }
+  }, [listingCount]);
+
+  // if (isBlockchainLoading === false) {
+  //   console.log(listingData, "listingData");
+  // }
 
   const pointName = pointNameWithAddress.split("-")[0];
   const pointAddress = pointNameWithAddress.split("-")[1];
@@ -47,6 +123,7 @@ const PointPage = () => {
     },
     enabled: !!pointName && !!pointAddress,
   });
+  // console.log(pointAssetInfoData, "pointAssetInfoData");
 
   useEffect(() => {
     if (!pointAssetInfoData?.data) return;
@@ -65,9 +142,14 @@ const PointPage = () => {
     setFormattedAssetListings(formattedListings);
   }, [pointAssetInfoData]);
 
-  const publicListings = formattedAssetListings.filter(
-    (listing) => listing.owner !== walletAddress
-  );
+  const publicListings =
+    formattedBlockchainListings.length > 0
+      ? formattedBlockchainListings.filter(
+          (listing) => listing.owner !== walletAddress
+        )
+      : formattedAssetListings.filter(
+          (listing) => listing.owner !== walletAddress
+        );
 
   const livePublicListings = publicListings.filter(
     (listing) => listing.status === ListingStatus.LIVE
@@ -77,9 +159,14 @@ const PointPage = () => {
     (listing) => listing.status === ListingStatus.BOUGHT
   );
 
-  const ownerListings = formattedAssetListings.filter(
-    (listing) => listing.owner === walletAddress
-  );
+  const ownerListings =
+    formattedBlockchainListings.length > 0
+      ? formattedBlockchainListings.filter(
+          (listing) => listing.owner === walletAddress
+        )
+      : formattedAssetListings.filter(
+          (listing) => listing.owner === walletAddress
+        );
 
   return (
     <main className="pt-16">
