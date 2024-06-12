@@ -41,7 +41,7 @@ We follow the Conventional Commits specification for our commit messages.
 ## Bad Commits
 The following commits will be rejected:
 
-git commit -m "fixed bug"
+git commit -m "fixed bug with a lot of efforts"
 git commit -m "update files"
 
 ## Good Commits
