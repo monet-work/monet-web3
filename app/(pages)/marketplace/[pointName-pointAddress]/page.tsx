@@ -57,7 +57,7 @@ const PointPage = () => {
         return {
           ...listing,
           amount: toTokens(BigInt(listing.amount), pointDecimals),
-          totalPrice: toTokens(BigInt(listing.totalPrice), 18),
+          // totalPrice: toTokens(BigInt(listing.totalPrice), 18),
           pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
         };
       });

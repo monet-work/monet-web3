@@ -59,7 +59,7 @@ export default function Listings() {
               enablePagination={true}
               columns={AdminListingColumns}
               data={listingData}
-              // loading={isLoading}
+            // loading={isLoading}
             />
           </div>
         </div>

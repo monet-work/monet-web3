@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+/* global BigInt */
+import React, { useEffect, useState } from "react";
 
 type Props = {
   pointInfo?: {
@@ -47,6 +48,22 @@ const TradeDetails: React.FC<Props> = ({
   const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const [totalPrice, setTotalPrice] = useState<string>("");
+
+  useEffect(() => {
+    if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
+    calculateTotalPrice(assetListing?.asset, assetListing?.amount, assetListing?.pricePerPoint);
+  }, [totalPrice, assetListing]);
+
+  const calculateTotalPrice = async (asset: string, amount: string, pricePerPoint: string) => {
+    const decimals = await readContract({
+      contract: monetPointsContractFactory(asset),
+      method: "decimals",
+    });
+    const _totalPrice = toUnits(amount, decimals) * toWei(pricePerPoint);
+    setTotalPrice(String(_totalPrice));
+  }
+
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
 
@@ -67,7 +84,7 @@ const TradeDetails: React.FC<Props> = ({
         ],
         value:
           assetListing.listingType === ListingType.SELL
-            ? toWei(assetListing.totalPrice)
+            ? BigInt(totalPrice)
             : undefined,
       });
 
@@ -178,7 +195,7 @@ const TradeDetails: React.FC<Props> = ({
               <p className="mt-2">for an offer price of</p>
               <div className="mt-2">
                 <span className="text-3xl font-semibold">
-                  {assetListing.totalPrice}
+                  {toTokens(BigInt(totalPrice), 18)}
                 </span>
                 <span className="text-sm font-normal">ETH</span>
               </div>
