@@ -5,6 +5,7 @@ export const LOCALSTORAGE_KEYS = {
   COMPANY: "company",
   ADMIN: "admin",
   MARKETPLACE_POINTS: "marketplace_points",
+  REWARD_POINTS: "reward_points",
 };
 
 export type LOCALSTORAGE_KEYS =

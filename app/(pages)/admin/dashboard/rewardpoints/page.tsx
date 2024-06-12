@@ -8,6 +8,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { AdminListingColumns } from "@/components/table-columns/admin-listing-columns";
 import { CustomerColumns } from "@/components/table-columns/customers-columns";
 import { PointsListColumns } from "@/components/table-columns/points-list-columns";
+import { useRewardPointsStore } from "@/store/rewardPointsStore";
 import { useEffect, useState } from "react";
 import { readContract } from "thirdweb";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
@@ -33,6 +34,8 @@ export default function RewardPoints() {
     params: [],
   });
   // console.log(data, "data");
+
+  const { rewardPoints, setRewardPoints } = useRewardPointsStore();
 
   const FetchRewardPoints = async () => {
     if (isLoading) return;
@@ -64,13 +67,7 @@ export default function RewardPoints() {
       const asset = await AssetInfo();
       const symbol = await Symbol();
       const name = await Name();
-      console.log({
-        symbol,
-        name,
-        address: asset.asset,
-        status: asset.status,
-        index: data[i],
-      });
+
       setRewardPointsData((prev) => [
         ...prev,
         {
@@ -89,6 +86,14 @@ export default function RewardPoints() {
     }
   }, [wallet, isLoading]);
 
+  useEffect(() => {
+    if (isLoading) return;
+    if (!data) return;
+    if (rewardPointsData.length === data.length) {
+      setRewardPoints(rewardPointsData);
+    }
+  }, [rewardPointsData, setRewardPoints, isLoading]);
+
   return (
     <main className="bg-background">
       <div className="container">
@@ -97,7 +102,7 @@ export default function RewardPoints() {
             <h2 className="mb-4 font-semibold text-slate-600p">Customers</h2>
             <DataTable
               columns={PointsListColumns}
-              data={rewardPointsData || []}
+              data={rewardPoints ? rewardPoints : rewardPointsData || []}
               loading={isLoading}
               enablePagination={true}
             />
