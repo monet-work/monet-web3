@@ -1,8 +1,8 @@
 // create marketplace store
 
+import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { LOCALSTORAGE_KEYS } from "@/models/tokens";
 
 type Store = {
   rewardPoints: any;

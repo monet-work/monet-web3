@@ -390,6 +390,19 @@ export const MONET_POINT_CONTRACT_ABI = [
   },
   {
     type: "event",
+    name: "SetMintingSwitch",
+    inputs: [
+      {
+        name: "newState",
+        type: "bool",
+        indexed: false,
+        internalType: "bool",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
     name: "Transfer",
     inputs: [
       {
@@ -550,9 +563,46 @@ export const MONET_POINT_CONTRACT_ABI = [
 
 export const MONET_MARKET_PLACE_ABI = [
   {
-    type: "constructor",
+    type: "function",
+    name: "UPGRADE_INTERFACE_VERSION",
     inputs: [],
-    stateMutability: "nonpayable",
+    outputs: [
+      {
+        name: "",
+        type: "string",
+        internalType: "string",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "_getPreciseAmount",
+    inputs: [
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "amountPrecision",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "pricePerUnitPrecision",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "preciseAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "pure",
   },
   {
     type: "function",
@@ -759,11 +809,6 @@ export const MONET_MARKET_PLACE_ABI = [
             internalType: "uint256",
           },
           {
-            name: "totalPrice",
-            type: "uint256",
-            internalType: "uint256",
-          },
-          {
             name: "owner",
             type: "address",
             internalType: "address",
@@ -818,6 +863,47 @@ export const MONET_MARKET_PLACE_ABI = [
   },
   {
     type: "function",
+    name: "getTotalPrice",
+    inputs: [
+      {
+        name: "assetAmount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "asset",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "pricePerPoint",
+        type: "uint256",
+        internalType: "uint256",
+      },
+      {
+        name: "paymentToken",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "_totalPrice",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "initialize",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
     name: "owner",
     inputs: [],
     outputs: [
@@ -825,6 +911,19 @@ export const MONET_MARKET_PLACE_ABI = [
         name: "",
         type: "address",
         internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "proxiableUUID",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "bytes32",
+        internalType: "bytes32",
       },
     ],
     stateMutability: "view",
@@ -886,6 +985,24 @@ export const MONET_MARKET_PLACE_ABI = [
     stateMutability: "nonpayable",
   },
   {
+    type: "function",
+    name: "upgradeToAndCall",
+    inputs: [
+      {
+        name: "newImplementation",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "data",
+        type: "bytes",
+        internalType: "bytes",
+      },
+    ],
+    outputs: [],
+    stateMutability: "payable",
+  },
+  {
     type: "event",
     name: "AddAsset",
     inputs: [
@@ -908,6 +1025,18 @@ export const MONET_MARKET_PLACE_ABI = [
         indexed: false,
         internalType: "uint256",
       },
+      {
+        name: "refundAmount",
+        type: "uint256",
+        indexed: false,
+        internalType: "uint256",
+      },
+      {
+        name: "refundToken",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
     ],
     anonymous: false,
   },
@@ -915,6 +1044,12 @@ export const MONET_MARKET_PLACE_ABI = [
     type: "event",
     name: "CreateListing",
     inputs: [
+      {
+        name: "listingId",
+        type: "uint256",
+        indexed: true,
+        internalType: "uint256",
+      },
       {
         name: "seller",
         type: "address",
@@ -934,10 +1069,41 @@ export const MONET_MARKET_PLACE_ABI = [
         internalType: "uint256",
       },
       {
-        name: "price",
+        name: "pricePerPoint",
         type: "uint256",
         indexed: false,
         internalType: "uint256",
+      },
+      {
+        name: "listingType",
+        type: "uint8",
+        indexed: false,
+        internalType: "enum ListingType",
+      },
+      {
+        name: "fillType",
+        type: "uint8",
+        indexed: false,
+        internalType: "enum FillType",
+      },
+      {
+        name: "paymentType",
+        type: "uint8",
+        indexed: false,
+        internalType: "enum PaymentType",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Initialized",
+    inputs: [
+      {
+        name: "version",
+        type: "uint64",
+        indexed: false,
+        internalType: "uint64",
       },
     ],
     anonymous: false,
@@ -1010,6 +1176,56 @@ export const MONET_MARKET_PLACE_ABI = [
       },
     ],
     anonymous: false,
+  },
+  {
+    type: "event",
+    name: "Upgraded",
+    inputs: [
+      {
+        name: "implementation",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "error",
+    name: "AddressEmptyCode",
+    inputs: [
+      {
+        name: "target",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+  },
+  {
+    type: "error",
+    name: "ERC1967InvalidImplementation",
+    inputs: [
+      {
+        name: "implementation",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+  },
+  {
+    type: "error",
+    name: "ERC1967NonPayable",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "FailedInnerCall",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "InvalidInitialization",
+    inputs: [],
   },
   {
     type: "error",
@@ -1122,6 +1338,22 @@ export const MONET_MARKET_PLACE_ABI = [
   },
   {
     type: "error",
+    name: "MarketPlace__SendFailed",
+    inputs: [
+      {
+        name: "to",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "amount",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+  },
+  {
+    type: "error",
     name: "MarketPlace__TransferFailed",
     inputs: [
       {
@@ -1164,6 +1396,11 @@ export const MONET_MARKET_PLACE_ABI = [
   },
   {
     type: "error",
+    name: "NotInitializing",
+    inputs: [],
+  },
+  {
+    type: "error",
     name: "OwnableInvalidOwner",
     inputs: [
       {
@@ -1189,9 +1426,75 @@ export const MONET_MARKET_PLACE_ABI = [
     name: "ReentrancyGuardReentrantCall",
     inputs: [],
   },
+  {
+    type: "error",
+    name: "UUPSUnauthorizedCallContext",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "UUPSUnsupportedProxiableUUID",
+    inputs: [
+      {
+        name: "slot",
+        type: "bytes32",
+        internalType: "bytes32",
+      },
+    ],
+  },
 ] as const;
 
 export const MONET_REWARD_POINTS_FACTORY_ABI = [
+  {
+    type: "constructor",
+    inputs: [
+      {
+        name: "i_beacon",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_signer",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "create",
+    inputs: [
+      {
+        name: "_owner",
+        type: "address",
+        internalType: "address",
+      },
+      {
+        name: "_decimals",
+        type: "uint8",
+        internalType: "uint8",
+      },
+      {
+        name: "_name",
+        type: "string",
+        internalType: "string",
+      },
+      {
+        name: "_symbol",
+        type: "string",
+        internalType: "string",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "nonpayable",
+  },
   {
     type: "function",
     name: "getRewardPoints",
@@ -1203,6 +1506,211 @@ export const MONET_REWARD_POINTS_FACTORY_ABI = [
         internalType: "address[]",
       },
     ],
-    stateMutability: "view", // Add the stateMutability property
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getRewardPointsOf",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "address[]",
+        internalType: "address[]",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "getSigner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "owner",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "renounceOwnership",
+    inputs: [],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "rewardPoints",
+    inputs: [
+      {
+        name: "",
+        type: "uint256",
+        internalType: "uint256",
+      },
+    ],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "setSigner",
+    inputs: [
+      {
+        name: "_signer",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "signer",
+    inputs: [],
+    outputs: [
+      {
+        name: "",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
+    name: "transferOwnership",
+    inputs: [
+      {
+        name: "newOwner",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "event",
+    name: "Create",
+    inputs: [
+      {
+        name: "owner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "pointAddress",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+      {
+        name: "name",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
+      {
+        name: "symbol",
+        type: "string",
+        indexed: false,
+        internalType: "string",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "OwnershipTransferred",
+    inputs: [
+      {
+        name: "previousOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+      {
+        name: "newOwner",
+        type: "address",
+        indexed: true,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "event",
+    name: "SetSigner",
+    inputs: [
+      {
+        name: "newSigner",
+        type: "address",
+        indexed: false,
+        internalType: "address",
+      },
+    ],
+    anonymous: false,
+  },
+  {
+    type: "error",
+    name: "OwnableInvalidOwner",
+    inputs: [
+      {
+        name: "owner",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+  },
+  {
+    type: "error",
+    name: "OwnableUnauthorizedAccount",
+    inputs: [
+      {
+        name: "account",
+        type: "address",
+        internalType: "address",
+      },
+    ],
+  },
+  {
+    type: "error",
+    name: "RewardPointFactory__NotContractAddress",
+    inputs: [],
+  },
+  {
+    type: "error",
+    name: "RewardPointFactory__ZeroAddress",
+    inputs: [],
   },
 ] as const;
