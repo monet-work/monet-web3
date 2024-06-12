@@ -5,6 +5,7 @@ export const LOCALSTORAGE_KEYS = {
   MARKETPLACE_POINTS: "marketplace_points",
   ACCESS_TOKEN: "access_token",
   REFRESH_TOKEN: "refresh_token",
+  REWARD_POINTS: "reward_points",
 };
 
 export type LOCALSTORAGE_KEYS =
