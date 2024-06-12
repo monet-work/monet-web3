@@ -33,7 +33,7 @@ Clone the repository and install the dependencies:
 git clone https://github.com/monet-work/monet-web3
 cd monet-points
 npm install
-
+```
 
 # Writing Commits
 We follow the Conventional Commits specification for our commit messages.
