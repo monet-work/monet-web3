@@ -74,18 +74,22 @@ const PointPage = () => {
   };
 
   useEffect(() => {
+    getDecimals();
     const formattedListings = listingData.map((listing) => {
+      const _amount = BigInt(listing.amount);
+      // console.log(decimals);
+      const pricePerPoint = BigInt(listing.pricePerPoint);
       return {
         ...listing,
         Id: Number(listing.Id),
         amount: toTokens(BigInt(listing.amount), decimals),
-        totalPrice: toTokens(BigInt(listing.totalPrice), 18),
+        totalPrice: toTokens(_amount * pricePerPoint, 18),
         pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
       };
     });
     console.log(formattedListings, "formattedListings");
     setFormattedBlockchainListings(formattedListings);
-  }, [isBlockchainLoading]);
+  }, [isBlockchainLoading, decimals, listingData]);
   useEffect(() => {
     if (listingCount != 0) {
       fetchListings();
@@ -145,11 +149,11 @@ const PointPage = () => {
   const publicListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-          (listing) => listing.owner !== walletAddress
-        )
+        (listing) => listing.owner !== walletAddress
+      )
       : formattedAssetListings.filter(
-          (listing) => listing.owner !== walletAddress
-        );
+        (listing) => listing.owner !== walletAddress
+      );
 
   const livePublicListings = publicListings.filter(
     (listing) => listing.status === ListingStatus.LIVE
@@ -162,11 +166,11 @@ const PointPage = () => {
   const ownerListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-          (listing) => listing.owner === walletAddress
-        )
+        (listing) => listing.owner === walletAddress
+      )
       : formattedAssetListings.filter(
-          (listing) => listing.owner === walletAddress
-        );
+        (listing) => listing.owner === walletAddress
+      );
 
   return (
     <main className="pt-16">
