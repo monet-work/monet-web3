@@ -27,6 +27,8 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@splinetool/react-spline": "^3.1.0",
+    "@splinetool/runtime": "^1.6.6",
     "@tanstack/query-core": "^5.28.13",
     "@tanstack/react-query": "^5.28.9",
     "@tanstack/react-table": "^8.16.0",
