@@ -1,4 +1,5 @@
 import { ROUTES_CONFIG } from "@/config/routes.config";
+import { matchesDynamicRoute } from "@/lib/utils";
 import { Role } from "@/models/role.model";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -9,7 +10,7 @@ const useRole = () => {
 
   const hasRole = (requiredRoles: Role["role"][]) => {
     const routePath = ROUTES_CONFIG.protectedRoutes.find((route) =>
-      route.path.includes(pathname)
+      matchesDynamicRoute(pathname, route.path)
     );
 
     if (!routePath) return false;
