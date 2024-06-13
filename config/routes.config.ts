@@ -15,6 +15,10 @@ export const ROUTES_CONFIG: { protectedRoutes: ROUTE[] } = {
     {
       path: "/marketplace",
       roles: ["CUSTOMER", "COMPANY", "ADMIN"],
+    },
+    {
+      path: "/marketplace/:id",
+      roles: ["CUSTOMER", "COMPANY", "ADMIN"],
     }
   ],
 };
