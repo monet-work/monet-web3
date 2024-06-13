@@ -162,7 +162,7 @@ const CustomerDashboard = () => {
               customerPointsResponse?.data?.points.map((point) => (
                 <div
                   key={point.id}
-                  className="flex items-center py-4 px-2 justify-between odd:bg-gray-900"
+                  className="flex items-center px-2 justify-between odd:bg-gray-900"
                 >
                   <div className="flex items-center">
                     <div className="ml-4">
