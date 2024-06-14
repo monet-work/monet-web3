@@ -52,40 +52,42 @@ const MarketplacePage = () => {
   const marketPlaceStore = useMarketPlaceStore();
 
   const getMarketplaceDataFromContract = async () => {
-    const Mint = prepareEvent({
+    const mint = prepareEvent({
       signature: "event Mint(address,uint256)",
     });
-    const allAddresses = await readContract({
+    const allPointContractAddresses = await readContract({
       contract: monetMarketplaceContract,
       method: "getAssetAddresses",
       params: [],
     });
 
-    setListCount(allAddresses.length);
-    for (let i = 0; i < allAddresses.length; i++) {
-      if (!allAddresses[i]) return;
-      console.log(allAddresses[i], "allAddresses[i]");
+    setListCount(allPointContractAddresses.length);
+    for (let i = 0; i < allPointContractAddresses.length; i++) {
+      if (!allPointContractAddresses[i]) return;
+      // console.log(allPointContractAddresses[i], "allPointContractAddresses[i]");
       const events = await getContractEvents({
-        contract: monetPointsContractFactory(allAddresses[i].toString()),
+        contract: monetPointsContractFactory(
+          allPointContractAddresses[i].toString()
+        ),
         fromBlock: "earliest",
         toBlock: "latest",
-        events: [Mint],
+        events: [mint],
       });
       // console.log(events, "events inside loop");
       const decimals = await readContract({
-        contract: monetPointsContractFactory(allAddresses[i]),
+        contract: monetPointsContractFactory(allPointContractAddresses[i]),
         method: "decimals",
       });
       const Symbol = async () => {
         const Symboldata = await readContract({
-          contract: monetPointsContractFactory(allAddresses[i]),
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
           method: "symbol",
         });
         return Symboldata;
       };
       const Name = async () => {
         const Namedata = await readContract({
-          contract: monetPointsContractFactory(allAddresses[i]),
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
           method: "name",
         });
         return Namedata;
@@ -94,12 +96,12 @@ const MarketplacePage = () => {
         const Assetdata = await readContract({
           contract: monetMarketplaceContract,
           method: "getAsset",
-          params: [allAddresses[i]],
+          params: [allPointContractAddresses[i]],
         });
         return Assetdata;
       };
 
-      const OnChainPointsCalculations = async () => {
+      const onChainPointsCalculations = async () => {
         let onChainPoints = 0;
         events.forEach((event) => {
           onChainPoints += Number(toTokens(BigInt(event.args[1]), decimals));
@@ -107,24 +109,24 @@ const MarketplacePage = () => {
         return onChainPoints;
       };
 
-      const UserOnChainPoints = async () => {
+      const userOnChainPoints = async () => {
         if (!activeAccount?.address) return;
 
         const userPoints = await readContract({
-          contract: monetPointsContractFactory(allAddresses[i]),
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
           method: "balanceOf",
           params: [activeAccount?.address],
         });
-        console.log(userPoints, "userPoints");
+        // console.log(userPoints, "userPoints");
         return Number(toTokens(userPoints, decimals));
       };
       const symbol = await Symbol();
       const name = await Name();
       const assetInfo = await AssetInfo();
       const status = assetInfo.status;
-      const address = allAddresses[i];
-      const onChainPoints = await OnChainPointsCalculations();
-      const userPoints = await UserOnChainPoints();
+      const address = allPointContractAddresses[i];
+      const onChainPoints = await onChainPointsCalculations();
+      const userPoints = await userOnChainPoints();
       setBlockchainData((prev) => [
         ...prev,
         {
