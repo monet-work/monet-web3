@@ -1,3 +1,13 @@
+import { monetPointsContractFactory } from "@/app/contract-utils";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import {
+  readContract,
+  prepareContractCall,
+  PreparedTransaction,
+} from "thirdweb";
+import { useSendTransaction } from "thirdweb/react";
+import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
@@ -17,6 +27,52 @@ type Props = {
 
 const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
   const { address, name, symbol } = contract ?? {};
+
+  const [mintStatus, setMintStatus] = useState<Boolean | null>(null);
+
+  const getMintStatus = async () => {
+    if (!address) return;
+    const data = await readContract({
+      contract: monetPointsContractFactory(address),
+      method: "mintingSwitch",
+      params: [],
+    });
+    console.log(data, "mint status");
+    setMintStatus(data);
+  };
+
+  useEffect(() => {
+    getMintStatus();
+  }, [address]);
+
+  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const handleMintSwitchClick = async () => {
+    const call = async () => {
+      if (!address) return;
+      if (mintStatus === null) return;
+      const transaction = await prepareContractCall({
+        contract: monetPointsContractFactory(address),
+        method: "setMintingSwitch",
+        params: [!mintStatus],
+      });
+
+      await sendTransaction(transaction as PreparedTransaction, {
+        onSuccess: (result) => {
+          toast.success("Minting Switched successfully");
+          console.log(result);
+        },
+
+        onError: (error) => {
+          console.log(error);
+          toast.error(
+            "Error while switching minting status. Please try again later."
+          );
+        },
+      });
+    };
+    await call();
+  };
+
   return (
     <div>
       <Card className="sm:col-span-2 w-fit">
@@ -64,6 +120,22 @@ const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
                     <div className="flex gap-4">
                       <span className="w-[50px]">Symbol:</span>{" "}
                       <span className="font-semibold">{symbol}</span>
+                    </div>
+                    <div className="flex items-center gap-4 mt-2">
+                      <Button
+                        disabled={mintStatus === null}
+                        onClick={() => handleMintSwitchClick()}
+                        loading={isPending}
+                      >
+                        {mintStatus ? "Turn off minting" : "Turn on minting"}
+                      </Button>
+                      <div className="flex text-base ">
+                        {mintStatus !== null && mintStatus ? (
+                          <p className="text-green-500">Minting is enabled</p>
+                        ) : (
+                          <p className="text-red-500">Minting is disabled</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
