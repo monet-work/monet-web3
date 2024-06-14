@@ -89,7 +89,7 @@ const PointPage = () => {
     });
     console.log(formattedListings, "formattedListings");
     setFormattedBlockchainListings(formattedListings);
-  }, [isBlockchainLoading, decimals, listingData]);
+  }, [isBlockchainLoading]);
   useEffect(() => {
     if (listingCount != 0) {
       fetchListings();

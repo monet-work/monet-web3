@@ -62,9 +62,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     offerType: z.string(),
     point: z.string().min(1, "Point is required"),
     // paymentToken: z.string(),
-    pricePerPoint: z.coerce.number().positive({
-      message: "Price must be greater than 0",
-    }),
+    pricePerPoint: z.coerce.string(),
     amount: z.string().min(1, "Amount is required"),
     fillType: z.string().min(1, "Fill type is required"),
   });
@@ -75,7 +73,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       amount: "",
       point: "",
       // paymentToken: "",
-      pricePerPoint: 0,
+      pricePerPoint: "0",
       offerType: "sell",
       fillType: "partial",
     },
@@ -124,10 +122,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     }
   }, [form, pathName]);
 
-  const totalPriceInEth = toUnits(
-    String(Number(toUnits(amount, decimals)) * Number(pricePerPoint)),
-    18
-  );
+  const totalPriceInEth = toUnits(amount, decimals) * toUnits(String(pricePerPoint), 18);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("submit", values);
@@ -333,12 +328,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   onValueChange={
                     isPointDetailPage
                       ? (value) => {
-                          field.onChange(value === "" ? null : null);
-                        }
+                        field.onChange(value === "" ? null : null);
+                      }
                       : (value) => {
-                          field.onChange(value);
-                          value && setSelectedPoint(value);
-                        }
+                        field.onChange(value);
+                        value && setSelectedPoint(value);
+                      }
                   }
                   value={isPointDetailPage ? selectedPoint : field.value}
                   disabled={isPointDetailPage}
