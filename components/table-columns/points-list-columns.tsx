@@ -9,6 +9,8 @@ export const PointsListColumns: ColumnDef<{
   symbol: string;
   address: string;
   status: number;
+  mintedPoints: number;
+  userPoints: number;
 }>[] = [
   {
     accessorKey: "name",
@@ -16,7 +18,9 @@ export const PointsListColumns: ColumnDef<{
       <DataTableColumnHeader column={column} title="Name" />
     ),
     cell: ({ row }) => (
-      <div className="w-[80px] cursor-pointer text-xs">{row.getValue("name")}</div>
+      <div className="w-[80px] cursor-pointer text-xs">
+        {row.getValue("name")}
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,
@@ -26,7 +30,11 @@ export const PointsListColumns: ColumnDef<{
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Symbol" />
     ),
-    cell: ({ row }) => <div className="text-muted-foreground text-xs">{row.getValue("symbol")}</div>,
+    cell: ({ row }) => (
+      <div className="text-muted-foreground text-xs">
+        {row.getValue("symbol")}
+      </div>
+    ),
   },
   {
     accessorKey: "address",
@@ -34,7 +42,31 @@ export const PointsListColumns: ColumnDef<{
       <DataTableColumnHeader column={column} title="Address" />
     ),
     cell: ({ row }) => (
-      <div className="text-muted-foreground text-xs">{row.getValue("address")}</div>
+      <div className="text-muted-foreground text-xs">
+        {row.getValue("address")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "mintedPoints",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Minted Points" />
+    ),
+    cell: ({ row }) => (
+      <div className="text-muted-foreground text-xs">
+        {row.getValue("mintedPoints")}
+      </div>
+    ),
+  },
+  {
+    accessorKey: "userPoints",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="On-Chain Balance" />
+    ),
+    cell: ({ row }) => (
+      <div className="text-muted-foreground text-xs">
+        {row.getValue("userPoints")}
+      </div>
     ),
   },
   {

@@ -12,11 +12,24 @@ import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { readContract } from "thirdweb";
-import { useReadContract } from "thirdweb/react";
+import {
+  Address,
+  getContractEvents,
+  prepareEvent,
+  readContract,
+  toTokens,
+} from "thirdweb";
+import {
+  useActiveAccount,
+  useContractEvents,
+  useReadContract,
+} from "thirdweb/react";
 
 const MarketplacePage = () => {
   const router = useRouter();
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
+
   const { data: pointsListData, isLoading } = useQuery({
     queryKey: [],
     queryFn: async () => {
@@ -29,34 +42,52 @@ const MarketplacePage = () => {
       name: string;
       address: string;
       status: number;
+      mintedPoints: number;
+      userPoints: number;
     }[]
   >([]);
 
   const [listCount, setListCount] = useState(0);
-  if (blockchainData.length === listCount) {
-    console.log("blockchainData", blockchainData);
-  }
 
   const marketPlaceStore = useMarketPlaceStore();
 
   const getMarketplaceDataFromContract = async () => {
-    const allAddresses = await readContract({
+    const mint = prepareEvent({
+      signature: "event Mint(address,uint256)",
+    });
+    const allPointContractAddresses = await readContract({
       contract: monetMarketplaceContract,
       method: "getAssetAddresses",
       params: [],
     });
-    setListCount(allAddresses.length);
-    for (let i = 0; i < allAddresses.length; i++) {
+
+    setListCount(allPointContractAddresses.length);
+    for (let i = 0; i < allPointContractAddresses.length; i++) {
+      if (!allPointContractAddresses[i]) return;
+      // console.log(allPointContractAddresses[i], "allPointContractAddresses[i]");
+      const events = await getContractEvents({
+        contract: monetPointsContractFactory(
+          allPointContractAddresses[i].toString()
+        ),
+        fromBlock: "earliest",
+        toBlock: "latest",
+        events: [mint],
+      });
+      // console.log(events, "events inside loop");
+      const decimals = await readContract({
+        contract: monetPointsContractFactory(allPointContractAddresses[i]),
+        method: "decimals",
+      });
       const Symbol = async () => {
         const Symboldata = await readContract({
-          contract: monetPointsContractFactory(allAddresses[i]),
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
           method: "symbol",
         });
         return Symboldata;
       };
       const Name = async () => {
         const Namedata = await readContract({
-          contract: monetPointsContractFactory(allAddresses[i]),
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
           method: "name",
         });
         return Namedata;
@@ -65,15 +96,37 @@ const MarketplacePage = () => {
         const Assetdata = await readContract({
           contract: monetMarketplaceContract,
           method: "getAsset",
-          params: [allAddresses[i]],
+          params: [allPointContractAddresses[i]],
         });
         return Assetdata;
+      };
+
+      const onChainPointsCalculations = async () => {
+        let onChainPoints = 0;
+        events.forEach((event) => {
+          onChainPoints += Number(toTokens(BigInt(event.args[1]), decimals));
+        });
+        return onChainPoints;
+      };
+
+      const userOnChainPoints = async () => {
+        if (!activeAccount?.address) return;
+
+        const userPoints = await readContract({
+          contract: monetPointsContractFactory(allPointContractAddresses[i]),
+          method: "balanceOf",
+          params: [activeAccount?.address],
+        });
+        // console.log(userPoints, "userPoints");
+        return Number(toTokens(userPoints, decimals));
       };
       const symbol = await Symbol();
       const name = await Name();
       const assetInfo = await AssetInfo();
       const status = assetInfo.status;
-      const address = allAddresses[i];
+      const address = allPointContractAddresses[i];
+      const onChainPoints = await onChainPointsCalculations();
+      const userPoints = await userOnChainPoints();
       setBlockchainData((prev) => [
         ...prev,
         {
@@ -81,21 +134,27 @@ const MarketplacePage = () => {
           name,
           address,
           status,
+          mintedPoints: onChainPoints,
+          userPoints: userPoints && userPoints > 0 ? userPoints : 0,
         },
       ]);
     }
   };
 
   useEffect(() => {
-    marketPlaceStore.setMarketPlace(pointsListData?.data.pointsAssets || []);
+    if (blockchainData.length === 0) {
+      marketPlaceStore.setMarketPlace(pointsListData?.data.pointsAssets);
+    }
   }, [pointsListData]);
 
   useEffect(() => {
-    getMarketplaceDataFromContract();
-  }, []);
+    if (activeAccount?.address) {
+      getMarketplaceDataFromContract();
+    }
+  }, [activeAccount?.address]);
 
   useEffect(() => {
-    if (blockchainData.length === listCount) {
+    if (blockchainData.length === listCount && listCount > 0) {
       marketPlaceStore.setMarketPlace(blockchainData);
     }
   }, [blockchainData]);
@@ -110,11 +169,7 @@ const MarketplacePage = () => {
         <div className="mt-4">
           <DataTable
             columns={PointsListColumns}
-            data={
-              blockchainData.length === listCount && listCount > 0
-                ? blockchainData
-                : pointsListData?.data.pointsAssets || []
-            }
+            data={blockchainData}
             loading={isLoading}
             cursorPointer={true}
             enablePagination={true}
