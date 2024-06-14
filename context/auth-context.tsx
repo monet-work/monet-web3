@@ -52,6 +52,7 @@ const useAuthProvider = () => {
 
   const [activeWalletChanged, setActiveWalletChanged] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
+  const [userWallerAddress, setUserWalletAddress] = useState("");
   const [accessToken, setAccessToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     { token: "", expires: "" }
@@ -114,8 +115,15 @@ const useAuthProvider = () => {
   }, [authError]);
 
   useEffect(() => {
-    if (!walletConnected || !activeAccount) return;
-    setActiveWalletChanged(true);
+    if (!activeAccount) return;
+    if (!userWallerAddress) {
+      setUserWalletAddress(activeAccount.address);
+      return;
+    }
+    if (activeAccount.address !== userWallerAddress) {
+      console.log(activeAccount.address, 'active', userWallerAddress, 'user address')
+      setActiveWalletChanged(true);
+    }
   }, [activeAccount]);
 
   useEffect(() => {
