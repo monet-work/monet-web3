@@ -16,6 +16,7 @@ import RedeemPointsForm from "./forms/redeem-points-form";
 import { Point } from "@/models/point.model";
 import { monetPointsContractFactory } from "@/app/contract-utils";
 import { ExternalLink } from "lucide-react";
+import SadEmoji from "./icons/sad-emoji";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
@@ -146,15 +147,20 @@ const CustomerDashboard = () => {
       <div className="container py-16">
         <div className="w-full">
           <h2 className="">Your points archive</h2>
-          <div className="h-full py-4">
+          <div className="h-full py-4 min-h-[400px] border rounded-md border-muted mt-4">
             {isLoadingCustomerPoints && (
               <Skeleton className="w-full h-[100px]" />
             )}
 
             {customerPointsResponse?.data &&
             !(customerPointsResponse?.data.points.length > 0) ? (
-              <div className="text-center h-full flex justify-center items-center">
-                <span>No off-chain points available</span>
+              <div className="text-center min-h-[400px] flex justify-center items-center">
+                <div className="flex flex-col gap-4 items-center">
+                  <SadEmoji className=" w-16 h-16" />
+                  <span className="text-muted-foreground text-lg">
+                    {`Oh no! you don't seem to have any off-chain points`}
+                  </span>
+                </div>
               </div>
             ) : null}
 
