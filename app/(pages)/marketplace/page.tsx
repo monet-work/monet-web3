@@ -42,8 +42,8 @@ const MarketplacePage = () => {
       name: string;
       address: string;
       status: number;
-      mintedPoints: number;
-      userPoints: number;
+      mintedPoints?: number;
+      userPoints?: number;
     }[]
   >([]);
 
@@ -169,7 +169,11 @@ const MarketplacePage = () => {
         <div className="mt-4">
           <DataTable
             columns={PointsListColumns}
-            data={blockchainData}
+            data={
+              blockchainData.length === listCount && listCount > 0
+                ? blockchainData
+                : pointsListData?.data.pointsAssets || []
+            }
             loading={isLoading}
             cursorPointer={true}
             enablePagination={true}
