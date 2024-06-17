@@ -26,6 +26,10 @@ const CustomerDashboard = () => {
     null
   );
   const [onChainPoints, setOnChainPoints] = useState(0);
+  const [dataWithOnChainPoints, setDataWithOnChainPoints] = useState<
+    any | null
+  >(null);
+  // console.log(dataWithOnChainPoints, "dataWithOnChainPoints");
 
   const {
     data: customerOnChainPointsResponse,
@@ -64,7 +68,33 @@ const CustomerDashboard = () => {
     enabled: !!customerStore?.customer?.id,
   });
 
+  // console.log(customerPointsResponse, "customerPointsResponse");
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+
+  const fetchOnChainPointsForAllTokens = async () => {
+    if (customerPointsResponse?.data) {
+      const { points } = customerPointsResponse.data;
+      if (points.length === 0) return;
+      const dataWithOnChainPoints = await Promise.all(
+        points.map(async (point) => {
+          const onChainPoints = await apiService.getCustomerOnChainPoints(
+            customerStore?.customer?.id!,
+            point.company!.point_contract_address!
+          );
+          return {
+            ...point,
+            onChainPoints: onChainPoints.data.points,
+          };
+        })
+      );
+
+      setDataWithOnChainPoints(dataWithOnChainPoints as any);
+    }
+  };
+
+  useEffect(() => {
+    fetchOnChainPointsForAllTokens();
+  }, [customerPointsResponse]);
 
   const processRedeemPoints = async (point: Point) => {
     const { company_id, points, company } = point;
@@ -165,58 +195,117 @@ const CustomerDashboard = () => {
             ) : null}
 
             {customerPointsResponse?.data &&
-              customerPointsResponse?.data?.points.map((point) => (
-                <div
-                  key={point.id}
-                  className="flex items-center px-2 justify-between odd:bg-gray-900"
-                >
-                  <div className="flex items-center">
-                    <div className="p-4">
-                      <div>
-                        <div className="text-lg font-semibold">
-                          {point?.company?.name}
+            dataWithOnChainPoints &&
+            dataWithOnChainPoints.length > 0
+              ? dataWithOnChainPoints?.map((point: any) => (
+                  <div
+                    key={point.id}
+                    className="flex items-center px-2 justify-between odd:bg-gray-900"
+                  >
+                    <div className="flex items-center">
+                      <div className="p-4">
+                        <div>
+                          <div className="text-lg font-semibold">
+                            {point?.company?.name ?? ""}
+                          </div>
+                        </div>
+                        <div className="text-xs">
+                          {/* point name and symbol in a single line */}
+                          <span>
+                            {point?.company?.point_name} (
+                            {point?.company?.point_symbol})
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground hover:underline">
+                          <a
+                            href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
+                            target="_blank"
+                            className="flex items-center gap-1"
+                          >
+                            {point?.company?.point_contract_address}
+
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
                         </div>
                       </div>
-                      <div className="text-xs">
-                        {/* point name and symbol in a single line */}
-                        <span>
-                          {point?.company?.point_name} (
-                          {point?.company?.point_symbol})
-                        </span>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <div className="text-lg font-semibold">
+                        {point?.points} points
                       </div>
-                      <div className="text-xs mt-1 text-muted-foreground hover:underline">
-                        <a
-                          href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
-                          target="_blank"
-                          className="flex items-center gap-1"
-                        >
-                          {point?.company?.point_contract_address}
+                      <div className="text-lg font-semibold">
+                        {point?.onChainPoints} on-chain points
+                      </div>
+                      <Button
+                        disabled={point?.onChainPoints > point?.points}
+                        variant={"outline"}
+                        loading={
+                          redeemPointsMutation.isPending ||
+                          isPending ||
+                          isLoadingCustomerOnChainPoints
+                        }
+                        onClick={() => {
+                          handleRedeemPoints(point);
+                        }}
+                      >
+                        Redeem
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              : customerPointsResponse?.data?.points.map((point) => (
+                  <div
+                    key={point.id}
+                    className="flex items-center px-2 justify-between odd:bg-gray-900"
+                  >
+                    <div className="flex items-center">
+                      <div className="p-4">
+                        <div>
+                          <div className="text-lg font-semibold">
+                            {point?.company?.name ?? ""}
+                          </div>
+                        </div>
+                        <div className="text-xs">
+                          {/* point name and symbol in a single line */}
+                          <span>
+                            {point?.company?.point_name} (
+                            {point?.company?.point_symbol})
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground hover:underline">
+                          <a
+                            href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
+                            target="_blank"
+                            className="flex items-center gap-1"
+                          >
+                            {point?.company?.point_contract_address}
 
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex gap-4 items-center">
-                    <div className="text-lg font-semibold">
-                      {point?.points} points
+                    <div className="flex gap-4 items-center">
+                      <div className="text-lg font-semibold">
+                        {point?.points} points
+                      </div>
+
+                      <Button
+                        variant={"outline"}
+                        loading={
+                          redeemPointsMutation.isPending ||
+                          isPending ||
+                          isLoadingCustomerOnChainPoints
+                        }
+                        onClick={() => {
+                          handleRedeemPoints(point);
+                        }}
+                      >
+                        Redeem
+                      </Button>
                     </div>
-                    <Button
-                      variant={"outline"}
-                      loading={
-                        redeemPointsMutation.isPending ||
-                        isPending ||
-                        isLoadingCustomerOnChainPoints
-                      }
-                      onClick={() => {
-                        handleRedeemPoints(point);
-                      }}
-                    >
-                      Redeem
-                    </Button>
                   </div>
-                </div>
-              ))}
+                ))}
           </div>
         </div>
       </div>
