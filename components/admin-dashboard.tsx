@@ -1,11 +1,12 @@
 import { client } from "@/app/contract-utils";
-import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useSwitchActiveWalletChain, useActiveWalletChain } from "thirdweb/react";
 import { createWallet } from "thirdweb/wallets";
 import { useQuery } from "@tanstack/react-query";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { apiService } from "@/services/api.service";
 import CompanyList from "./company-list";
 import { usePathname } from "next/navigation";
+import { baseSepolia } from "thirdweb/chains";
 
 type Props = {};
 
@@ -23,6 +24,16 @@ const AdminDashboard: React.FC<Props> = () => {
     enabled: !!walletAddress,
   });
   // console.log(dashboardDataResponse, isLoading);
+
+
+  const chainId = useActiveWalletChain();
+
+  const switchChain = useSwitchActiveWalletChain();
+
+  // later in your code
+  if (chainId?.id !== baseSepolia.id) {
+    return <button onClick={() => switchChain(baseSepolia)}>Switch Chain</button>;
+  }
 
   return (
     <>
