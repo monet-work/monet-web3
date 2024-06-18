@@ -17,8 +17,9 @@ const ChainSwitcher = ({
           <div className="flex flex-col">
             <h1 className="text-2xl font-bold">Different Chain Detected!</h1>
             <p className="text-sm mt-2 max-w-sm text-muted-foreground">
-              You’re on a different network. Switch to BaseSepolia to keep
-              going. 🚀
+              You’re on a different network. Switch to{" "}
+              <span className="font-semibold">Base Sepolia</span> to keep going.
+              🚀
             </p>
 
             <div>
@@ -31,7 +32,8 @@ const ChainSwitcher = ({
                   }
                   className="bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-purple-600 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-full"
                 >
-                  Connect to Base Sepolia! 🌟
+                  Connect to{" "}
+                  <span className="font-semibold">Base Sepolia!</span> 🌟
                 </Button>
               </div>
             </div>
