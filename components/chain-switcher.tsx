@@ -7,7 +7,7 @@ import { baseSepolia, sepolia } from "thirdweb/chains";
 const ChainSwitcher = ({
   setActiveChainChanged,
 }: {
-  setActiveChainChanged: any;
+  setActiveChainChanged: (value: boolean) => void;
 }) => {
   const switchChain = useSwitchActiveWalletChain();
   return (

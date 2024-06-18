@@ -54,7 +54,6 @@ const useAuthProvider = () => {
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
   const chainId = useActiveWalletChain();
-  const switchChain = useSwitchActiveWalletChain();
 
   const [activeWalletChanged, setActiveWalletChanged] = useState(false);
   const [activeChainChanged, setActiveChainChanged] = useState(false);
@@ -192,7 +191,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   } = useAuthProvider();
 
   const userStore = useUserStore();
-  const switchChain = useSwitchActiveWalletChain();
 
   const wallets = [createWallet("io.metamask")];
 
