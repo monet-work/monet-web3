@@ -9,8 +9,8 @@ export const PointsListColumns: ColumnDef<{
   symbol: string;
   address: string;
   status: number;
-  mintedPoints: number;
-  userPoints: number;
+  mintedPoints?: number;
+  userPoints?: number;
 }>[] = [
   {
     accessorKey: "name",
