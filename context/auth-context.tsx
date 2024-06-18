@@ -122,7 +122,6 @@ const useAuthProvider = () => {
 
   useEffect(() => {
     if (!chainId) return;
-    // console.log(chainId, baseSepolia, chainId.id === baseSepolia.id);
     if (chainId.id != baseSepolia.id) {
       setActiveChainChanged(true);
     } else {
@@ -137,12 +136,6 @@ const useAuthProvider = () => {
       return;
     }
     if (activeAccount.address !== userWallerAddress) {
-      console.log(
-        activeAccount.address,
-        "active",
-        userWallerAddress,
-        "user address"
-      );
       setActiveWalletChanged(true);
     }
   }, [activeAccount]);
