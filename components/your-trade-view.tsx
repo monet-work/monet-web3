@@ -14,6 +14,7 @@ import GridViewComponent from "./grid-view-component";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
 import { AssetListingColumns } from "./table-columns/asset-listing-columns";
 import { ListingsDataTable } from "./listings-table/listings-data-table";
+import { YourListingColumns } from "./table-columns/your-listing-columns";
 
 type Props = {
   assetListings: AssetListing[];
@@ -21,7 +22,7 @@ type Props = {
   onListingSelected?: (listing: AssetListing) => void;
 };
 
-const TradesView: React.FC<Props> = ({
+const YourTradeView: React.FC<Props> = ({
   assetListings,
   loading = true,
   onListingSelected,
@@ -47,17 +48,14 @@ const TradesView: React.FC<Props> = ({
         </div>
 
         <ListingsDataTable
-          columns={AssetListingColumns}
+          columns={YourListingColumns}
           data={assetListings}
           loading={loading}
           noResultsMessage="No listings available."
-          onRowClick={(listing) =>
-            onListingSelected && onListingSelected(listing)
-          }
         />
       </Tabs>
     </div>
   );
 };
 
-export default TradesView;
+export default YourTradeView;

@@ -7,6 +7,7 @@ import {
 import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
+import YourTradeView from "@/components/your-trade-view";
 import { pointsTableData } from "@/data";
 import { AssetListing, ListingStatus } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
@@ -149,11 +150,11 @@ const PointPage = () => {
   const publicListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-        (listing) => listing.owner !== walletAddress
-      )
+          (listing) => listing.owner !== walletAddress
+        )
       : formattedAssetListings.filter(
-        (listing) => listing.owner !== walletAddress
-      );
+          (listing) => listing.owner !== walletAddress
+        );
 
   const livePublicListings = publicListings.filter(
     (listing) => listing.status === ListingStatus.LIVE
@@ -166,11 +167,11 @@ const PointPage = () => {
   const ownerListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-        (listing) => listing.owner === walletAddress
-      )
+          (listing) => listing.owner === walletAddress
+        )
       : formattedAssetListings.filter(
-        (listing) => listing.owner === walletAddress
-      );
+          (listing) => listing.owner === walletAddress
+        );
 
   return (
     <main className="pt-16">
@@ -227,7 +228,7 @@ const PointPage = () => {
           </div>
           <div className="mt-8">
             <h3 className="mb-4 text-muted-foreground">Your listings</h3>
-            <TradesView
+            <YourTradeView
               assetListings={ownerListings || []}
               loading={isLoading}
             />
