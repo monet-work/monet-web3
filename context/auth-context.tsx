@@ -20,6 +20,8 @@ import {
   useActiveWallet,
   useActiveWalletConnectionStatus,
   useDisconnect,
+  useActiveWalletChain,
+  useSwitchActiveWalletChain,
 } from "thirdweb/react";
 import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
@@ -29,6 +31,8 @@ import UnauthorizedAccess from "@/components/unauthorized";
 import { useUserStore } from "@/store/userStore";
 import { AxiosError } from "axios";
 import AccountSwitcher from "@/components/account-switcher";
+import { baseSepolia } from "thirdweb/chains";
+import ChainSwitcher from "@/components/chain-switcher";
 
 interface AuthContextType {
   isAuthLoading: boolean;
@@ -49,8 +53,10 @@ const useAuthProvider = () => {
   const { disconnect } = useDisconnect();
   const activeAccount = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
+  const chainId = useActiveWalletChain();
 
   const [activeWalletChanged, setActiveWalletChanged] = useState(false);
+  const [activeChainChanged, setActiveChainChanged] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
   const [userWallerAddress, setUserWalletAddress] = useState("");
   const [accessToken, setAccessToken] = useLocalStorage(
@@ -115,13 +121,21 @@ const useAuthProvider = () => {
   }, [authError]);
 
   useEffect(() => {
+    if (!chainId) return;
+    if (chainId.id != baseSepolia.id) {
+      setActiveChainChanged(true);
+    } else {
+      setActiveChainChanged(false);
+    }
+  }, [chainId]);
+
+  useEffect(() => {
     if (!activeAccount) return;
     if (!userWallerAddress) {
       setUserWalletAddress(activeAccount.address);
       return;
     }
     if (activeAccount.address !== userWallerAddress) {
-      console.log(activeAccount.address, 'active', userWallerAddress, 'user address')
       setActiveWalletChanged(true);
     }
   }, [activeAccount]);
@@ -152,6 +166,8 @@ const useAuthProvider = () => {
     isProtectedRoute,
     authResponse,
     activeWalletChanged,
+    activeChainChanged,
+    setActiveChainChanged,
   };
 };
 
@@ -163,6 +179,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isProtectedRoute,
     authResponse,
     activeWalletChanged,
+    activeChainChanged,
+    setActiveChainChanged,
   } = useAuthProvider();
 
   const userStore = useUserStore();
@@ -186,6 +204,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     if (activeWalletChanged) {
       return <AccountSwitcher />;
+    }
+
+    if (activeChainChanged) {
+      return <ChainSwitcher setActiveChainChanged={setActiveChainChanged} />;
     }
 
     if (authResponse) {
