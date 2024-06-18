@@ -36,7 +36,6 @@ const YourListingsAction: React.FC<Props> = ({ Id }) => {
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const handleCancel = async () => {
     const call = async () => {
-      console.log(Id);
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
         method: "cancelListing",
