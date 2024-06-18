@@ -56,7 +56,7 @@ export const PointsListColumns: ColumnDef<{
     ),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
-        {row.getValue("mintedPoints") || <Skeleton className="w-6 h-5" />}
+        {row.getValue("mintedPoints") || <Skeleton className="w-full h-5" />}
       </div>
     ),
   },
@@ -67,7 +67,7 @@ export const PointsListColumns: ColumnDef<{
     ),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
-        {row.getValue("userPoints") || <Skeleton className="w-6 h-5" />}
+        {row.getValue("userPoints") || <Skeleton className="w-full h-5" />}
       </div>
     ),
   },
