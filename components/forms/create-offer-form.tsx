@@ -22,7 +22,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useActiveAccount, useSendTransaction, useSendAndConfirmTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import {
   monetMarketplaceContract,
   monetPointsContractFactory,

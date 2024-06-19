@@ -10,7 +10,7 @@ import {
   sendTransaction,
 } from "thirdweb";
 import { client, monetMarketplaceContract } from "@/app/contract-utils";
-import { useSendTransaction } from "thirdweb/react";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { DeleteIcon, Trash2, X } from "lucide-react";
 import {
   AlertDialog,
@@ -33,7 +33,7 @@ type Props = {
 
 const UserListingsAction: React.FC<Props> = ({ Id }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
   const handleCancel = async () => {
     const call = async () => {
       const transaction = await prepareContractCall({

@@ -6,7 +6,7 @@ import {
   prepareContractCall,
   PreparedTransaction,
 } from "thirdweb";
-import { useSendTransaction } from "thirdweb/react";
+import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { Button } from "./ui/button";
 import {
   Card,
@@ -45,7 +45,7 @@ const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
     getMintStatus();
   }, [address]);
 
-  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
   const handleMintSwitchClick = async () => {
     const call = async () => {
       if (!address) return;
