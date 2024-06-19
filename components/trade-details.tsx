@@ -35,7 +35,7 @@ import {
   monetPointsContractFactory,
 } from "@/app/contract-utils";
 import { toast } from "sonner";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
 
 const TradeDetails: React.FC<Props> = ({
@@ -49,7 +49,7 @@ const TradeDetails: React.FC<Props> = ({
   const pathname = usePathname();
   const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
-  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
   const [totalPrice, setTotalPrice] = useState<string>("");
 
   useEffect(() => {
