@@ -22,7 +22,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useActiveAccount, useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction, useSendAndConfirmTransaction } from "thirdweb/react";
 import {
   monetMarketplaceContract,
   monetPointsContractFactory,
@@ -84,6 +84,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const pricePerPoint = form.watch("pricePerPoint");
 
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const { mutate: sendAndConfirmTransaction, data: transactionReceipt } = useSendAndConfirmTransaction();
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
@@ -136,11 +137,10 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
         ],
       });
 
-      await sendTransaction(transaction as PreparedTransaction, {
+      await sendAndConfirmTransaction(transaction as PreparedTransaction, {
         onSuccess: async () => {
           toast.success("Successfully approved");
-          setTimeout(call, 10000);
-          // await call();
+          await call();
         },
         onError: () => {
           toast.error("Error approving");
@@ -184,7 +184,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           values.offerType === "buy" ? totalPriceInEth + BigInt(1) : undefined, // change this later
       });
 
-      await sendTransaction(transaction as PreparedTransaction, {
+      await sendAndConfirmTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           toast.success("Successfully created offer");
 
