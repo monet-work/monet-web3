@@ -122,7 +122,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     }
   }, [form, pathName]);
 
-  const totalPriceInEth = toUnits(amount, decimals) * toUnits(String(pricePerPoint), 18);
+  const totalPriceInEth = BigInt(toTokens(toUnits(amount, decimals) * toUnits(String(pricePerPoint), 18), decimals));
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("submit", values);
@@ -158,7 +158,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     const sellOfferParams = [
       values.point,
       BigInt(toUnits(values.amount, decimals)),
-      toWei(values.pricePerPoint.toString()),
+      toTokens(toWei(values.pricePerPoint.toString()), decimals),
       values.point,
       values.offerType === "buy" ? ListingType.BUY : ListingType.SELL,
       values.fillType === "full"
@@ -275,7 +275,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           render={({ field }) => (
             <FormItem className="p-4 rounded-lg">
               <FormLabel className="text-xs text-muted-foreground uppercase">
-                Price Per Point (ETH)
+                Price Per {pointSymbol ? pointSymbol : "Point"} (ETH)
               </FormLabel>
               <FormControl>
                 <Input
@@ -284,11 +284,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription className="text-xs">
+              {/* <FormDescription className="text-xs">
                 {!!pricePerPoint && !!point
                   ? `1 ${pointSymbol} = ${toUnits("1", decimals)} points`
                   : ""}
-              </FormDescription>
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -311,7 +311,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                 </FormControl>
                 <FormDescription className="text-xs">
                   {!!pricePerPoint && !!point && !!amount
-                    ? `Total Price = ${amount} ${pointSymbol} * ${toUnits("1", decimals)} Points/${pointSymbol} * ${pricePerPoint} (Price Per Point) = ${toTokens(totalPriceInEth, 18)} ETH`
+                    ? `Total Price = ${amount} ${pointSymbol} * ${pricePerPoint} (Price Per ${pointSymbol ? pointSymbol : "Point"}) = ${toTokens(totalPriceInEth, 18)} ETH`
                     : ""}
                 </FormDescription>
                 <FormMessage />

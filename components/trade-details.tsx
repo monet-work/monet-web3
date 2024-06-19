@@ -7,6 +7,7 @@ type Props = {
     name: string;
     symbol: string;
   };
+  decimals: number;
   assetListing?: AssetListing;
   onTradeSuccess?: () => void;
   onTradeError?: () => void;
@@ -40,6 +41,7 @@ import { usePathname } from "next/navigation";
 const TradeDetails: React.FC<Props> = ({
   assetListing,
   pointInfo,
+  decimals,
   onTradeError,
   onTradeSuccess,
 }) => {
@@ -162,6 +164,10 @@ const TradeDetails: React.FC<Props> = ({
     await executeTrade();
   };
 
+  const getPricePerPoint = (pricePerPoint: string) => {
+    return toTokens(toUnits(toWei(pricePerPoint).toString(), decimals), 18);
+  }
+
   return (
     <Card
       className={clsx("w-full bg-muted", {
@@ -200,7 +206,7 @@ const TradeDetails: React.FC<Props> = ({
                 <span className="text-sm font-normal">ETH</span>
               </div>
               <span className="text-xs mt-2 text-muted-foreground">
-                ({assetListing.pricePerPoint} ETH per point)
+                ({getPricePerPoint(assetListing.pricePerPoint)} ETH per {symbol || 'point'})
               </span>
               <p className="mt-2">from</p>
               <p className="text-xs mt-2">{assetListing.owner}</p>
