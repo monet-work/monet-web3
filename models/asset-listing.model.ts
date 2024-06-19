@@ -10,8 +10,8 @@ export interface AssetListing {
   paymentType: PaymentType;
   fillType: ListingFillType;
   status: ListingStatus;
+  action?: JSX.Element;
 }
-
 
 export enum ListingFillType {
   PARTIAL = 0,

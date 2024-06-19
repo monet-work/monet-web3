@@ -121,7 +121,7 @@ export function ListingsDataTable<TData, TValue>({
                       data-state={row.getIsSelected() && "selected"}
                       onClick={() => handleRowClick(row.original)}
                       className={clsx(
-                        '[&_tr:last-child]:border-solid',
+                        "[&_tr:last-child]:border-solid",
                         selectedRow === row.original
                           ? row.original.listingType === ListingType.SELL
                             ? "border-2 border-red-600 rounded-md"
