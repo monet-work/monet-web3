@@ -83,8 +83,8 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const amount = form.watch("amount");
   const pricePerPoint = form.watch("pricePerPoint");
 
-  const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
-  const { mutate: sendAndConfirmTransaction, data: transactionReceipt } = useSendAndConfirmTransaction();
+  // const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
+  const { mutate: sendAndConfirmTransaction, data: transactionReceipt, isPending, isError } = useSendAndConfirmTransaction();
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
