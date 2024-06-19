@@ -135,10 +135,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
           BigInt(toUnits(amount, decimals)),
         ],
       });
+
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: async () => {
           toast.success("Successfully approved");
-          await call();
+          setTimeout(call, 10000);
+          // await call();
         },
         onError: () => {
           toast.error("Error approving");
@@ -212,9 +214,9 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
 
     const allowanceValue = await allowanceFunction();
 
-    if (Number(allowanceValue) < Number(values.amount)) {
+    if (BigInt(allowanceValue) < BigInt(values.amount)) {
       await performApproval(
-        (Number(values.amount) - Number(allowanceValue)).toString()
+        values.amount
       );
     } else {
       await call(); //directly call the function
