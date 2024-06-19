@@ -16,8 +16,8 @@ const readExcelFile = (file: File) => {
     reader.onerror = (e) => {
       reject(e);
     };
-    reader.readAsArrayBuffer(file)
+    reader.readAsArrayBuffer(file);
   });
-}
+};
 
 export { readExcelFile };

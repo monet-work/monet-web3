@@ -33,7 +33,9 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => {
-      return <div className="text-xs cursor-pointer">{row.getValue("amount")}</div>;
+      return (
+        <div className="text-xs cursor-pointer">{row.getValue("amount")}</div>
+      );
     },
     enableSorting: false,
     enableHiding: false,
@@ -103,7 +105,9 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
         className="text-xs"
       />
     ),
-    cell: ({ row }) => <div className="text-xs cursor-pointer">{row.getValue("owner")}</div>,
+    cell: ({ row }) => (
+      <div className="text-xs cursor-pointer">{row.getValue("owner")}</div>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -117,7 +121,9 @@ export const AssetListingColumns: ColumnDef<AssetListing>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="text-xs cursor-pointer">{row.getValue("totalPrice")} ETH</div>
+      <div className="text-xs cursor-pointer">
+        {row.getValue("totalPrice")} ETH
+      </div>
     ),
     enableSorting: false,
     enableHiding: false,

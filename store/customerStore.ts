@@ -17,8 +17,8 @@ const useCustomerStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.CUSTOMER,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export default useCustomerStore;

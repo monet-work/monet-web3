@@ -33,7 +33,11 @@ type Props = {
 
 const UserListingsAction: React.FC<Props> = ({ Id }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
+  const {
+    mutate: sendTransaction,
+    isPending,
+    isError,
+  } = useSendAndConfirmTransaction();
   const handleCancel = async () => {
     const call = async () => {
       const transaction = await prepareContractCall({

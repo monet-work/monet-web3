@@ -18,6 +18,6 @@ export const useRewardPointsStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.REWARD_POINTS,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

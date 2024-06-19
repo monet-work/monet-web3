@@ -10,7 +10,7 @@ const HomePage = () => {
       <section className="bg-background text-white">
         <div className="mx-auto max-w-screen-xl px-4 py-32 lg:flex lg:h-screen lg:items-center">
           <Spline
-            scene="https://prod.spline.design/SCXaqhx0ZDC6BNrz/scene.splinecode" 
+            scene="https://prod.spline.design/SCXaqhx0ZDC6BNrz/scene.splinecode"
             className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2 opacity-40"
           />
           <div className="mx-auto max-w-3xl text-center z-50">

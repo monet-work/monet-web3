@@ -23,7 +23,7 @@ const CustomerDashboard = () => {
   const account = useActiveAccount();
   const [showRedeemForm, setShowRedeemForm] = useState(false);
   const [activePointToRedeem, setActivePointToRedeem] = useState<Point | null>(
-    null
+    null,
   );
   const [onChainPoints, setOnChainPoints] = useState(0);
   const [dataWithOnChainPoints, setDataWithOnChainPoints] = useState<
@@ -44,7 +44,7 @@ const CustomerDashboard = () => {
     queryFn: () => {
       return apiService.getCustomerOnChainPoints(
         customerStore?.customer?.id!,
-        activePointToRedeem?.company?.point_contract_address!
+        activePointToRedeem?.company?.point_contract_address!,
       );
     },
     enabled:
@@ -69,7 +69,11 @@ const CustomerDashboard = () => {
   });
 
   // console.log(customerPointsResponse, "customerPointsResponse");
-  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
+  const {
+    mutate: sendTransaction,
+    isPending,
+    isError,
+  } = useSendAndConfirmTransaction();
 
   const fetchOnChainPointsForAllTokens = async () => {
     if (customerPointsResponse?.data) {
@@ -79,13 +83,13 @@ const CustomerDashboard = () => {
         points.map(async (point) => {
           const onChainPoints = await apiService.getCustomerOnChainPoints(
             customerStore?.customer?.id!,
-            point.company!.point_contract_address!
+            point.company!.point_contract_address!,
           );
           return {
             ...point,
             onChainPoints: onChainPoints.data.points,
           };
-        })
+        }),
       );
 
       setDataWithOnChainPoints(dataWithOnChainPoints as any);
@@ -151,7 +155,7 @@ const CustomerDashboard = () => {
         onError: (error) => {
           toast.error(error.message);
         },
-      }
+      },
     );
   };
 
@@ -162,7 +166,7 @@ const CustomerDashboard = () => {
 
     if (customerOnChainPointsResponse?.data) {
       setOnChainPoints(
-        customerOnChainPointsResponse?.data.points as unknown as number
+        customerOnChainPointsResponse?.data.points as unknown as number,
       );
     }
   }, [customerOnChainPointsResponse]);
@@ -183,7 +187,7 @@ const CustomerDashboard = () => {
             )}
 
             {customerPointsResponse?.data &&
-              !(customerPointsResponse?.data.points.length > 0) ? (
+            !(customerPointsResponse?.data.points.length > 0) ? (
               <div className="text-center min-h-[400px] flex justify-center items-center">
                 <div className="flex flex-col gap-4 items-center bg-gray-900 rounded-lg p-16">
                   <SadEmoji className=" w-16 h-16" />
@@ -195,117 +199,117 @@ const CustomerDashboard = () => {
             ) : null}
 
             {customerPointsResponse?.data &&
-              dataWithOnChainPoints &&
-              dataWithOnChainPoints.length > 0
+            dataWithOnChainPoints &&
+            dataWithOnChainPoints.length > 0
               ? dataWithOnChainPoints?.map((point: any) => (
-                <div
-                  key={point.id}
-                  className="flex items-center px-2 justify-between odd:bg-gray-900"
-                >
-                  <div className="flex items-center">
-                    <div className="p-4">
-                      <div>
-                        <div className="text-lg font-semibold">
-                          {point?.company?.name ?? ""}
+                  <div
+                    key={point.id}
+                    className="flex items-center px-2 justify-between odd:bg-gray-900"
+                  >
+                    <div className="flex items-center">
+                      <div className="p-4">
+                        <div>
+                          <div className="text-lg font-semibold">
+                            {point?.company?.name ?? ""}
+                          </div>
+                        </div>
+                        <div className="text-xs">
+                          {/* point name and symbol in a single line */}
+                          <span>
+                            {point?.company?.point_name} (
+                            {point?.company?.point_symbol})
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground hover:underline">
+                          <a
+                            href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
+                            target="_blank"
+                            className="flex items-center gap-1"
+                          >
+                            {point?.company?.point_contract_address}
+
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
                         </div>
                       </div>
-                      <div className="text-xs">
-                        {/* point name and symbol in a single line */}
-                        <span>
-                          {point?.company?.point_name} (
-                          {point?.company?.point_symbol})
-                        </span>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <div className="text-lg font-semibold">
+                        {point?.points} points
                       </div>
-                      <div className="text-xs mt-1 text-muted-foreground hover:underline">
-                        <a
-                          href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
-                          target="_blank"
-                          className="flex items-center gap-1"
-                        >
-                          {point?.company?.point_contract_address}
-
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
+                      <div className="text-lg font-semibold">
+                        {point?.onChainPoints} on-chain points
                       </div>
+                      <Button
+                        disabled={point?.onChainPoints > point?.points}
+                        variant={"outline"}
+                        loading={
+                          redeemPointsMutation.isPending ||
+                          isPending ||
+                          isLoadingCustomerOnChainPoints
+                        }
+                        onClick={() => {
+                          handleRedeemPoints(point);
+                        }}
+                      >
+                        Redeem
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-4 items-center">
-                    <div className="text-lg font-semibold">
-                      {point?.points} points
-                    </div>
-                    <div className="text-lg font-semibold">
-                      {point?.onChainPoints} on-chain points
-                    </div>
-                    <Button
-                      disabled={point?.onChainPoints > point?.points}
-                      variant={"outline"}
-                      loading={
-                        redeemPointsMutation.isPending ||
-                        isPending ||
-                        isLoadingCustomerOnChainPoints
-                      }
-                      onClick={() => {
-                        handleRedeemPoints(point);
-                      }}
-                    >
-                      Redeem
-                    </Button>
-                  </div>
-                </div>
-              ))
+                ))
               : customerPointsResponse?.data?.points.map((point) => (
-                <div
-                  key={point.id}
-                  className="flex items-center px-2 justify-between odd:bg-gray-900"
-                >
-                  <div className="flex items-center">
-                    <div className="p-4">
-                      <div>
-                        <div className="text-lg font-semibold">
-                          {point?.company?.name ?? ""}
+                  <div
+                    key={point.id}
+                    className="flex items-center px-2 justify-between odd:bg-gray-900"
+                  >
+                    <div className="flex items-center">
+                      <div className="p-4">
+                        <div>
+                          <div className="text-lg font-semibold">
+                            {point?.company?.name ?? ""}
+                          </div>
+                        </div>
+                        <div className="text-xs">
+                          {/* point name and symbol in a single line */}
+                          <span>
+                            {point?.company?.point_name} (
+                            {point?.company?.point_symbol})
+                          </span>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground hover:underline">
+                          <a
+                            href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
+                            target="_blank"
+                            className="flex items-center gap-1"
+                          >
+                            {point?.company?.point_contract_address}
+
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
                         </div>
                       </div>
-                      <div className="text-xs">
-                        {/* point name and symbol in a single line */}
-                        <span>
-                          {point?.company?.point_name} (
-                          {point?.company?.point_symbol})
-                        </span>
+                    </div>
+                    <div className="flex gap-4 items-center">
+                      <div className="text-lg font-semibold">
+                        {point?.points} points
                       </div>
-                      <div className="text-xs mt-1 text-muted-foreground hover:underline">
-                        <a
-                          href={`https://sepolia.basescan.org/address/${point?.company?.point_contract_address}`}
-                          target="_blank"
-                          className="flex items-center gap-1"
-                        >
-                          {point?.company?.point_contract_address}
 
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </div>
+                      <Button
+                        variant={"outline"}
+                        loading={
+                          redeemPointsMutation.isPending ||
+                          isPending ||
+                          isLoadingCustomerOnChainPoints
+                        }
+                        onClick={() => {
+                          handleRedeemPoints(point);
+                        }}
+                      >
+                        Redeem
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex gap-4 items-center">
-                    <div className="text-lg font-semibold">
-                      {point?.points} points
-                    </div>
-
-                    <Button
-                      variant={"outline"}
-                      loading={
-                        redeemPointsMutation.isPending ||
-                        isPending ||
-                        isLoadingCustomerOnChainPoints
-                      }
-                      onClick={() => {
-                        handleRedeemPoints(point);
-                      }}
-                    >
-                      Redeem
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ))}
           </div>
         </div>
       </div>

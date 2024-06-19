@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
 type Props = {
-  id: 'post-tweet' | 'write-blog-post' | 'review-google' | 'youtube-video';
+  id: "post-tweet" | "write-blog-post" | "review-google" | "youtube-video";
   title: string;
   description: string;
   points: number;
@@ -22,10 +22,10 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
   // });
   const [loading, setLoading] = useState(false);
 
-  const handleCollectPoints = async (id: Props['id'], points: number) => {
+  const handleCollectPoints = async (id: Props["id"], points: number) => {
     setLoading(true);
 
-    if(!walletAddress) return;
+    if (!walletAddress) return;
 
     // collectPointsMutation.mutate(
     //   {
@@ -49,20 +49,20 @@ const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
     // );
   };
 
-  const successMessageBasedOnKey = (key: Props['id']) => {
-    switch(title){
-      case 'post-tweet':
-        return 'Tweet posted successfully!';
-      case 'write-blog-post':
-        return 'Blog post written successfully!';
-      case 'review-google':
-        return 'Google review posted successfully!';
-      case 'youtube-video':
-        return 'YouTube video created successfully!';
+  const successMessageBasedOnKey = (key: Props["id"]) => {
+    switch (title) {
+      case "post-tweet":
+        return "Tweet posted successfully!";
+      case "write-blog-post":
+        return "Blog post written successfully!";
+      case "review-google":
+        return "Google review posted successfully!";
+      case "youtube-video":
+        return "YouTube video created successfully!";
       default:
-        return 'Points collected successfully!';
+        return "Points collected successfully!";
     }
-  }
+  };
 
   return (
     <BackgroundGradient className="rounded-[22px] max-w-sm py-2 px-8 bg-white dark:bg-zinc-900 h-full">

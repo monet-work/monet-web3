@@ -23,7 +23,7 @@ const TradeCard: React.FC<Props> = ({ assetListing }) => {
             <div className="flex items-center gap-2">
               {/* {Offer} <Image src={OfferImg} width={20} height={20} alt={""} /> */}
             </div>
-            <p className="text-xs text-green-500 ">{''}</p>
+            <p className="text-xs text-green-500 ">{""}</p>
           </div>
 
           <div className="flex flex-col gap-1 items-end">

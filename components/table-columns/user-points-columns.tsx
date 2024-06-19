@@ -4,7 +4,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { CustomerPoint } from "@/models/point.model";
 
-export const UserPointsColumns: ColumnDef<{name: string, wallet_address: string, points: string}>[] = [
+export const UserPointsColumns: ColumnDef<{
+  name: string;
+  wallet_address: string;
+  points: string;
+}>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => (
@@ -27,5 +31,5 @@ export const UserPointsColumns: ColumnDef<{name: string, wallet_address: string,
       <DataTableColumnHeader column={column} title="Points" />
     ),
     cell: ({ row }) => <div className="">{row.getValue("points")}</div>,
-  }
+  },
 ];

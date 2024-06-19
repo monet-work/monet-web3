@@ -10,7 +10,7 @@ const useRole = () => {
 
   const hasRole = (requiredRoles: Role["role"][]) => {
     const routePath = ROUTES_CONFIG.protectedRoutes.find((route) =>
-      matchesDynamicRoute(pathname, route.path)
+      matchesDynamicRoute(pathname, route.path),
     );
 
     if (!routePath) return false;

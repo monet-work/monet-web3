@@ -15,7 +15,6 @@ export const CONTRACTS = {
 
 const clientId = process.env.NEXT_PUBLIC_TEMPLATE_CLIENT_ID;
 
-
 if (!clientId) {
   throw new Error("No client ID provided");
 }
@@ -23,5 +22,3 @@ if (!clientId) {
 export const client = createThirdwebClient({
   clientId: clientId,
 });
-
-

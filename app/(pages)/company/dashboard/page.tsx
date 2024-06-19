@@ -21,7 +21,7 @@ const CompanyDashboardPage = () => {
     ],
     queryFn: () => {
       return apiService.fetchCompanyDashboard(
-        companyStore.company?.id || userStore.user?.company.id || ""
+        companyStore.company?.id || userStore.user?.company.id || "",
       );
     },
     enabled: !!companyStore.company?.id || !!userStore.user?.company.id,

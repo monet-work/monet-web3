@@ -18,11 +18,11 @@ const UserTradeView: React.FC<Props> = ({
   onListingSelected,
 }) => {
   const buyListings = assetListings.filter(
-    (listing) => listing.listingType === ListingType.BUY
+    (listing) => listing.listingType === ListingType.BUY,
   );
 
   const sellListings = assetListings.filter(
-    (listing) => listing.listingType === ListingType.SELL
+    (listing) => listing.listingType === ListingType.SELL,
   );
 
   const [viewType, setViewType] = useState<"list" | "grid">("list");

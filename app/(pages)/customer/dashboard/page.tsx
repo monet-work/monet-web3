@@ -1,11 +1,9 @@
-'use client';
+"use client";
 
 import CustomerDashboard from "@/components/customer-dashboard";
 
 const CustomerDashboardPage = () => {
-  return (
-    <CustomerDashboard />
-  );
+  return <CustomerDashboard />;
 };
 
 export default CustomerDashboardPage;

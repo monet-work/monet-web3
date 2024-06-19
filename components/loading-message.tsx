@@ -1,8 +1,8 @@
 type Props = {
   message?: string;
-}
+};
 
-const LoadingMessage:React.FC<Props> = ({message}) => {
+const LoadingMessage: React.FC<Props> = ({ message }) => {
   return (
     <div className="text-center">
       <p>{message || `loading...`}</p>

@@ -84,7 +84,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   const pricePerPoint = form.watch("pricePerPoint");
 
   // const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
-  const { mutate: sendAndConfirmTransaction, data: transactionReceipt, isPending, isError } = useSendAndConfirmTransaction();
+  const {
+    mutate: sendAndConfirmTransaction,
+    data: transactionReceipt,
+    isPending,
+    isError,
+  } = useSendAndConfirmTransaction();
 
   const { marketPlace, setMarketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
@@ -123,7 +128,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     }
   }, [form, pathName]);
 
-  const totalPriceInEth = BigInt(toTokens(toUnits(amount, decimals) * toUnits(String(pricePerPoint), 18), decimals));
+  const totalPriceInEth = BigInt(
+    toTokens(
+      toUnits(amount, decimals) * toUnits(String(pricePerPoint), 18),
+      decimals,
+    ),
+  );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("submit", values);
@@ -194,7 +204,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
         onError: (error) => {
           console.log(error);
           toast.error(
-            "Error creating offer. Please make sure you have enough balance"
+            "Error creating offer. Please make sure you have enough balance",
           );
         },
       });
@@ -215,16 +225,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     const allowanceValue = await allowanceFunction();
 
     if (BigInt(allowanceValue) < BigInt(values.amount)) {
-      await performApproval(
-        values.amount
-      );
+      await performApproval(values.amount);
     } else {
       await call(); //directly call the function
     }
   };
 
   const pointSymbol = marketPlace.find(
-    (item: any) => item.address === selectedPoint
+    (item: any) => item.address === selectedPoint,
   )?.symbol;
   // console.log(marketPlace, "marketPlace");
 
@@ -330,12 +338,12 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                   onValueChange={
                     isPointDetailPage
                       ? (value) => {
-                        field.onChange(value === "" ? null : null);
-                      }
+                          field.onChange(value === "" ? null : null);
+                        }
                       : (value) => {
-                        field.onChange(value);
-                        value && setSelectedPoint(value);
-                      }
+                          field.onChange(value);
+                          value && setSelectedPoint(value);
+                        }
                   }
                   value={isPointDetailPage ? selectedPoint : field.value}
                   disabled={isPointDetailPage}
@@ -363,7 +371,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
                       <SelectItem value={selectedPoint}>
                         {
                           marketPlace.find(
-                            (item: any) => item.address === selectedPoint
+                            (item: any) => item.address === selectedPoint,
                           )?.symbol
                         }
                       </SelectItem>

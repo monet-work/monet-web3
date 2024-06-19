@@ -150,27 +150,27 @@ const PointPage = () => {
   const publicListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-          (listing) => listing.owner !== walletAddress
+          (listing) => listing.owner !== walletAddress,
         )
       : formattedAssetListings.filter(
-          (listing) => listing.owner !== walletAddress
+          (listing) => listing.owner !== walletAddress,
         );
 
   const livePublicListings = publicListings.filter(
-    (listing) => listing.status === ListingStatus.LIVE
+    (listing) => listing.status === ListingStatus.LIVE,
   );
 
   const completedPublicListings = publicListings.filter(
-    (listing) => listing.status === ListingStatus.BOUGHT
+    (listing) => listing.status === ListingStatus.BOUGHT,
   );
 
   const ownerListings =
     formattedBlockchainListings.length > 0
       ? formattedBlockchainListings.filter(
-          (listing) => listing.owner === walletAddress
+          (listing) => listing.owner === walletAddress,
         )
       : formattedAssetListings.filter(
-          (listing) => listing.owner === walletAddress
+          (listing) => listing.owner === walletAddress,
         );
 
   return (

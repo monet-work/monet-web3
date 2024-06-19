@@ -21,7 +21,9 @@ export const client = createThirdwebClient({
 export { ThirdwebProvider, ConnectButton } from "thirdweb/react";
 
 export const connectWallet = async (
-  connect: (options: Wallet | (() => Promise<Wallet>)) => Promise<Wallet | null>
+  connect: (
+    options: Wallet | (() => Promise<Wallet>),
+  ) => Promise<Wallet | null>,
 ): Promise<Wallet | null> => {
   return connect(async () => {
     const metamask = createWallet("io.metamask");

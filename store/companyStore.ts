@@ -17,6 +17,6 @@ export const useCompanyStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.COMPANY,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );
