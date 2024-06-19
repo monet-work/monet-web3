@@ -241,6 +241,7 @@ const PointPage = () => {
                 symbol: pointAssetInfoData?.data.symbol || "",
               }}
               assetListing={selectedListing}
+              decimals={decimals}
               onTradeSuccess={() => setSelectedListing(undefined)}
             />
           </div>
