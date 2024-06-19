@@ -144,6 +144,8 @@ export const UserListingColumns: ColumnDef<AssetListing>[] = [
           <span className="text-blue-400 text-semibold">Live</span>
         ) : row.getValue("status") === ListingStatus.BOUGHT ? (
           <span className="text-muted-foreground">Bought</span>
+        ) : row.getValue("status") === ListingStatus.CANCELLED ? (
+          <span className="text-muted-foreground">Cancelled</span>
         ) : (
           "Sold"
         )}
