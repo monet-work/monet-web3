@@ -1,20 +1,10 @@
-import { ArrowDownRightSquareIcon, ListIcon, GridIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import GridViewComponent from "./grid-view-component";
 import { AssetListing, ListingType } from "@/models/asset-listing.model";
 import { AssetListingColumns } from "./table-columns/asset-listing-columns";
 import { ListingsDataTable } from "./listings-table/listings-data-table";
-import { YourListingColumns } from "./table-columns/your-listing-columns";
+import { UserListingColumns } from "./table-columns/user-listing-columns";
 
 type Props = {
   assetListings: AssetListing[];
@@ -22,7 +12,7 @@ type Props = {
   onListingSelected?: (listing: AssetListing) => void;
 };
 
-const YourTradeView: React.FC<Props> = ({
+const UserTradeView: React.FC<Props> = ({
   assetListings,
   loading = true,
   onListingSelected,
@@ -48,7 +38,7 @@ const YourTradeView: React.FC<Props> = ({
         </div>
 
         <ListingsDataTable
-          columns={YourListingColumns}
+          columns={UserListingColumns}
           data={assetListings}
           loading={loading}
           noResultsMessage="No listings available."
@@ -58,4 +48,4 @@ const YourTradeView: React.FC<Props> = ({
   );
 };
 
-export default YourTradeView;
+export default UserTradeView;

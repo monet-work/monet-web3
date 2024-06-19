@@ -10,9 +10,9 @@ import {
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
 import { ListingStatus } from "@/models/listing";
-import YourListingsAction from "../listings-table/your-listings-actions";
+import YourListingsAction from "../listings-table/user-listings-actions";
 
-export const YourListingColumns: ColumnDef<AssetListing>[] = [
+export const UserListingColumns: ColumnDef<AssetListing>[] = [
   {
     accessorKey: "Id",
     header: ({ column }) => (

@@ -7,7 +7,7 @@ import {
 import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
-import YourTradeView from "@/components/your-trade-view";
+import UserTradeView from "@/components/user-trade-view";
 import { pointsTableData } from "@/data";
 import { AssetListing, ListingStatus } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
@@ -228,7 +228,7 @@ const PointPage = () => {
           </div>
           <div className="mt-8">
             <h3 className="mb-4 text-muted-foreground">Your listings</h3>
-            <YourTradeView
+            <UserTradeView
               assetListings={ownerListings || []}
               loading={isLoading}
             />

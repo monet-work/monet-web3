@@ -31,7 +31,7 @@ type Props = {
   Id: number;
 };
 
-const YourListingsAction: React.FC<Props> = ({ Id }) => {
+const UserListingsAction: React.FC<Props> = ({ Id }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const handleCancel = async () => {
@@ -88,4 +88,4 @@ const YourListingsAction: React.FC<Props> = ({ Id }) => {
   );
 };
 
-export default YourListingsAction;
+export default UserListingsAction;
