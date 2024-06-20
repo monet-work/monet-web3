@@ -15,7 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import confetti from "canvas-confetti";
 
 type Props = {
   contract?: {
@@ -64,7 +63,6 @@ const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           toast.success("Minting Switched successfully");
-          confetti();
           console.log(result);
         },
 
