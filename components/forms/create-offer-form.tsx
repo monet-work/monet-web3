@@ -47,6 +47,8 @@ import clsx from "clsx";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
+import confetti from "canvas-confetti";
+import { celebratoryConfetti } from "@/lib/confetti-helper";
 
 type Props = {
   onCanceled: () => void;
@@ -161,7 +163,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
     const buyOfferParams = [
       values.point,
       BigInt(toUnits(values.amount, decimals)),
-      toWei(values.pricePerPoint.toString()),
+      toTokens(toWei(values.pricePerPoint.toString()), decimals),
       values.fillType === "full"
         ? ListingFillType.FULL
         : ListingFillType.PARTIAL,
@@ -197,7 +199,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       await sendAndConfirmTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           toast.success("Successfully created offer");
-
+          celebratoryConfetti();
           onCanceled();
         },
 
@@ -224,7 +226,10 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
 
     const allowanceValue = await allowanceFunction();
 
-    if (BigInt(allowanceValue) < BigInt(values.amount)) {
+    if (
+      BigInt(allowanceValue) < BigInt(values.amount) &&
+      values.offerType === "sell"
+    ) {
       await performApproval(values.amount);
     } else {
       await call(); //directly call the function
@@ -446,6 +451,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             onClick={() => onCanceled()}
             className="uppercase w-full"
             size={"lg"}
+            disabled={!isError && isPending}
           >
             Cancel
           </Button>
@@ -453,7 +459,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             type="submit"
             className="w-full uppercase"
             size={"lg"}
-            loading={isPending}
+            loading={!isError && isPending}
           >
             Create Offer
           </Button>

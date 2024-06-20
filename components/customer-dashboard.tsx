@@ -17,6 +17,8 @@ import { Point } from "@/models/point.model";
 import { monetPointsContractFactory } from "@/app/contract-utils";
 import { ExternalLink } from "lucide-react";
 import SadEmoji from "./icons/sad-emoji";
+import confetti from "canvas-confetti";
+import { realisticConfetti } from "@/lib/confetti-helper";
 
 const CustomerDashboard = () => {
   const customerStore = useCustomerStore();
@@ -136,6 +138,7 @@ const CustomerDashboard = () => {
               await sendTransaction(transaction as PreparedTransaction, {
                 onSuccess: (result) => {
                   toast.success("Points redeemed successfully");
+                  realisticConfetti();
                   setShowRedeemForm(false);
 
                   //refetch points
@@ -325,6 +328,7 @@ const CustomerDashboard = () => {
               totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
               onChainPoints={onChainPoints}
               isLoading={isLoadingCustomerOnChainPoints}
+              isButtonLoading={isPending}
               onSubmitForm={(values) => {
                 const { amount } = values;
 

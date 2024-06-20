@@ -22,6 +22,7 @@ type Props = {
   totalPoints: number;
   onSubmitForm: (values: z.infer<typeof formSchema>) => void;
   onChainPoints: number;
+  isButtonLoading?: boolean;
 };
 
 const formSchema = z.object({
@@ -33,6 +34,7 @@ const RedeemPointsForm: React.FC<Props> = ({
   onSubmitForm,
   onChainPoints,
   isLoading,
+  isButtonLoading,
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -103,9 +105,11 @@ const RedeemPointsForm: React.FC<Props> = ({
             disabled={
               !amount ||
               totalPoints < Number(amount) ||
-              Number(totalPoints) - onChainPoints < Number(amount)
+              Number(totalPoints) - onChainPoints < Number(amount) ||
+              isButtonLoading
             }
             className="w-full"
+            loading={isButtonLoading}
           >
             Redeem {Number(amount) > 0 ? amount : ""} points
           </Button>
