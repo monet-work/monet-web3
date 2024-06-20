@@ -57,7 +57,7 @@ export const PointsListColumns: ColumnDef<{
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
         {row.getValue("mintedPoints") ||
-          (row.getValue("mintedPoints") == 0 ? (
+          (row.getValue("mintedPoints") === 0 ? (
             "0"
           ) : (
             <Skeleton className="w-full h-5" />
