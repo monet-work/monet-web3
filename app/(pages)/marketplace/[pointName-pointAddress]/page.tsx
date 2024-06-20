@@ -77,6 +77,7 @@ const PointPage = () => {
   useEffect(() => {
     getDecimals();
     const formattedListings = listingData.map((listing) => {
+      // console.log("Listing: ", listing);
       const _amount = BigInt(listing.amount);
       // console.log(decimals);
       const pricePerPoint = BigInt(listing.pricePerPoint);

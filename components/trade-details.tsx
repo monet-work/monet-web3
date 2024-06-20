@@ -37,6 +37,11 @@ import {
 import { toast } from "sonner";
 import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
+import confetti from "canvas-confetti";
+import {
+  celebratoryConfetti,
+  schoolPrideConfetti,
+} from "@/lib/confetti-helper";
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
@@ -106,6 +111,7 @@ const TradeDetails: React.FC<Props> = ({
         onSuccess: (result) => {
           console.log({ result }, "result");
           toast.success("Trade executed successfully");
+          celebratoryConfetti();
           onTradeSuccess && onTradeSuccess();
         },
 
@@ -163,10 +169,8 @@ const TradeDetails: React.FC<Props> = ({
         });
       };
 
-      if (Number(allowanceValue) < Number(assetListing.amount)) {
-        await performApproval(
-          (Number(assetListing.amount) - Number(allowanceValue)).toString(),
-        );
+      if (BigInt(allowanceValue!) < BigInt(assetListing.amount)) {
+        await performApproval(assetListing.amount);
       } else {
         await executeTrade();
         return;
