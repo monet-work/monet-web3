@@ -3,6 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { ListingStatus } from "@/models/listing";
+import { Spinner } from "../ui/spinner";
+import { Skeleton } from "../ui/skeleton";
 
 export const PointsListColumns: ColumnDef<{
   name: string;
@@ -54,7 +56,12 @@ export const PointsListColumns: ColumnDef<{
     ),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
-        {row.getValue("mintedPoints")}
+        {row.getValue("mintedPoints") ||
+          (row.getValue("mintedPoints") === 0 ? (
+            "0"
+          ) : (
+            <Skeleton className="w-full h-5" />
+          ))}
       </div>
     ),
   },
@@ -65,7 +72,12 @@ export const PointsListColumns: ColumnDef<{
     ),
     cell: ({ row }) => (
       <div className="text-muted-foreground text-xs">
-        {row.getValue("userPoints")}
+        {row.getValue("userPoints") ||
+          (row.getValue("userPoints") === 0 ? (
+            "0"
+          ) : (
+            <Skeleton className="w-full h-5" />
+          ))}
       </div>
     ),
   },
