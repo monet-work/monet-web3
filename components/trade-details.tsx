@@ -176,8 +176,6 @@ const TradeDetails: React.FC<Props> = ({
         return;
       }
     }
-
-    await executeTrade();
   };
 
   const getPricePerPoint = (pricePerPoint: string) => {
