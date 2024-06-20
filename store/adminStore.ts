@@ -17,6 +17,6 @@ export const useAdminStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.ADMIN,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

@@ -14,7 +14,7 @@ const CustomerLoginPage = () => {
   const activeAccount = useActiveAccount();
   const [accessToken, setAccessToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    { token: "", expires: 0 }
+    { token: "", expires: 0 },
   );
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();

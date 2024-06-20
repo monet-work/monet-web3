@@ -18,6 +18,6 @@ export const useMarketPlaceStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.MARKETPLACE_POINTS,
       storage: createJSONStorage(() => localStorage),
-    }
-  )
+    },
+  ),
 );

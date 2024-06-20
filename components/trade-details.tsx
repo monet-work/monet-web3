@@ -49,22 +49,34 @@ const TradeDetails: React.FC<Props> = ({
   const pathname = usePathname();
   const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
-  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
+  const {
+    mutate: sendTransaction,
+    isPending,
+    isError,
+  } = useSendAndConfirmTransaction();
   const [totalPrice, setTotalPrice] = useState<string>("");
 
   useEffect(() => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
-    calculateTotalPrice(assetListing?.asset, assetListing?.amount, assetListing?.pricePerPoint);
+    calculateTotalPrice(
+      assetListing?.asset,
+      assetListing?.amount,
+      assetListing?.pricePerPoint,
+    );
   }, [totalPrice, assetListing]);
 
-  const calculateTotalPrice = async (asset: string, amount: string, pricePerPoint: string) => {
+  const calculateTotalPrice = async (
+    asset: string,
+    amount: string,
+    pricePerPoint: string,
+  ) => {
     const decimals = await readContract({
       contract: monetPointsContractFactory(asset),
       method: "decimals",
     });
     const _totalPrice = toUnits(amount, decimals) * toWei(pricePerPoint);
     setTotalPrice(String(_totalPrice));
-  }
+  };
 
   const handleListingTrade = async () => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
@@ -153,7 +165,7 @@ const TradeDetails: React.FC<Props> = ({
 
       if (Number(allowanceValue) < Number(assetListing.amount)) {
         await performApproval(
-          (Number(assetListing.amount) - Number(allowanceValue)).toString()
+          (Number(assetListing.amount) - Number(allowanceValue)).toString(),
         );
       } else {
         await executeTrade();
@@ -166,7 +178,7 @@ const TradeDetails: React.FC<Props> = ({
 
   const getPricePerPoint = (pricePerPoint: string) => {
     return toTokens(toUnits(toWei(pricePerPoint).toString(), decimals), 18);
-  }
+  };
 
   return (
     <Card
@@ -196,7 +208,8 @@ const TradeDetails: React.FC<Props> = ({
                   : "Buying"}
               </p>
               <h3 className="font-bold text-4xl mt-2">
-                {assetListing.amount} <span className="font-thin">{symbol || 'points'}</span>
+                {assetListing.amount}{" "}
+                <span className="font-thin">{symbol || "points"}</span>
               </h3>
               <p className="mt-2">for an offer price of</p>
               <div className="mt-2">
@@ -206,7 +219,8 @@ const TradeDetails: React.FC<Props> = ({
                 <span className="text-sm font-normal">ETH</span>
               </div>
               <span className="text-xs mt-2 text-muted-foreground">
-                ({getPricePerPoint(assetListing.pricePerPoint)} ETH per {symbol || 'point'})
+                ({getPricePerPoint(assetListing.pricePerPoint)} ETH per{" "}
+                {symbol || "point"})
               </span>
               <p className="mt-2">from</p>
               <p className="text-xs mt-2">{assetListing.owner}</p>

@@ -44,12 +44,12 @@ export function ListingsDataTable<TData, TValue>({
 }: DataTableProps<AssetListing, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [selectedRow, setSelectedRow] = React.useState<AssetListing | null>(
-    null
+    null,
   ); // New state to track the selected row
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -96,9 +96,9 @@ export function ListingsDataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -126,14 +126,14 @@ export function ListingsDataTable<TData, TValue>({
                           ? row.original.listingType === ListingType.SELL
                             ? "border-2 border-red-600 rounded-md"
                             : "border-2 border-green-600 rounded-md"
-                          : ""
+                          : "",
                       )}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}

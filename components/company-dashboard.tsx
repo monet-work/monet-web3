@@ -48,7 +48,7 @@ const CompanyDashboard: React.FC<Props> = ({
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [files, setFiles] = useState<File[] | null>(null);
   const [customerData, setCustomerData] = useState<CustomerPoint[] | null>(
-    null
+    null,
   );
 
   const activeAccount = useActiveAccount();
@@ -87,10 +87,10 @@ const CompanyDashboard: React.FC<Props> = ({
         },
         onError: (error: any) => {
           toast.error(
-            error?.response?.data || "Failed to upload customer data"
+            error?.response?.data || "Failed to upload customer data",
           );
         },
-      }
+      },
     );
   };
 

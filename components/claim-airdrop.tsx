@@ -94,8 +94,6 @@ const ClaimAirdrop = () => {
 
   return (
     <div>
-    
-
       {/* <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>
           <div>

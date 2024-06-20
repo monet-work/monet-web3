@@ -61,15 +61,15 @@ const useAuthProvider = () => {
   const [userWallerAddress, setUserWalletAddress] = useState("");
   const [accessToken, setAccessToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    { token: "", expires: "" }
+    { token: "", expires: "" },
   );
   const [refreshToken, setRefreshToken] = useLocalStorage(
     LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    { token: "", expires: "" }
+    { token: "", expires: "" },
   );
 
   const isProtectedRoute = ROUTES_CONFIG.protectedRoutes.some((route) =>
-    matchesDynamicRoute(pathname, route.path)
+    matchesDynamicRoute(pathname, route.path),
   );
 
   const {

@@ -22,12 +22,12 @@ const SubmitRequestPage: React.FC = () => {
   const [loader, setLoader] = useState(false);
   const [accessTokenData, setAccessTokenData] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-    { token: "", expires: 0 }
+    { token: "", expires: 0 },
   );
 
   const [refreshTokenData, setRefreshTokenData] = useLocalStorage(
     LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-    { token: "", expires: 0 }
+    { token: "", expires: 0 },
   );
 
   const walletSignatureVerficationMutation = useMutation({
@@ -101,7 +101,7 @@ const SubmitRequestPage: React.FC = () => {
                   setLoader(false);
                   toast.error(error.message);
                 },
-              }
+              },
             );
           }}
         />

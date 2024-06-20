@@ -18,7 +18,7 @@ const AdminLoginPage = () => {
   const router = useRouter();
   const userStore = useUserStore();
   const verifyAddressStep1Mutation = useMutation({
-    mutationFn: apiService.adminVerifyWalletStep1
+    mutationFn: apiService.adminVerifyWalletStep1,
   });
 
   const handleLoginAdmin = async () => {
@@ -36,7 +36,6 @@ const AdminLoginPage = () => {
       return;
     }
   }, [activeAccount]);
-
 
   return (
     <main>

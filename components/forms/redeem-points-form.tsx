@@ -75,22 +75,31 @@ const RedeemPointsForm: React.FC<Props> = ({
               <div className="text-xs space-y-2">
                 <div className="flex items-center">
                   <Coins className="mr-2 text-yellow-500" size={16} />
-                  <div className="flex justify-between w-full"><span>Total points available:</span> <span>{totalPoints}</span></div>
+                  <div className="flex justify-between w-full">
+                    <span>Total points available:</span>{" "}
+                    <span>{totalPoints}</span>
+                  </div>
                 </div>
                 <div className="flex items-center">
                   <Coins className="mr-2 text-yellow-500" size={16} />
-                  <div className="flex justify-between w-full"><span>Total points on chain:</span> <span>{onChainPoints}</span></div>
+                  <div className="flex justify-between w-full">
+                    <span>Total points on chain:</span>{" "}
+                    <span>{onChainPoints}</span>
+                  </div>
                 </div>
                 <div className="flex items-center text-white">
                   <Coins className="mr-2 text-yellow-500" size={16} />
-                  <div className="flex justify-between w-full"><span>Redeemable points:</span> <span>{totalPoints - onChainPoints}</span></div>
+                  <div className="flex justify-between w-full">
+                    <span>Redeemable points:</span>{" "}
+                    <span>{totalPoints - onChainPoints}</span>
+                  </div>
                 </div>
               </div>
             )}
           </div>
           <Button
             type="submit"
-            size={'lg'}
+            size={"lg"}
             disabled={
               !amount ||
               totalPoints < Number(amount) ||

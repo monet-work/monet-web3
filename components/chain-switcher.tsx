@@ -27,7 +27,7 @@ const ChainSwitcher = ({
                 <Button
                   onClick={() =>
                     switchChain(baseSepolia).then(() =>
-                      setActiveChainChanged(true)
+                      setActiveChainChanged(true),
                     )
                   }
                   className="bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-purple-600 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-full"

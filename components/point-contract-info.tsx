@@ -45,7 +45,11 @@ const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
     getMintStatus();
   }, [address]);
 
-  const { mutate: sendTransaction, isPending, isError } = useSendAndConfirmTransaction();
+  const {
+    mutate: sendTransaction,
+    isPending,
+    isError,
+  } = useSendAndConfirmTransaction();
   const handleMintSwitchClick = async () => {
     const call = async () => {
       if (!address) return;
@@ -65,7 +69,7 @@ const PointContractInfo: React.FC<Props> = ({ contract, isApproved }) => {
         onError: (error) => {
           console.log(error);
           toast.error(
-            "Error while switching minting status. Please try again later."
+            "Error while switching minting status. Please try again later.",
           );
         },
       });

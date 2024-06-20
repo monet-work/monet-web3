@@ -1,4 +1,3 @@
-
 import { columns } from "./table-columns/company-columns";
 import { DataTable } from "./data-table/data-table";
 import { Company } from "@/models/company.model";

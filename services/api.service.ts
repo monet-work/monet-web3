@@ -21,7 +21,7 @@ import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import axios from "axios";
 
-// TODO: Convert this into a hook 
+// TODO: Convert this into a hook
 
 const securedRoutes = [
   `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
@@ -46,12 +46,12 @@ axios.interceptors.request.use(
     // secured routes
     if (config.url) {
       const isSecuredRoute = securedRoutes.some((route) =>
-        matchesDynamicRoute(config.url!, route)
+        matchesDynamicRoute(config.url!, route),
       );
       // Add token to request header
       if (isSecuredRoute) {
         const accessToken = JSON.parse(
-          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? ""
+          localStorage.getItem(LOCALSTORAGE_KEYS.ACCESS_TOKEN) ?? "",
         ) as Token;
         if (typeof accessToken === "object" && accessToken !== null) {
           config.headers.Authorization = `Bearer ${accessToken.token}`;
@@ -62,9 +62,9 @@ axios.interceptors.request.use(
   },
   (error) => {
     // Do something with request error
-    console.log(error, 'error');
+    console.log(error, "error");
     return Promise.reject(error.response);
-  }
+  },
 );
 
 axios.interceptors.response.use(
@@ -76,33 +76,33 @@ axios.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = JSON.parse(
-        localStorage.getItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN) ?? ""
+        localStorage.getItem(LOCALSTORAGE_KEYS.REFRESH_TOKEN) ?? "",
       ) as Token;
       const response = await axios.post<RefreshTokensResponse>(
         `${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`,
         {
           refreshToken: refreshToken.token,
-        }
+        },
       );
       if (response.status === 200) {
         localStorage.setItem(
           LOCALSTORAGE_KEYS.ACCESS_TOKEN,
-          JSON.stringify(response.data.access)
+          JSON.stringify(response.data.access),
         );
         localStorage.setItem(
           LOCALSTORAGE_KEYS.REFRESH_TOKEN,
-          JSON.stringify(response.data.refresh)
+          JSON.stringify(response.data.refresh),
         );
         return axios(originalRequest);
       }
     }
     return Promise.reject(error);
-  }
-);  
+  },
+);
 
 const authenticate = async () => {
   return axios.get<AuthResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`
+    `${API_BASE_URL}/${API_ENDPOINTS.AUTHENTICATE}`,
   );
 };
 
@@ -111,29 +111,29 @@ const refreshToken = async (refreshToken: string) => {
     `${API_BASE_URL}/${API_ENDPOINTS.REFRESH_TOKENS}`,
     {
       refreshToken,
-    }
+    },
   );
 };
 
 const companyVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_1}`,
-    { walletAddress: wallet }
+    { walletAddress: wallet },
   );
 };
 
 const companyVerifyWalletStep2 = async (
-  payload: Partial<CompanyVerifyWalletPayload>
+  payload: Partial<CompanyVerifyWalletPayload>,
 ) => {
   return axios.post<VerifyCompanySubmitRequestResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_VERIFY_WALLET_2}`,
-    payload
+    payload,
   );
 };
 
 const fetchCompanyDashboard = async (companyId: string) => {
   return axios.get<CompanyDashboardResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_DASHBOARD(companyId)}`
+    `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_DASHBOARD(companyId)}`,
   );
 };
 
@@ -143,14 +143,14 @@ const companyUploadPoints = async (payload: {
 }) => {
   return axios.post(
     `${API_BASE_URL}/${API_ENDPOINTS.COMPANY_UPLOAD_POINTS(payload.companyId)}`,
-    payload.points
+    payload.points,
   );
 };
 
 const adminVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<Pick<VerifyWalletResponse, "words">>(
     `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_1}`,
-    { walletAddress: wallet }
+    { walletAddress: wallet },
   );
 };
 
@@ -165,29 +165,29 @@ const adminVerifyWalletStep2 = async ({
 }) => {
   return axios.post<VerifyAdminSubmitRequestResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.ADMIN_VERIFY_WALLET_2}`,
-    { walletAddress: wallet, words: words, signature: signature }
+    { walletAddress: wallet, words: words, signature: signature },
   );
 };
 
 const customerVerifyWalletStep1 = async (wallet: string) => {
   return axios.post<VerifyWalletResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_VERIFY_WALLET_1}`,
-    { walletAddress: wallet }
+    { walletAddress: wallet },
   );
 };
 
 const customerVerifyWalletStep2 = async (
-  payload: Partial<CompanyVerifyWalletPayload>
+  payload: Partial<CompanyVerifyWalletPayload>,
 ) => {
   return axios.post<VerifyCustomerSubmitRequestResponse>(
     `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_VERIFY_WALLET_2}`,
-    payload
+    payload,
   );
 };
 
 const fetchCustomerPoints = async (customerId: string) => {
   return axios.get<CustomerPointResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_POINTS(customerId)}`
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_POINTS(customerId)}`,
   );
 };
 
@@ -225,28 +225,28 @@ const customerRedeemPoints = async (payload: {
     {
       amount: payload.amount,
       companyId: payload.companyId,
-    }
+    },
   );
 };
 
 const getMarketplacePointsList = async () => {
   return axios.get<PointsListResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`
+    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINTS_LIST}`,
   );
 };
 
 const getMarketplacePointAssetInfo = async (pointAddress: string) => {
   return axios.get<MarketplacePointAssetInfoResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINT_ASSET_INFO(pointAddress)}`
+    `${API_BASE_URL}/${API_ENDPOINTS.MARKETPLACE_POINT_ASSET_INFO(pointAddress)}`,
   );
 };
 
 const getCustomerOnChainPoints = async (
   customerId: string,
-  pointAddress: string
+  pointAddress: string,
 ) => {
   return axios.get<CustomerPointResponse>(
-    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_ONCHAIN_POINTS(customerId, pointAddress)}`
+    `${API_BASE_URL}/${API_ENDPOINTS.CUSTOMER_ONCHAIN_POINTS(customerId, pointAddress)}`,
   );
 };
 

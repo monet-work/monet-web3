@@ -1,6 +1,5 @@
 import { Company } from "./company.model";
 
-
 export interface Point {
   id: string;
   created_at: string;
@@ -11,7 +10,6 @@ export interface Point {
   company?: Company;
   name?: string;
 }
-
 
 export interface CustomerPoint {
   walletAddress: string;

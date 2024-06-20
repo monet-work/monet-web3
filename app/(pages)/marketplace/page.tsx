@@ -67,7 +67,7 @@ const MarketplacePage = () => {
       // console.log(allPointContractAddresses[i], "allPointContractAddresses[i]");
       const events = await getContractEvents({
         contract: monetPointsContractFactory(
-          allPointContractAddresses[i].toString()
+          allPointContractAddresses[i].toString(),
         ),
         fromBlock: "earliest",
         toBlock: "latest",
@@ -181,7 +181,7 @@ const MarketplacePage = () => {
               const pointName = rowData.name;
               const pointAddress = rowData.address;
               const urlEncodedPointName = encodeURIComponent(
-                `${pointName}-${pointAddress}`
+                `${pointName}-${pointAddress}`,
               );
               router.push(`/marketplace/${urlEncodedPointName}`);
             }}

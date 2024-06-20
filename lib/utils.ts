@@ -12,7 +12,7 @@ export const formatCustomerData = (
     Name: string;
     "Wallet Address": string;
     Points: number;
-  }[]
+  }[],
 ) => {
   return data.map((item) => {
     return {
@@ -32,7 +32,7 @@ export const parseJWT = (jwt: string) => {
       .map(function (c) {
         return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
       })
-      .join("")
+      .join(""),
   );
 
   return JSON.parse(jsonPayload);
@@ -49,7 +49,7 @@ export const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
 /**
  * Helper function to check if a URL matches a dynamic pattern
- * 
+ *
  * @param url the URL to check
  * @param pattern the dynamic pattern to match against
  * @returns true if the URL matches the pattern, false otherwise
@@ -78,9 +78,9 @@ export const matchesDynamicRoute = (url: string, pattern: string) => {
 
 /**
  * Check if a token is expired
- * 
- * @param token 
- * @returns 
+ *
+ * @param token
+ * @returns
  */
 export const isTokenExpired = (token: Token) => {
   return new Date(token.expires).getTime() < Date.now();

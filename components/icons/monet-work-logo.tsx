@@ -9,10 +9,10 @@ export const MonetWorkLogo: React.FC<Props> = ({ className }) => {
     <svg
       viewBox="0 0 174 35"
       xmlns="http://www.w3.org/2000/svg"
-      className={
-        
-        cn("text-[#ffd700] fill-current stroke-current w-64", className)}
-      
+      className={cn(
+        "text-[#ffd700] fill-current stroke-current w-64",
+        className,
+      )}
       fill="current"
       stroke="current"
     >

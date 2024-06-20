@@ -13,7 +13,8 @@ const UnauthorizedAccess = () => {
           You are not authorized to access this page.
         </p>
 
-        <Button className="mt-4"
+        <Button
+          className="mt-4"
           onClick={() => {
             logout();
           }}

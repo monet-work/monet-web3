@@ -5,9 +5,7 @@ import PageLoader from "@/components/page-loader";
 type Props = {};
 
 function loading({}: Props) {
-  return (
-    <PageLoader />
-  );
+  return <PageLoader />;
 }
 
 export default loading;
