@@ -44,17 +44,20 @@ import {
   PaymentType,
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
 import confetti from "canvas-confetti";
 import { celebratoryConfetti } from "@/lib/confetti-helper";
+import { ExternalLink } from "lucide-react";
 
 type Props = {
   onCanceled: () => void;
+  onSuccess: (show: boolean, children: JSX.Element) => void;
 };
 
-const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
+const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
+  const router = useRouter();
   const [isPointDetailPage, setIsPointDetailPage] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<string>("");
   console.log(selectedPoint, "selectedPoint");
@@ -138,6 +141,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    // onSuccess(true, <></>);
     console.log("submit", values);
     const performApproval = async (amount: string) => {
       const transaction = await prepareContractCall({
@@ -199,6 +203,32 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
       await sendAndConfirmTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
           toast.success("Successfully created offer");
+          onSuccess(
+            true,
+            <div>
+              <div>
+                {"💰💰💰 Offer for " +
+                  (values.offerType === "buy" ? "buying " : "selling ") +
+                  amount +
+                  " " +
+                  pointSymbol +
+                  " at " +
+                  toTokens(totalPriceInEth, 18) +
+                  " ETH is created successfully 💰💰💰"}
+              </div>
+              <div className="text-xs mt-1 text-muted-foreground">
+                View your transaction:
+                <a
+                  href={`https://sepolia.basescan.org/tx/${result.transactionHash}`}
+                  target="_blank"
+                  className="flex items-center gap-1 hover:underline"
+                >
+                  {result.transactionHash}
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            </div>,
+          );
           celebratoryConfetti();
           onCanceled();
         },
@@ -443,7 +473,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled }) => {
             </Select>
           </FormItem>
         </div>
-
         <div className="flex gap-2 pt-2">
           <Button
             type="button"

@@ -26,10 +26,16 @@ function CreateOfferDialog({}: Props) {
           {" "}
           {/* <SellOfferComponent />
            */}
-          <CreateOfferForm onCanceled={() => setAmount(0)} />
+          <CreateOfferForm
+            onCanceled={() => setAmount(0)}
+            onSuccess={() => {}}
+          />
         </TabsContent>
         <TabsContent value="buy">
-          <CreateOfferForm onCanceled={() => setAmount(0)} />
+          <CreateOfferForm
+            onCanceled={() => setAmount(0)}
+            onSuccess={() => {}}
+          />
         </TabsContent>
       </Tabs>
     </AlertDialogContent>
