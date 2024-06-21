@@ -9,13 +9,13 @@ type Props = {
   };
   decimals: number;
   assetListing?: AssetListing;
-  onTradeSuccess?: () => void;
+  onTradeSuccess?: (show: boolean, children: JSX.Element) => void;
   onTradeError?: () => void;
 };
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
-import { Pointer } from "lucide-react";
+import { ExternalLink, Pointer } from "lucide-react";
 import {
   AssetListing,
   ListingStatus,
@@ -112,7 +112,34 @@ const TradeDetails: React.FC<Props> = ({
           console.log({ result }, "result");
           toast.success("Trade executed successfully");
           celebratoryConfetti();
-          onTradeSuccess && onTradeSuccess();
+          onTradeSuccess &&
+            onTradeSuccess(
+              true,
+              <div>
+                <h3>Hello Trader 🧑🏻‍💻,</h3>
+                <div>
+                  {"You just " +
+                    (assetListing.listingType === ListingType.SELL
+                      ? " bought "
+                      : " sold ") +
+                    (assetListing.amount + " " + symbol) +
+                    " at a great price of " +
+                    toTokens(BigInt(totalPrice), 18) +
+                    " ETH 🤑🤑🤑"}
+                </div>
+                <div className="text-xs mt-1 text-muted-foreground">
+                  View your transaction:
+                  <a
+                    href={`https://sepolia.basescan.org/tx/${result.transactionHash}`}
+                    target="_blank"
+                    className="flex items-center gap-1 hover:underline"
+                  >
+                    {result.transactionHash}
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>,
+            );
         },
 
         onError: (error) => {
@@ -175,6 +202,9 @@ const TradeDetails: React.FC<Props> = ({
         await executeTrade();
         return;
       }
+    } else {
+      await executeTrade();
+      return;
     }
   };
 

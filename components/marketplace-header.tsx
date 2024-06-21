@@ -9,13 +9,19 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateOfferForm from "./forms/create-offer-form";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
+import OverlayMessageBox from "./overlay-message-box";
 
 const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
+  const router = useRouter();
   const [showOfferDialog, setShowOfferDialog] = useState(false);
   const pathname = usePathname();
+  const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
+    shouldShowOfferCompletionOverlay: false,
+    children: <></>,
+  });
 
   const isRouteActive = (route: string) => {
     return pathname.includes(route);
@@ -23,6 +29,17 @@ const MarketplaceHeader = () => {
 
   const isMarketplaceRoute = isRouteActive("/marketplace");
   const isDashboardRoute = isRouteActive("/customer/dashboard");
+
+  const handleCreateOfferCallback = (
+    showOfferCompletion: boolean,
+    children: JSX.Element,
+  ) => {
+    setRedeemCompletionOverlay({
+      ...redeemCompletionOverlay,
+      shouldShowOfferCompletionOverlay: showOfferCompletion,
+      children: children,
+    });
+  };
 
   return (
     <nav className="sticky h-[70px] py-2 top-0 z-50 items-center gap-4 bg-background w-full">
@@ -69,10 +86,30 @@ const MarketplaceHeader = () => {
 
           <Dialog open={showOfferDialog} onOpenChange={setShowOfferDialog}>
             <DialogContent>
-              <CreateOfferForm onCanceled={() => setShowOfferDialog(false)} />
+              <CreateOfferForm
+                onCanceled={() => setShowOfferDialog(false)}
+                onSuccess={(show, children) => {
+                  handleCreateOfferCallback(show, children);
+                }}
+              />
             </DialogContent>
           </Dialog>
         </div>
+        {redeemCompletionOverlay.shouldShowOfferCompletionOverlay && (
+          <OverlayMessageBox
+            showCloseButton={true}
+            onClose={() =>
+              setRedeemCompletionOverlay({
+                ...redeemCompletionOverlay,
+                shouldShowOfferCompletionOverlay: false,
+              })
+            }
+            closeOnBackdropClick={false}
+            closeOnEscapeKey={true}
+          >
+            {redeemCompletionOverlay.children}
+          </OverlayMessageBox>
+        )}
       </div>
     </nav>
   );

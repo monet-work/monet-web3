@@ -4,6 +4,7 @@ import {
   monetMarketplaceContract,
   monetPointsContractFactory,
 } from "@/app/contract-utils";
+import OverlayMessageBox from "@/components/overlay-message-box";
 import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -28,10 +29,25 @@ const PointPage = () => {
   const [isBlockchainLoading, setIsBlockchianLoading] = useState<boolean>(true);
   const [listingData, setListingData] = useState<any[]>([]);
   const [decimals, setDecimals] = useState<number>(0);
+  const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
+    shouldShowTradeCompletionOverlay: false,
+    children: <></>,
+  });
   const [formattedBlockchainListings, setFormattedBlockchainListings] =
     useState<AssetListing[]>([]);
 
   console.log(formattedBlockchainListings, "formattedBlockchianListings");
+
+  const handleTradeCompletionDialogCallback = (
+    showTradeCompletion: boolean,
+    children: JSX.Element,
+  ) => {
+    setRedeemCompletionOverlay({
+      ...redeemCompletionOverlay,
+      shouldShowTradeCompletionOverlay: showTradeCompletion,
+      children: children,
+    });
+  };
 
   const getDecimals = async () => {
     const decimals = await readContract({
@@ -244,11 +260,29 @@ const PointPage = () => {
               }}
               assetListing={selectedListing}
               decimals={decimals}
-              onTradeSuccess={() => setSelectedListing(undefined)}
+              onTradeSuccess={(show: boolean, children: JSX.Element) => {
+                setSelectedListing(undefined);
+                handleTradeCompletionDialogCallback(show, children);
+              }}
             />
           </div>
         </div>
       </div>
+      {redeemCompletionOverlay.shouldShowTradeCompletionOverlay && (
+        <OverlayMessageBox
+          showCloseButton={true}
+          onClose={() =>
+            setRedeemCompletionOverlay({
+              ...redeemCompletionOverlay,
+              shouldShowTradeCompletionOverlay: false,
+            })
+          }
+          closeOnBackdropClick={false}
+          closeOnEscapeKey={true}
+        >
+          {redeemCompletionOverlay.children}
+        </OverlayMessageBox>
+      )}
     </main>
   );
 };
