@@ -48,7 +48,7 @@ const OverlayMessageBox: React.FC<Props> = ({
 
   return (
     <div
-      className="bg-background/80 w-full fixed h-full backdrop-blur-sm flex justify-center items-center"
+      className="bg-background/80 w-full fixed h-full backdrop-blur-sm flex justify-center items-center top-0"
       onClick={closeOnBackdropClick ? handleBackdropClick : undefined}
     >
       <Card className="backdrop-blur-sm bg-muted-foreground/20 relative">
