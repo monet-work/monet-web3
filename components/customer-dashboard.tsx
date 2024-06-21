@@ -15,15 +15,22 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import RedeemPointsForm from "./forms/redeem-points-form";
 import { Point } from "@/models/point.model";
 import { monetPointsContractFactory } from "@/app/contract-utils";
-import { ExternalLink } from "lucide-react";
+import { Copy, ExternalLink } from "lucide-react";
 import SadEmoji from "./icons/sad-emoji";
 import confetti from "canvas-confetti";
 import { realisticConfetti } from "@/lib/confetti-helper";
+import OverlayMessageBox from "./overlay-message-box";
+import { useRouter } from "next/navigation";
 
 const CustomerDashboard = () => {
+  const router = useRouter();
   const customerStore = useCustomerStore();
   const account = useActiveAccount();
   const [showRedeemForm, setShowRedeemForm] = useState(false);
+  const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
+    shouldShowRedeemCompletionOverlay: false,
+    children: <></>,
+  });
   const [activePointToRedeem, setActivePointToRedeem] = useState<Point | null>(
     null,
   );
@@ -102,6 +109,8 @@ const CustomerDashboard = () => {
     fetchOnChainPointsForAllTokens();
   }, [customerPointsResponse]);
 
+  useEffect(() => {}, [redeemCompletionOverlay]);
+
   const processRedeemPoints = async (point: Point) => {
     const { company_id, points, company } = point;
     if (!customerStore.customer) return;
@@ -137,10 +146,51 @@ const CustomerDashboard = () => {
 
               await sendTransaction(transaction as PreparedTransaction, {
                 onSuccess: (result) => {
-                  toast.success("Points redeemed successfully");
+                  console.log(result);
+                  toast.success(points + " points redeemed successfully");
                   realisticConfetti();
                   setShowRedeemForm(false);
-
+                  setRedeemCompletionOverlay({
+                    shouldShowRedeemCompletionOverlay: true,
+                    children: (
+                      <div>
+                        <div>
+                          {"+" +
+                            points +
+                            " on-chain " +
+                            point.company?.point_symbol +
+                            " 🤑 available"}
+                        </div>
+                        <div>
+                          Trade now at{" "}
+                          <Button
+                            variant={"outline"}
+                            onClick={() => {
+                              const urlEncodedPointName = encodeURIComponent(
+                                `${point.company?.point_name}-${point_contract_address}`,
+                              );
+                              router.push(
+                                `/marketplace/${urlEncodedPointName}`,
+                              );
+                            }}
+                          >
+                            Marketplace 🚀
+                          </Button>
+                        </div>
+                        <div className="text-xs mt-1 text-muted-foreground">
+                          View your transaction:
+                          <a
+                            href={`https://sepolia.basescan.org/tx/${result.transactionHash}`}
+                            target="_blank"
+                            className="flex items-center gap-1 hover:underline"
+                          >
+                            {result.transactionHash}
+                            <ExternalLink className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </div>
+                    ),
+                  });
                   //refetch points
                   refetchCustomerPoints();
                 },
@@ -316,7 +366,21 @@ const CustomerDashboard = () => {
           </div>
         </div>
       </div>
-
+      {redeemCompletionOverlay.shouldShowRedeemCompletionOverlay && (
+        <OverlayMessageBox
+          showCloseButton={true}
+          onClose={() =>
+            setRedeemCompletionOverlay({
+              ...redeemCompletionOverlay,
+              shouldShowRedeemCompletionOverlay: false,
+            })
+          }
+          closeOnBackdropClick={false}
+          closeOnEscapeKey={true}
+        >
+          {redeemCompletionOverlay.children}
+        </OverlayMessageBox>
+      )}
       <Dialog
         open={showRedeemForm}
         onOpenChange={(open) => setShowRedeemForm(open)}
