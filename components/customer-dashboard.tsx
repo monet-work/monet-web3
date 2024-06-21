@@ -174,7 +174,7 @@ const CustomerDashboard = () => {
                               );
                             }}
                           >
-                            {point.company?.point_name} Marketplace 🚀
+                            Marketplace 🚀
                           </Button>
                         </div>
                         <div className="text-xs mt-1 text-muted-foreground">
