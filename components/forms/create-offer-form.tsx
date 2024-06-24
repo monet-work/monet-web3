@@ -149,7 +149,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
         contract: monetPointsContractFactory(values.point),
         method: "approve",
         params: [
-          monetMarketplaceContract.address as unknown as Address,
+          monetMarketplaceContract.address as Address,
           BigInt(toUnits(amount, decimals)),
         ],
       });
