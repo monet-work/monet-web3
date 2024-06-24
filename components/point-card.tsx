@@ -39,7 +39,7 @@ const PointCard: React.FC<Props> = ({
               </a>
             </span>
           </p>
-          <div className="text-sm mt-2 max-w-sm text-muted-foreground flex items-center">
+          <div className="text-sm max-w-sm text-muted-foreground flex items-center mt-4">
             <Coins className="mr-2 text-yellow-500" size={16} />
             Off Chain: {offChain.toString()}
           </div>
