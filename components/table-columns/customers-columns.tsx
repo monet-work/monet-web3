@@ -12,6 +12,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CustomerListingSync from "../listings-table/customer-listings-actions";
+import { Address } from "thirdweb";
 
 export const CustomerColumns: ColumnDef<Company>[] = [
   {
@@ -87,6 +89,21 @@ export const CustomerColumns: ColumnDef<Company>[] = [
       return (
         <div className="w-[200px]">
           {row.getValue<User>("user")?.email || ""}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "action",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Action" />
+    ),
+    cell: ({ row }) => {
+      return (
+        <div className="w-[200px]">
+          <CustomerListingSync
+            WalletAddress={row.getValue<User>("user").wallet_address as Address}
+          />
         </div>
       );
     },
