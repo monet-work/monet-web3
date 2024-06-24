@@ -6,6 +6,7 @@ import Footer from "@/components/footer";
 import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/context/auth-context";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ReactQueryProvider>
           <ThirdwebProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </AuthProvider>
             <Footer />
           </ThirdwebProvider>
         </ReactQueryProvider>

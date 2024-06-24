@@ -1,7 +1,8 @@
 import { cn, ellipsis } from "@/lib/utils";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { Coins, ExternalLink, Gift } from "lucide-react";
+import { CircleHelp, Coins, ExternalLink, Gift } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type Props = {
   className?: string;
@@ -41,11 +42,33 @@ const PointCard: React.FC<Props> = ({
           </p>
           <div className="text-sm max-w-sm text-muted-foreground flex items-center mt-4">
             <Coins className="mr-2 text-yellow-500" size={16} />
-            Off Chain: {offChain.toString()}
+            Off Chain: {offChain.toString()}{" "}
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelp className="ml-2" size={16} />
+              </TooltipTrigger>
+              <TooltipContent className="text-xs max-w-md">
+                {`Points that you have earned after trying out the company's
+                products, joining their communities and helping them build a
+                solid place in the marketplace`}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="text-sm mt-2 max-w-sm text-muted-foreground flex items-center">
             <Coins className="mr-2 text-yellow-500" size={16} />
-            On Chain: {onChain.toString()}
+            On Chain: {onChain.toString()}{" "}
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelp className="ml-2" size={16} />
+              </TooltipTrigger>
+              <TooltipContent className="text-xs max-w-md">
+                {`Points that you have minted on-chain from the earned points. 
+                It is different from the on-chain's balance. 
+                You can mint only the exact points earned from a company. 
+                Say, you have earned 1000 points (off-chain) from a company and you can mint 1000 on-chain points from it. 
+                You can transfer them around and trade it in our fair marketplace.`}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Button
             onClick={onRedeemClick}
