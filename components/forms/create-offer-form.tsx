@@ -29,6 +29,7 @@ import {
 } from "@/app/contract-utils";
 import { toast } from "sonner";
 import {
+  Address,
   prepareContractCall,
   PreparedTransaction,
   readContract,
@@ -144,11 +145,11 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
     // onSuccess(true, <></>);
     console.log("submit", values);
     const performApproval = async (amount: string) => {
-      const transaction = await prepareContractCall({
+      const transaction = prepareContractCall({
         contract: monetPointsContractFactory(values.point),
         method: "approve",
         params: [
-          monetMarketplaceContract.address,
+          monetMarketplaceContract.address as unknown as Address,
           BigInt(toUnits(amount, decimals)),
         ],
       });
@@ -248,7 +249,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
         method: "allowance",
         params: [
           account?.address!,
-          process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT!,
+          process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT! as Address,
         ],
       });
       return toTokens(data, decimals);

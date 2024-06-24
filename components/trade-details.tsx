@@ -23,6 +23,7 @@ import {
 } from "@/models/asset-listing.model";
 import clsx from "clsx";
 import {
+  Address,
   PreparedTransaction,
   prepareContractCall,
   readContract,
@@ -161,7 +162,7 @@ const TradeDetails: React.FC<Props> = ({
           method: "allowance",
           params: [
             activeAccount?.address,
-            process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT!,
+            process.env.NEXT_PUBLIC_MONET_MARKETPLACE_CONTRACT! as Address,
           ],
         });
         console.log(data, "allowance data");
@@ -180,7 +181,7 @@ const TradeDetails: React.FC<Props> = ({
           contract: monetPointsContractFactory(pointAddress),
           method: "approve",
           params: [
-            monetMarketplaceContract.address,
+            monetMarketplaceContract.address as Address,
             BigInt(toUnits(amount, decimals)),
           ],
         });
