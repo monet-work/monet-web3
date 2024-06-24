@@ -28,7 +28,7 @@ import {
 const MarketplacePage = () => {
   const router = useRouter();
   const activeAccount = useActiveAccount();
-  const address = activeAccount?.address;
+  const UserAddress = activeAccount?.address;
 
   const { data: pointsListData, isLoading } = useQuery({
     queryKey: [],
@@ -103,7 +103,11 @@ const MarketplacePage = () => {
 
       const onChainPointsCalculations = async () => {
         let onChainPoints = 0;
-        events.forEach((event) => {
+        // array of user minted events
+        const userEvents = events.filter(
+          (item) => item.args[0] === UserAddress,
+        );
+        userEvents.forEach((event) => {
           onChainPoints += Number(toTokens(BigInt(event.args[1]), decimals));
         });
         return onChainPoints;
