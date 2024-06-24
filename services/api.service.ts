@@ -20,6 +20,7 @@ import {
 import { Token } from "@/models/company.model";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import axios from "axios";
+import { Address } from "thirdweb";
 
 // TODO: Convert this into a hook
 
@@ -34,6 +35,7 @@ const securedRoutes = [
   `${API_BASE_URL}/admins/companies/:companyId/approve`,
   `${API_BASE_URL}/admins/sync-points`,
   `${API_BASE_URL}/admins/sync-listings`,
+  `${API_BASE_URL}/admins/sync-customer-points`,
   `${API_BASE_URL}/marketplace`,
   `${API_BASE_URL}/marketplace/:pointAddress`,
   `${API_BASE_URL}/customers/:customerId/points/:pointAddress`,
@@ -215,6 +217,12 @@ export const syncListings = async () => {
   return axios.post(`${API_BASE_URL}/admins/sync-listings`);
 };
 
+export const syncCustomerPoints = async (walletAddress: Address) => {
+  return axios.post(`${API_BASE_URL}/admins/sync-customer-points`, {
+    walletAddress: walletAddress,
+  });
+};
+
 const customerRedeemPoints = async (payload: {
   customerId: string;
   amount: string;
@@ -275,4 +283,5 @@ export const apiService = {
   getAdminCustomerDetails,
   syncPoints,
   syncListings,
+  syncCustomerPoints,
 };
