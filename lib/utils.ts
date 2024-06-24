@@ -85,3 +85,7 @@ export const matchesDynamicRoute = (url: string, pattern: string) => {
 export const isTokenExpired = (token: Token) => {
   return new Date(token.expires).getTime() < Date.now();
 };
+
+export const ellipsis = (str: string, length: number) => {
+  return str.length > length ? str.substring(0, length) + "..." : str;
+};

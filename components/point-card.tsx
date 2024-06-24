@@ -1,88 +1,93 @@
-import React, { useState } from "react";
-import { BackgroundGradient } from "./ui/background-gradient";
+import { cn, ellipsis } from "@/lib/utils";
+import { Card } from "./ui/card";
 import { Button } from "./ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-// import { collectPoints } from "@/lib/api-requests";
-import { useActiveAccount } from "thirdweb/react";
+import { CircleHelp, Coins, ExternalLink, Gift } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 
 type Props = {
-  id: "post-tweet" | "write-blog-post" | "review-google" | "youtube-video";
-  title: string;
-  description: string;
-  points: number;
+  className?: string;
+  pointName: string;
+  pointSymbol: string;
+  pointAddress: string;
+  offChain: BigInt;
+  onChain: BigInt;
+  onRedeemClick: () => void;
 };
 
-const PointCard: React.FC<Props> = ({ id, points, title, description }) => {
-  // const customerStore = useCustomerStore();
-  const account = useActiveAccount();
-  const walletAddress = account?.address;
-  // const collectPointsMutation = useMutation({
-  //   mutationFn: collectPoints,
-  // });
-  const [loading, setLoading] = useState(false);
-
-  const handleCollectPoints = async (id: Props["id"], points: number) => {
-    setLoading(true);
-
-    if (!walletAddress) return;
-
-    // collectPointsMutation.mutate(
-    //   {
-    //     walletAddress: walletAddress || "",
-    //     points: Number(points),
-    //   },
-    //   {
-    //     onSuccess: (data) => {
-    //       // update points in store and invaliate cache
-    //       // customerStore.setCustomer(data.data);
-    //       toast.message(successMessageBasedOnKey(id), {
-    //         description: `You have successfully collected ${points} points!`,
-    //       })
-    //       setLoading(false);
-    //     },
-    //     onError: () => {
-    //       toast("Failed to collect points, please try again!");
-    //       setLoading(false);
-    //     },
-    //   }
-    // );
-  };
-
-  const successMessageBasedOnKey = (key: Props["id"]) => {
-    switch (title) {
-      case "post-tweet":
-        return "Tweet posted successfully!";
-      case "write-blog-post":
-        return "Blog post written successfully!";
-      case "review-google":
-        return "Google review posted successfully!";
-      case "youtube-video":
-        return "YouTube video created successfully!";
-      default:
-        return "Points collected successfully!";
-    }
-  };
-
+const PointCard: React.FC<Props> = ({
+  className,
+  pointName = "",
+  pointSymbol = "",
+  pointAddress = "",
+  offChain = 0,
+  onChain = 0,
+  onRedeemClick,
+}) => {
   return (
-    <BackgroundGradient className="rounded-[22px] max-w-sm py-2 px-8 bg-white dark:bg-zinc-900 h-full">
-      <div className="min-h-40">
-        <p className="text-base sm:text-xl text-black mt-4 mb-2 dark:text-neutral-200">
-          {title}
-        </p>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          {description}
-          <span className="font-bold">{points}</span> points
-        </p>
+    <Card className={cn(className, "hover:bg-muted transition-all")}>
+      <div className="p-4">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold">{pointName}</h1>
+          <p className="text-sm mt-2 max-w-sm text-muted-foreground">
+            ({pointSymbol})
+          </p>
+          <p className="text-xs mt-2 max-w-sm text-muted-foreground hover:underline flex items-center">
+            <ExternalLink className="mr-2" size={16} />
+            <span>
+              Address:{" "}
+              <a href={`https://sepolia.basescan.org/address/${pointAddress}`}>
+                {ellipsis(pointAddress, 10)}
+              </a>
+            </span>
+          </p>
+          <div className="text-sm max-w-sm text-muted-foreground flex items-center mt-4">
+            <Coins className="mr-2 text-yellow-500" size={16} />
+            Off Chain: {offChain.toString()}{" "}
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelp className="ml-2" size={16} />
+              </TooltipTrigger>
+              <TooltipContent
+                className="text-xs max-w-md"
+                side="right"
+                align="end"
+              >
+                {`Points that you have earned after trying out the company's
+                products, joining their communities and helping them build a
+                solid place in the marketplace`}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="text-sm mt-2 max-w-sm text-muted-foreground flex items-center">
+            <Coins className="mr-2 text-yellow-500" size={16} />
+            On Chain: {onChain.toString()}{" "}
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelp className="ml-2" size={16} />
+              </TooltipTrigger>
+              <TooltipContent
+                className="text-xs max-w-md"
+                side="right"
+                align="end"
+              >
+                {`Points that you have minted on-chain from the earned points. 
+                It is different from the on-chain's balance. 
+                You can mint only the exact points earned from a company. 
+                Say, you have earned 1000 points (off-chain) from a company and you can mint 1000 on-chain points from it. 
+                You can transfer them around and trade it in our fair marketplace.`}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+          <Button
+            onClick={onRedeemClick}
+            className="w-full mt-8 rounded-lg p-2 bg-transparent border border-muted text-muted-foreground hover:text-muted"
+          >
+            <Gift className="mr-2" size={16} />
+            Redeem
+          </Button>
+        </div>
       </div>
-      <Button
-        className="mb-4"
-        onClick={() => handleCollectPoints(id, points)}
-        loading={loading}
-      >
-        Collect
-      </Button>
-    </BackgroundGradient>
+    </Card>
   );
 };
 
