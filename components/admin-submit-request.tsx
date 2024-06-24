@@ -29,7 +29,10 @@ will be submitted.`;
     <section className="bg-background">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
         <aside className="relative block h-16 lg:order-first lg:col-span-5 lg:h-full xl:col-span-6">
-          <Spline scene="https://prod.spline.design/mbdk1wtIgdMhoDBC/scene.splinecode" />
+          <Spline
+            scene="https://prod.spline.design/dNTOSDbsDWdB2iK5/scene.splinecode"
+            className="max-h-screen"
+          />
         </aside>
 
         <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
