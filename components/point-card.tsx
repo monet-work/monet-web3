@@ -47,7 +47,11 @@ const PointCard: React.FC<Props> = ({
               <TooltipTrigger>
                 <CircleHelp className="ml-2" size={16} />
               </TooltipTrigger>
-              <TooltipContent className="text-xs max-w-md">
+              <TooltipContent
+                className="text-xs max-w-md"
+                side="right"
+                align="end"
+              >
                 {`Points that you have earned after trying out the company's
                 products, joining their communities and helping them build a
                 solid place in the marketplace`}
@@ -61,7 +65,11 @@ const PointCard: React.FC<Props> = ({
               <TooltipTrigger>
                 <CircleHelp className="ml-2" size={16} />
               </TooltipTrigger>
-              <TooltipContent className="text-xs max-w-md">
+              <TooltipContent
+                className="text-xs max-w-md"
+                side="right"
+                align="end"
+              >
                 {`Points that you have minted on-chain from the earned points. 
                 It is different from the on-chain's balance. 
                 You can mint only the exact points earned from a company. 
