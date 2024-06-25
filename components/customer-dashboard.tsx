@@ -138,7 +138,7 @@ const CustomerDashboard = () => {
               });
 
               await sendTransaction(transaction as PreparedTransaction, {
-                onSuccess: (result) => {
+                onSuccess: async (result) => {
                   console.log(result);
                   toast.success(points + " points redeemed successfully");
                   realisticConfetti();
@@ -186,6 +186,7 @@ const CustomerDashboard = () => {
                   });
                   //refetch points
                   refetchCustomerPoints();
+                  await fetchOnChainPointsForAllTokens();
                 },
 
                 onError: (error) => {
@@ -302,7 +303,7 @@ const CustomerDashboard = () => {
               totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
               onChainPoints={onChainPoints}
               isLoading={isLoadingCustomerOnChainPoints}
-              isButtonLoading={isPending}
+              isButtonLoading={isPending || redeemPointsMutation.isPending}
               onSubmitForm={(values) => {
                 const { amount } = values;
 
