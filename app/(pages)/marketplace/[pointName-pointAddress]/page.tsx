@@ -120,6 +120,7 @@ const PointPage = () => {
     data: pointAssetInfoData,
     isLoading: isLoadingPointAssetInfoData,
     isError,
+    refetch: refetchPointAssetInfoData,
   } = useQuery({
     queryKey: [
       "marketplace/point-asset-info",
@@ -249,6 +250,8 @@ const PointPage = () => {
               onTradeSuccess={(show: boolean, children: JSX.Element) => {
                 setSelectedListing(undefined);
                 handleTradeCompletionDialogCallback(show, children);
+                refetchPointAssetInfoData();
+                fetchListings();
               }}
             />
           </div>
