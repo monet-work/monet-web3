@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { ListingStatus } from "@/models/listing";
-import { Spinner } from "../ui/spinner";
 import { Skeleton } from "../ui/skeleton";
 
 export const PointsListColumns: ColumnDef<{

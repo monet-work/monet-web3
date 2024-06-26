@@ -44,11 +44,9 @@ import {
   ListingType,
   PaymentType,
 } from "@/models/asset-listing.model";
-import clsx from "clsx";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Spinner } from "../ui/spinner";
-import confetti from "canvas-confetti";
 import { celebratoryConfetti } from "@/lib/confetti-helper";
 import { ExternalLink } from "lucide-react";
 
@@ -58,17 +56,14 @@ type Props = {
 };
 
 const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
-  const router = useRouter();
   const [isPointDetailPage, setIsPointDetailPage] = useState(false);
   const [selectedPoint, setSelectedPoint] = useState<string>("");
-  console.log(selectedPoint, "selectedPoint");
   const [decimals, setDecimals] = useState<number>(0);
 
   const formSchema = z.object({
     offerType: z.string(),
     point: z.string().min(1, "Point is required"),
-    // paymentToken: z.string(),
-    pricePerPoint: z.coerce.string(),
+    pricePerPoint: z.string(),
     amount: z.string().min(1, "Amount is required"),
     fillType: z.string().min(1, "Fill type is required"),
   });
@@ -78,7 +73,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
     defaultValues: {
       amount: "",
       point: "",
-      // paymentToken: "",
       pricePerPoint: "0",
       offerType: "sell",
       fillType: "partial",
@@ -89,7 +83,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
   const amount = form.watch("amount");
   const pricePerPoint = form.watch("pricePerPoint");
 
-  // const { mutate: sendTransaction, isPending, isError } = useSendTransaction();
   const {
     mutate: sendAndConfirmTransaction,
     data: transactionReceipt,
@@ -97,7 +90,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
     isError,
   } = useSendAndConfirmTransaction();
 
-  const { marketPlace, setMarketPlace } = useMarketPlaceStore();
+  const { marketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
 
   const pathName = usePathname();
@@ -126,7 +119,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
       setIsPointDetailPage(false);
     } else {
       const pointAddress = pathName?.split("-");
-      // console.log(pointAddress?.[1]);
       form.setValue("point", pointAddress?.[1]);
       setSelectedPoint(pointAddress?.[1]);
 
@@ -142,8 +134,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // onSuccess(true, <></>);
-    console.log("submit", values);
     const performApproval = async (amount: string) => {
       const transaction = prepareContractCall({
         contract: monetPointsContractFactory(values.point),
@@ -270,7 +260,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
   const pointSymbol = marketPlace.find(
     (item: any) => item.address === selectedPoint,
   )?.symbol;
-  // console.log(marketPlace, "marketPlace");
 
   if (marketPlace.length === 0)
     return (
@@ -330,11 +319,6 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
                   {...field}
                 />
               </FormControl>
-              {/* <FormDescription className="text-xs">
-                {!!pricePerPoint && !!point
-                  ? `1 ${pointSymbol} = ${toUnits("1", decimals)} points`
-                  : ""}
-              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}

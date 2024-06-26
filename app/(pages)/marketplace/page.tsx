@@ -6,31 +6,30 @@ import {
 } from "@/app/contract-utils";
 import { DataTable } from "@/components/data-table/data-table";
 import { PointsListColumns } from "@/components/table-columns/points-list-columns";
-import { pointsTableData } from "@/data";
 import { apiService } from "@/services/api.service";
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Address,
   getContractEvents,
   prepareEvent,
   readContract,
   toTokens,
 } from "thirdweb";
-import {
-  useActiveAccount,
-  useContractEvents,
-  useReadContract,
-} from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 
 const MarketplacePage = () => {
   const router = useRouter();
   const activeAccount = useActiveAccount();
   const userAddress = activeAccount?.address;
+  const [isLoadingOnChainData, setIsLoadingOnChainData] = useState(false);
 
-  const { data: pointsListData, isLoading } = useQuery({
+  const {
+    data: pointsListData,
+    isLoading,
+    refetch: refetchPointsList,
+  } = useQuery({
     queryKey: [],
     queryFn: async () => {
       return await apiService.getMarketplacePointsList();
@@ -52,6 +51,7 @@ const MarketplacePage = () => {
   const marketPlaceStore = useMarketPlaceStore();
 
   const getMarketplaceDataFromContract = async () => {
+    setIsLoadingOnChainData(true);
     const mint = prepareEvent({
       signature: "event Mint(address,uint256)",
     });
@@ -64,7 +64,6 @@ const MarketplacePage = () => {
     setListCount(allPointContractAddresses.length);
     for (let i = 0; i < allPointContractAddresses.length; i++) {
       if (!allPointContractAddresses[i]) return;
-      // console.log(allPointContractAddresses[i], "allPointContractAddresses[i]");
       const events = await getContractEvents({
         contract: monetPointsContractFactory(
           allPointContractAddresses[i].toString(),
@@ -73,7 +72,6 @@ const MarketplacePage = () => {
         toBlock: "latest",
         events: [mint],
       });
-      // console.log(events, "events inside loop");
       const decimals = await readContract({
         contract: monetPointsContractFactory(allPointContractAddresses[i]),
         method: "decimals",
@@ -121,7 +119,6 @@ const MarketplacePage = () => {
           method: "balanceOf",
           params: [activeAccount?.address],
         });
-        // console.log(userPoints, "userPoints");
         return Number(toTokens(userPoints, decimals));
       };
       const symbol = await Symbol();
@@ -142,8 +139,22 @@ const MarketplacePage = () => {
           userPoints: userPoints && userPoints > 0 ? userPoints : 0,
         },
       ]);
+
+      setIsLoadingOnChainData(false);
     }
   };
+
+  useEffect(() => {
+    if (marketPlaceStore.offerCreated) {
+      const refetchMarketplaceDataFromContract = async () => {
+        await getMarketplaceDataFromContract();
+      };
+      setBlockchainData([]);
+      refetchPointsList();
+      refetchMarketplaceDataFromContract();
+      marketPlaceStore.setOfferCreated(false);
+    }
+  }, [marketPlaceStore.offerCreated]);
 
   useEffect(() => {
     if (blockchainData.length === 0) {
