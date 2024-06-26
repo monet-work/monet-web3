@@ -6,7 +6,12 @@ import { Button } from "./ui/button";
 import { apiService } from "@/services/api.service";
 import useCustomerStore from "@/store/customerStore";
 import { toast } from "sonner";
-import { PreparedTransaction, prepareContractCall } from "thirdweb";
+import {
+  Address,
+  PreparedTransaction,
+  prepareContractCall,
+  readContract,
+} from "thirdweb";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -73,6 +78,16 @@ const CustomerDashboard = () => {
     enabled: !!customerStore?.customer?.id,
   });
 
+  const getMintStatus = async (address: Address) => {
+    if (!address) return;
+    const data = await readContract({
+      contract: monetPointsContractFactory(address),
+      method: "mintingSwitch",
+      params: [],
+    });
+    return data;
+  };
+
   const {
     mutate: sendTransaction,
     isPending,
@@ -89,9 +104,14 @@ const CustomerDashboard = () => {
             customerStore?.customer?.id!,
             point.company!.point_contract_address!,
           );
+          const mintStatus = await getMintStatus(
+            point.company!.point_contract_address! as Address,
+          );
+
           return {
             ...point,
             onChainPoints: onChainPoints.data.points,
+            mintStatus: mintStatus,
           };
         }),
       );
@@ -256,7 +276,12 @@ const CustomerDashboard = () => {
                       pointAddress={point?.company?.point_contract_address}
                       offChain={point.points}
                       onChain={point.onChainPoints}
-                      onRedeemClick={() => handleRedeemPoints(point)}
+                      onRedeemClick={
+                        point.mintStatus
+                          ? () => handleRedeemPoints(point)
+                          : () =>
+                              toast.error("Minting is disabled for this token")
+                      }
                     />
                   ))
                 : customerPointsResponse?.data?.points.map((point) => (
