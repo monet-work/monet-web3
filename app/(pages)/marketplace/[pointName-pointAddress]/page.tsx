@@ -217,7 +217,7 @@ const PointPage = () => {
             <h3 className="mb-4">Live public listings</h3>
             <TradesView
               assetListings={livePublicListings || []}
-              loading={isLoadingPointAssetInfoData || isBlockchainLoading}
+              loading={isLoadingPointAssetInfoData}
               onListingSelected={(listing) => setSelectedListing(listing)}
             />
           </div>
@@ -227,14 +227,14 @@ const PointPage = () => {
             </h3>
             <TradesView
               assetListings={completedPublicListings || []}
-              loading={isLoadingPointAssetInfoData || isBlockchainLoading}
+              loading={isLoadingPointAssetInfoData}
             />
           </div>
           <div className="mt-8">
             <h3 className="mb-4 text-muted-foreground">Your listings</h3>
             <UserTradeView
               assetListings={ownerListings || []}
-              loading={isLoadingPointAssetInfoData || isBlockchainLoading}
+              loading={isLoadingPointAssetInfoData}
             />
           </div>
         </div>
