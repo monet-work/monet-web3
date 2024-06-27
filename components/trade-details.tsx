@@ -18,6 +18,7 @@ import { Button } from "./ui/button";
 import { ExternalLink, Pointer } from "lucide-react";
 import {
   AssetListing,
+  ListingFillType,
   ListingStatus,
   ListingType,
 } from "@/models/asset-listing.model";
@@ -38,11 +39,8 @@ import {
 import { toast } from "sonner";
 import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
-import confetti from "canvas-confetti";
-import {
-  celebratoryConfetti,
-  schoolPrideConfetti,
-} from "@/lib/confetti-helper";
+import { celebratoryConfetti } from "@/lib/confetti-helper";
+import { Slider } from "@/components/ui/slider";
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
@@ -51,7 +49,7 @@ const TradeDetails: React.FC<Props> = ({
   onTradeError,
   onTradeSuccess,
 }) => {
-  const { name, symbol } = pointInfo || { name: "", symbol: "" };
+  const { symbol } = pointInfo || { name: "", symbol: "" };
   const pathname = usePathname();
   const activeAccount = useActiveAccount();
   const pointAddress = pathname.split("/")[2].split("-")[1];
@@ -61,6 +59,8 @@ const TradeDetails: React.FC<Props> = ({
     isError,
   } = useSendAndConfirmTransaction();
   const [totalPrice, setTotalPrice] = useState<string>("");
+
+  const isPartialFillType = assetListing?.fillType === ListingFillType.PARTIAL;
 
   useEffect(() => {
     if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
@@ -170,11 +170,6 @@ const TradeDetails: React.FC<Props> = ({
       };
 
       const allowanceValue = await allowanceFunction();
-      // console.log(
-      //   allowanceValue,
-      //   values.quantity,
-      //   Number(allowanceValue) < Number(values.quantity)
-      // );
 
       const performApproval = async (amount: string) => {
         const transaction = await prepareContractCall({
@@ -187,7 +182,6 @@ const TradeDetails: React.FC<Props> = ({
         });
         await sendTransaction(transaction as PreparedTransaction, {
           onSuccess: async () => {
-            console.log("Approved");
             await executeTrade();
             return;
           },
@@ -222,9 +216,9 @@ const TradeDetails: React.FC<Props> = ({
           assetListing?.listingType === ListingType.SELL,
       })}
     >
-      <CardContent className="flex flex-col pt-4 w-full min-h-[400px] h-full">
+      <CardContent className="flex flex-col pt-4 w-full min-h-[450px] h-full">
         {!assetListing ? (
-          <div className="text-muted-foreground flex items-center justify-center h-full min-h-[400px]">
+          <div className="text-muted-foreground flex items-center justify-center h-full min-h-[450px]">
             <div className="flex flex-col items-center gap-8">
               <Pointer className="h-12 w-12" />
               <p className="text-lg">Select an offer to view details</p>
@@ -257,6 +251,17 @@ const TradeDetails: React.FC<Props> = ({
               </span>
               <p className="mt-2">from</p>
               <p className="text-xs mt-2">{assetListing.owner}</p>
+
+              <div className="mt-8">
+                <Slider
+                  // value={[0]}
+                  // max={100}
+                  step={25}
+                  minStepsBetweenThumbs={25}
+                  defaultPlaceholders={[0, 25, 50, 75, 100]}
+                  className="w-full rounded-full"
+                />
+              </div>
             </div>
 
             <div className="mt-auto">
