@@ -33,14 +33,6 @@ export const connectWallet = async (
       await metamask.connect({ client });
     }
 
-    // open wallet connect modal so user can scan the QR code and connect
-    else {
-      await metamask.connect({
-        client,
-        walletConnect: { showQrModal: true },
-      });
-    }
-
     // return the wallet
     return metamask;
   });

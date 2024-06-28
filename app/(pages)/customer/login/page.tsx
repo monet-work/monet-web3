@@ -2,6 +2,8 @@
 
 import { connectWallet } from "@/app/contract-utils";
 import LoginCustomer from "@/components/login-customer";
+import MetaMaskDownloader from "@/components/metamask-download";
+import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { useUserStore } from "@/store/userStore";
@@ -19,6 +21,11 @@ const CustomerLoginPage = () => {
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
+  const isInstalled = useIsWalletInstalled({ flag: "isMetaMask" });
+  const [showModal, setShowModal] = useState(isInstalled === false);
+  useEffect(() => {
+    setShowModal(isInstalled === false);
+  }, [isInstalled]);
 
   const handleLoginCustomer = async () => {
     setLoginRequested(true);
@@ -37,6 +44,9 @@ const CustomerLoginPage = () => {
 
   return (
     <main>
+      {loginRequested && showModal && (
+        <MetaMaskDownloader setLoginRequested={setLoginRequested} />
+      )}
       <LoginCustomer
         onClickConnectWallet={handleLoginCustomer}
         loading={isConnecting}

@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { Button } from "./ui/button";

@@ -2,6 +2,8 @@
 
 import { connectWallet } from "@/app/contract-utils";
 import LoginAdmin from "@/components/login-admin";
+import MetaMaskDownloader from "@/components/metamask-download";
+import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
@@ -15,6 +17,12 @@ const AdminLoginPage = () => {
   const activeAccount = useActiveAccount();
   const [accessToken, setAccessToken] = useLocalStorage("accessToken", "");
   const [loginRequested, setLoginRequested] = useState(false);
+  const isInstalled = useIsWalletInstalled({ flag: "isMetaMask" });
+  const [showModal, setShowModal] = useState(isInstalled === false);
+  useEffect(() => {
+    setShowModal(isInstalled === false);
+  }, [isInstalled]);
+
   const router = useRouter();
   const userStore = useUserStore();
   const verifyAddressStep1Mutation = useMutation({
@@ -39,6 +47,9 @@ const AdminLoginPage = () => {
 
   return (
     <main>
+      {loginRequested && showModal && (
+        <MetaMaskDownloader setLoginRequested={setLoginRequested} />
+      )}
       <LoginAdmin
         onClickConnectWallet={handleLoginAdmin}
         loading={verifyAddressStep1Mutation.isPending}
