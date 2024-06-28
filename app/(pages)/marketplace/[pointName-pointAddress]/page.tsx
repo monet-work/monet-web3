@@ -10,14 +10,18 @@ import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserTradeView from "@/components/user-trade-view";
 import { pointsTableData } from "@/data";
-import { AssetListing, ListingStatus } from "@/models/asset-listing.model";
+import {
+  AssetListing,
+  AssetStatus,
+  ListingStatus,
+} from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { readContract, toTokens } from "thirdweb";
+import { Address, readContract, toTokens } from "thirdweb";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 
 const PointPage = () => {
@@ -29,6 +33,7 @@ const PointPage = () => {
   const [isBlockchainLoading, setIsBlockchianLoading] = useState<boolean>(true);
   const [listingData, setListingData] = useState<any[]>([]);
   const [decimals, setDecimals] = useState<number>(0);
+  const [assetStatus, setAssetStatus] = useState<AssetStatus>(AssetStatus.LIVE);
   const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
     shouldShowTradeCompletionOverlay: false,
     children: <></>,
@@ -127,6 +132,19 @@ const PointPage = () => {
   const [formattedAssetListings, setFormattedAssetListings] = useState<
     AssetListing[]
   >([]);
+
+  const getAssetStatus = async () => {
+    const assetStatus = await readContract({
+      contract: monetMarketplaceContract,
+      method: "getAsset",
+      params: [pointAddress as Address],
+    });
+    setAssetStatus(Number(assetStatus.status));
+  };
+
+  useEffect(() => {
+    getAssetStatus();
+  }, []);
 
   const {
     data: pointAssetInfoData,
@@ -257,6 +275,7 @@ const PointPage = () => {
               pointInfo={{
                 name: pointAssetInfoData?.data.name || "",
                 symbol: pointAssetInfoData?.data.symbol || "",
+                assetStatus: assetStatus,
               }}
               assetListing={selectedListing}
               decimals={decimals}

@@ -6,6 +6,7 @@ type Props = {
   pointInfo?: {
     name: string;
     symbol: string;
+    assetStatus: AssetStatus;
   };
   decimals: number;
   assetListing?: AssetListing;
@@ -15,9 +16,10 @@ type Props = {
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
-import { ExternalLink, Pointer } from "lucide-react";
+import { Ban, ExternalLink, Pointer } from "lucide-react";
 import {
   AssetListing,
+  AssetStatus,
   ListingStatus,
   ListingType,
 } from "@/models/asset-listing.model";
@@ -231,8 +233,18 @@ const TradeDetails: React.FC<Props> = ({
             </div>
           </div>
         ) : null}
+        {assetListing && pointInfo?.assetStatus === AssetStatus.DOWN ? (
+          <div className="text-muted-foreground flex items-center justify-center h-full min-h-[400px]">
+            <div className="flex flex-col items-center gap-8">
+              <Ban className="h-12 w-12 text-red-500" />
+              <p className="text-lg text-center ">
+                Trading is temporarily disabled; please try again later.
+              </p>
+            </div>
+          </div>
+        ) : null}
 
-        {assetListing ? (
+        {assetListing && pointInfo?.assetStatus === AssetStatus.LIVE ? (
           <div className="flex flex-col flex-grow">
             <div className="flex-grow">
               <p className="text-2xl">
