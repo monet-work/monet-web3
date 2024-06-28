@@ -1,35 +1,14 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import GridViewComponent from "./grid-view-component";
-import { AssetListing, ListingType } from "@/models/asset-listing.model";
-import { AssetListingColumns } from "./table-columns/asset-listing-columns";
+import { Tabs } from "@/components/ui/tabs";
+import { AssetListing } from "@/models/asset-listing.model";
 import { ListingsDataTable } from "./listings-table/listings-data-table";
 import { UserListingColumns } from "./table-columns/user-listing-columns";
 
 type Props = {
   assetListings: AssetListing[];
   loading?: boolean;
-  onListingSelected?: (listing: AssetListing) => void;
 };
 
-const UserTradeView: React.FC<Props> = ({
-  assetListings,
-  loading = true,
-  onListingSelected,
-}) => {
-  const buyListings = assetListings.filter(
-    (listing) => listing.listingType === ListingType.BUY,
-  );
-
-  const sellListings = assetListings.filter(
-    (listing) => listing.listingType === ListingType.SELL,
-  );
-
-  const [viewType, setViewType] = useState<"list" | "grid">("list");
-  const [selectedListing, setSelectedListing] = useState<
-    AssetListing | undefined
-  >(undefined);
-
+const UserTradeView: React.FC<Props> = ({ assetListings, loading = true }) => {
   return (
     <div className="bg-muted/40 w-full">
       <Tabs defaultValue="list">

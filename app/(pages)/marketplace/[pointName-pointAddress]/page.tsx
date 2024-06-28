@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import UserTradeView from "@/components/user-trade-view";
 import { AssetListing, ListingStatus } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
+import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { useQuery } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
@@ -38,6 +39,7 @@ const PointPage = () => {
   const [selectedListing, setSelectedListing] = useState<
     AssetListing | undefined
   >(undefined);
+  const marketplaceStore = useMarketPlaceStore();
 
   const handleTradeCompletionDialogCallback = (
     showTradeCompletion: boolean,
@@ -111,6 +113,14 @@ const PointPage = () => {
       fetchListings();
     }
   }, [listingCountData]);
+
+  useEffect(() => {
+    if (marketplaceStore.listingCancelled) {
+      refetchPointAssetInfoData();
+      fetchListings();
+      marketplaceStore.setListingCancelled(false);
+    }
+  }, [marketplaceStore.listingCancelled]);
 
   const [formattedAssetListings, setFormattedAssetListings] = useState<
     AssetListing[]
