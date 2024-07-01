@@ -3,9 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
 import { ListingStatus } from "@/models/listing";
+import { Spinner } from "../ui/spinner";
 import { Skeleton } from "../ui/skeleton";
+import AdminRewardPointsAction from "../listings-table/admin-reward-points-actions";
+import { AssetStatus } from "@/models/asset-listing.model";
 
-export const PointsListColumns: ColumnDef<{
+export const AdminRewardPointColumns: ColumnDef<{
   name: string;
   symbol: string;
   address: string;
@@ -64,22 +67,22 @@ export const PointsListColumns: ColumnDef<{
       </div>
     ),
   },
-  {
-    accessorKey: "userPoints",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="On-Chain Balance" />
-    ),
-    cell: ({ row }) => (
-      <div className="text-muted-foreground text-xs">
-        {row.getValue("userPoints") ||
-          (row.getValue("userPoints") === 0 ? (
-            "0"
-          ) : (
-            <Skeleton className="w-full h-5" />
-          ))}
-      </div>
-    ),
-  },
+  // {
+  //   accessorKey: "userPoints",
+  //   header: ({ column }) => (
+  //     <DataTableColumnHeader column={column} title="On-Chain Balance" />
+  //   ),
+  //   cell: ({ row }) => (
+  //     <div className="text-muted-foreground text-xs">
+  //       {row.getValue("userPoints") ||
+  //         (row.getValue("userPoints") === 0 ? (
+  //           "0"
+  //         ) : (
+  //           <Skeleton className="w-full h-5" />
+  //         ))}
+  //     </div>
+  //   ),
+  // },
   {
     accessorKey: "status",
     header: ({ column }) => (
@@ -96,5 +99,27 @@ export const PointsListColumns: ColumnDef<{
         )}
       </div>
     ),
+  },
+  {
+    accessorKey: "action",
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title="Action"
+        className="text-xs"
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="text-xs cursor-pointer">
+        <AdminRewardPointsAction
+          AssetAddress={row.getValue("address")}
+          Status={
+            row.getValue("status") === 0 ? AssetStatus.LIVE : AssetStatus.DOWN
+          }
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
 ];
