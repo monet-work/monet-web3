@@ -222,7 +222,7 @@ const PointPage = () => {
     if (formattedAssetListings.length > 0) return;
     console.log("setting data from api", formattedListings);
     setFormattedAssetListings(formattedListings);
-  }, [pointAssetInfoData]);
+  }, [pointAssetInfoData, decimalsData]);
 
   const publicListings = formattedAssetListings.filter(
     (listing) => listing.owner !== walletAddress,
