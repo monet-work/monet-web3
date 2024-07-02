@@ -54,6 +54,28 @@ const PointPage = () => {
       method: "decimals",
     });
 
+  const { data: nameData, isLoading: isLoadingNameData } = useReadContract({
+    contract: monetPointsContractFactory(pointAddress),
+    method: "name",
+  });
+
+  const { data: symbolData, isLoading: isLoadingSymbolData } = useReadContract({
+    contract: monetPointsContractFactory(pointAddress),
+    method: "symbol",
+  });
+
+  console.log("walletAddress: ", walletAddress);
+  const { data: balanceData, isLoading: isLoadingBalanceData } =
+    useReadContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "balanceOf",
+      params: [walletAddress as Address],
+      queryOptions: {
+        enabled: !!walletAddress,
+      },
+    });
+
+  console.log("balanceData: ", balanceData);
   const {
     data: listingCountData,
     isLoading: isLoadingListingCountData,
@@ -167,34 +189,34 @@ const PointPage = () => {
     },
   });
 
-  const getAssetDetails = async () => {
-    const assetName = await readContract({
-      contract: monetPointsContractFactory(pointAddress),
-      method: "name",
-    });
-    setAssetName(assetName);
+  // const getAssetDetails = async () => {
+  //   const assetName = await readContract({
+  //     contract: monetPointsContractFactory(pointAddress),
+  //     method: "name",
+  //   });
+  //   setAssetName(assetName);
 
-    const assetSymbol = await readContract({
-      contract: monetPointsContractFactory(pointAddress),
-      method: "symbol",
-    });
-    setAssetSymbol(assetSymbol);
+  //   const assetSymbol = await readContract({
+  //     contract: monetPointsContractFactory(pointAddress),
+  //     method: "symbol",
+  //   });
+  //   setAssetSymbol(assetSymbol);
 
-    console.log("activeAccount?.address: ", activeAccount?.address);
-    if (activeAccount) {
-      console.log("decimalsData: ", decimalsData);
-      const assetBalance = await readContract({
-        contract: monetPointsContractFactory(pointAddress),
-        method: "balanceOf",
-        params: [activeAccount?.address as Address],
-      });
-      setAssetBalance(toTokens(assetBalance, decimalsData!));
-    }
-  };
+  //   console.log("activeAccount?.address: ", activeAccount?.address);
+  //   if (activeAccount) {
+  //     console.log("decimalsData: ", decimalsData);
+  //     const assetBalance = await readContract({
+  //       contract: monetPointsContractFactory(pointAddress),
+  //       method: "balanceOf",
+  //       params: [activeAccount?.address as Address],
+  //     });
+  //     setAssetBalance(toTokens(assetBalance, decimalsData!));
+  //   }
+  // };
 
-  useEffect(() => {
-    getAssetDetails();
-  }, [activeAccount, decimalsData]);
+  // useEffect(() => {
+  //   getAssetDetails();
+  // }, [activeAccount, decimalsData]);
 
   const {
     data: pointAssetInfoData,
@@ -251,6 +273,7 @@ const PointPage = () => {
     (listing) => listing.owner === walletAddress,
   );
 
+  console.log("assetData: ", assetData);
   return (
     <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-8 w-full container">
@@ -261,8 +284,8 @@ const PointPage = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl pb-2">
-                  {assetName}{" "}
-                  <span className="text-muted-foreground">({assetSymbol})</span>
+                  {nameData}{" "}
+                  <span className="text-muted-foreground">({symbolData})</span>
                 </h2>
                 <Link
                   className="flex gap-2"
@@ -276,8 +299,10 @@ const PointPage = () => {
               </div>
 
               <div className="text-muted-foreground text-2xl">
-                <span className="font-bold mr-2">{assetBalance}</span>
-                <span className="font-light">{assetSymbol}</span>
+                <span className="font-bold mr-2">
+                  {balanceData ? toTokens(balanceData, decimalsData!) : "0"}
+                </span>
+                <span className="font-light">{symbolData}</span>
               </div>
             </div>
           )}
@@ -310,8 +335,8 @@ const PointPage = () => {
           <div className="sticky top-[100px] mt-8">
             <TradeDetails
               pointInfo={{
-                name: assetName || "",
-                symbol: assetSymbol || "",
+                name: nameData || "",
+                symbol: symbolData || "",
                 assetStatus: assetData?.status || AssetStatus.LIVE,
               }}
               assetListing={selectedListing}
