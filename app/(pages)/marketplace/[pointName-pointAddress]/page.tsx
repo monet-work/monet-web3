@@ -9,7 +9,7 @@ import TradeDetails from "@/components/trade-details";
 import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserTradeView from "@/components/user-trade-view";
-import { pointsTableData } from "@/data";
+import useHasMounted from "@/hooks/useHasMounted";
 import {
   AssetListing,
   AssetStatus,
@@ -17,7 +17,8 @@ import {
 } from "@/models/asset-listing.model";
 import { apiService } from "@/services/api.service";
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { wrap } from "comlink";
 import { ExternalLinkIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,18 +30,12 @@ const PointPage = () => {
   const activeAccount = useActiveAccount();
   const walletAddress = activeAccount?.address;
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const pointNameWithAddress = pathname.split("/")[2];
-  const [isBlockchainLoading, setIsBlockchainLoading] =
-    useState<boolean>(false);
-  const [listingData, setListingData] = useState<any[]>([]);
-  const [decimals, setDecimals] = useState<number>(0);
-  const [assetStatus, setAssetStatus] = useState<AssetStatus>(AssetStatus.LIVE);
   const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
     shouldShowTradeCompletionOverlay: false,
     children: <></>,
   });
-  const [formattedBlockchainListings, setFormattedBlockchainListings] =
-    useState<AssetListing[]>([]);
   const pointName = pointNameWithAddress.split("-")[0];
   const pointAddress = pointNameWithAddress.split("-")[1];
   const [selectedListing, setSelectedListing] = useState<
@@ -48,15 +43,19 @@ const PointPage = () => {
   >(undefined);
   const marketplaceStore = useMarketPlaceStore();
 
-  const handleTradeCompletionDialogCallback = (
-    showTradeCompletion: boolean,
-    children: JSX.Element,
-  ) => {
-    setRedeemCompletionOverlay({
-      ...redeemCompletionOverlay,
-      shouldShowTradeCompletionOverlay: showTradeCompletion,
-      children: children,
+  const fetchListingData = async (id: number) => {
+    return await readContract({
+      contract: monetMarketplaceContract,
+      method: "getListing",
+      params: [BigInt(id)],
     });
+  };
+
+  const fetchListingsFromBlockchain = async (count: number) => {
+    const results = await Promise.all(
+      Array.from({ length: count }, (_, i) => fetchListingData(i + 1)), // i + 1 because the listing starts at 1
+    );
+    return results;
   };
 
   const { data: decimalsData, isLoading: isLoadingDecimalsData } =
@@ -77,74 +76,104 @@ const PointPage = () => {
     },
   });
 
-  const fetchListings = async () => {
-    setIsBlockchainLoading(true);
-    if (!listingCountData) return;
-    for (let i = 1; i <= Number(listingCountData); i++) {
-      const Listings = async () => {
-        const data = await readContract({
-          contract: monetMarketplaceContract,
-          method: "getListing",
-          params: [BigInt(i)],
+  const hasMounted = useHasMounted();
+
+  const useFetchBlockchainListings = (listingCount: number) => {
+    return useQuery({
+      queryKey: ["blockchain-listings", listingCount],
+      queryFn: async () => {
+        return await fetchListingsFromBlockchain(listingCount);
+      },
+      enabled: !!listingCount && !!decimalsData && hasMounted,
+      staleTime: 0,
+      select: (res) => {
+        const formattedData = res.map((listing) => {
+          const _amount = BigInt(listing.amount);
+          const pricePerPoint = BigInt(listing.pricePerPoint);
+          return {
+            ...listing,
+            Id: String(listing.Id),
+            amount: toTokens(BigInt(listing.amount), decimalsData!),
+            totalPrice: toTokens(_amount * pricePerPoint, 18),
+            pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
+          };
         });
+        return formattedData;
+      },
+    });
+  };
 
-        if (data.asset === pointAddress) {
-          setListingData((prev: any) => [...prev, data]);
-        }
-      };
+  const { data: blockchainListings, isLoading: isLoadingBlockchainListings } =
+    useFetchBlockchainListings(Number(listingCountData));
 
-      await Listings();
+  useEffect(() => {
+    if (blockchainListings) {
+      invalidateBlockchainListings();
+      console.log(blockchainListings, "blockchainListings");
+      setFormattedAssetListings(blockchainListings);
     }
+  }, [blockchainListings]);
 
-    setIsBlockchainLoading(false);
+  const invalidateBlockchainListings = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["blockchain-listings", Number(listingCountData)],
+    });
+  };
+
+  const invalidateApiListings = () => {
+    queryClient.invalidateQueries({
+      queryKey: [
+        "marketplace/point-asset-info",
+        {
+          pointName,
+          pointAddress,
+        },
+      ],
+    });
+  };
+
+  const refetchListings = async () => {
+    invalidateApiListings();
+    invalidateBlockchainListings();
   };
 
   useEffect(() => {
-    if (!decimalsData) return;
-    const formattedListings = listingData.map((listing) => {
-      const _amount = BigInt(listing.amount);
-      const pricePerPoint = BigInt(listing.pricePerPoint);
-      return {
-        ...listing,
-        Id: Number(listing.Id),
-        amount: toTokens(BigInt(listing.amount), decimalsData),
-        totalPrice: toTokens(_amount * pricePerPoint, 18),
-        pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
-      };
-    });
-    setFormattedBlockchainListings(formattedListings);
-  }, [isBlockchainLoading]);
-
-  useEffect(() => {
-    if (Number(listingCountData) != 0) {
-      fetchListings();
-    }
-  }, [listingCountData]);
-
-  useEffect(() => {
     if (marketplaceStore.listingCancelled) {
-      refetchPointAssetInfoData();
-      fetchListings();
+      refetchListings();
       marketplaceStore.setListingCancelled(false);
     }
   }, [marketplaceStore.listingCancelled]);
+
+  useEffect(() => {
+    if (marketplaceStore.offerCreated) {
+      refetchListings();
+      marketplaceStore.setOfferCreated(false);
+    }
+  }, [marketplaceStore.offerCreated]);
+
+  const handleTradeCompletionDialogCallback = (
+    showTradeCompletion: boolean,
+    children: JSX.Element,
+  ) => {
+    setRedeemCompletionOverlay({
+      ...redeemCompletionOverlay,
+      shouldShowTradeCompletionOverlay: showTradeCompletion,
+      children: children,
+    });
+  };
 
   const [formattedAssetListings, setFormattedAssetListings] = useState<
     AssetListing[]
   >([]);
 
-  const getAssetStatus = async () => {
-    const assetStatus = await readContract({
-      contract: monetMarketplaceContract,
-      method: "getAsset",
-      params: [pointAddress as Address],
-    });
-    setAssetStatus(Number(assetStatus.status));
-  };
-
-  useEffect(() => {
-    getAssetStatus();
-  }, []);
+  const { data: assetData, isLoading: isLoadingAssetData } = useReadContract({
+    contract: monetMarketplaceContract,
+    method: "getAsset",
+    params: [pointAddress as Address],
+    queryOptions: {
+      enabled: !!pointAddress,
+    },
+  });
 
   const {
     data: pointAssetInfoData,
@@ -178,17 +207,14 @@ const PointPage = () => {
         };
       });
 
+    if (formattedListings.length) return;
+    console.log("setting api data", formattedListings);
     setFormattedAssetListings(formattedListings);
   }, [pointAssetInfoData]);
 
-  const publicListings =
-    formattedBlockchainListings.length > 0
-      ? formattedBlockchainListings.filter(
-          (listing) => listing.owner !== walletAddress,
-        )
-      : formattedAssetListings.filter(
-          (listing) => listing.owner !== walletAddress,
-        );
+  const publicListings = formattedAssetListings.filter(
+    (listing) => listing.owner !== walletAddress,
+  );
 
   const livePublicListings = publicListings.filter(
     (listing) => listing.status === ListingStatus.LIVE,
@@ -198,14 +224,9 @@ const PointPage = () => {
     (listing) => listing.status === ListingStatus.BOUGHT,
   );
 
-  const ownerListings =
-    formattedBlockchainListings.length > 0
-      ? formattedBlockchainListings.filter(
-          (listing) => listing.owner === walletAddress,
-        )
-      : formattedAssetListings.filter(
-          (listing) => listing.owner === walletAddress,
-        );
+  const ownerListings = formattedAssetListings.filter(
+    (listing) => listing.owner === walletAddress,
+  );
 
   return (
     <main className="pt-16">
@@ -252,15 +273,6 @@ const PointPage = () => {
             />
           </div>
           <div className="mt-8">
-            <h3 className="mb-4 text-muted-foreground">
-              Recently completed listings
-            </h3>
-            <TradesView
-              assetListings={completedPublicListings || []}
-              loading={isLoadingPointAssetInfoData}
-            />
-          </div>
-          <div className="mt-8">
             <h3 className="mb-4 text-muted-foreground">Your listings</h3>
             <UserTradeView
               assetListings={ownerListings || []}
@@ -274,15 +286,14 @@ const PointPage = () => {
               pointInfo={{
                 name: pointAssetInfoData?.data.name || "",
                 symbol: pointAssetInfoData?.data.symbol || "",
-                assetStatus: assetStatus,
+                assetStatus: assetData?.status || AssetStatus.LIVE,
               }}
               assetListing={selectedListing}
               decimals={decimalsData || 0}
               onTradeSuccess={(show: boolean, children: JSX.Element) => {
                 setSelectedListing(undefined);
                 handleTradeCompletionDialogCallback(show, children);
-                refetchPointAssetInfoData();
-                fetchListings();
+                refetchListings();
               }}
             />
           </div>

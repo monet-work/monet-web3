@@ -40,11 +40,7 @@ import {
 import { toast } from "sonner";
 import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
-import confetti from "canvas-confetti";
-import {
-  celebratoryConfetti,
-  schoolPrideConfetti,
-} from "@/lib/confetti-helper";
+import { celebratoryConfetti } from "@/lib/confetti-helper";
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
