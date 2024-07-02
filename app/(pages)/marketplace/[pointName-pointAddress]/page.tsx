@@ -42,9 +42,6 @@ const PointPage = () => {
   const [selectedListing, setSelectedListing] = useState<
     AssetListing | undefined
   >(undefined);
-  const [assetBalance, setAssetBalance] = useState("0");
-  const [assetName, setAssetName] = useState("");
-  const [assetSymbol, setAssetSymbol] = useState("");
 
   const marketplaceStore = useMarketPlaceStore();
 
@@ -64,7 +61,6 @@ const PointPage = () => {
     method: "symbol",
   });
 
-  console.log("walletAddress: ", walletAddress);
   const { data: balanceData, isLoading: isLoadingBalanceData } =
     useReadContract({
       contract: monetPointsContractFactory(pointAddress),
@@ -188,35 +184,6 @@ const PointPage = () => {
       enabled: !!pointAddress,
     },
   });
-
-  // const getAssetDetails = async () => {
-  //   const assetName = await readContract({
-  //     contract: monetPointsContractFactory(pointAddress),
-  //     method: "name",
-  //   });
-  //   setAssetName(assetName);
-
-  //   const assetSymbol = await readContract({
-  //     contract: monetPointsContractFactory(pointAddress),
-  //     method: "symbol",
-  //   });
-  //   setAssetSymbol(assetSymbol);
-
-  //   console.log("activeAccount?.address: ", activeAccount?.address);
-  //   if (activeAccount) {
-  //     console.log("decimalsData: ", decimalsData);
-  //     const assetBalance = await readContract({
-  //       contract: monetPointsContractFactory(pointAddress),
-  //       method: "balanceOf",
-  //       params: [activeAccount?.address as Address],
-  //     });
-  //     setAssetBalance(toTokens(assetBalance, decimalsData!));
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getAssetDetails();
-  // }, [activeAccount, decimalsData]);
 
   const {
     data: pointAssetInfoData,
