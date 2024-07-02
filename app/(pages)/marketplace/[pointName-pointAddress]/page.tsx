@@ -162,7 +162,6 @@ const PointPage = () => {
     });
     setAssetSymbol(assetSymbol);
 
-    console.log("activeAccount?.address: ", activeAccount?.address);
     if (activeAccount) {
       const assetBalance = await readContract({
         contract: monetPointsContractFactory(pointAddress),
