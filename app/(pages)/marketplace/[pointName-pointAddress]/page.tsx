@@ -41,6 +41,10 @@ const PointPage = () => {
   const [formattedBlockchainListings, setFormattedBlockchainListings] =
     useState<AssetListing[]>([]);
 
+  const [assetBalance, setAssetBalance] = useState("0");
+  const [assetName, setAssetName] = useState("");
+  const [assetSymbol, setAssetSymbol] = useState("");
+
   console.log(formattedBlockchainListings, "formattedBlockchianListings");
 
   const handleTradeCompletionDialogCallback = (
@@ -133,18 +137,45 @@ const PointPage = () => {
     AssetListing[]
   >([]);
 
-  const getAssetStatus = async () => {
+  const getAssetDetails = async () => {
+    const decimals = await readContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "decimals",
+    });
+
     const assetStatus = await readContract({
       contract: monetMarketplaceContract,
       method: "getAsset",
       params: [pointAddress as Address],
     });
     setAssetStatus(Number(assetStatus.status));
+
+    const assetName = await readContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "name",
+    });
+    setAssetName(assetName);
+
+    const assetSymbol = await readContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "symbol",
+    });
+    setAssetSymbol(assetSymbol);
+
+    console.log("activeAccount?.address: ", activeAccount?.address);
+    if (activeAccount) {
+      const assetBalance = await readContract({
+        contract: monetPointsContractFactory(pointAddress),
+        method: "balanceOf",
+        params: [activeAccount?.address as Address],
+      });
+      setAssetBalance(toTokens(assetBalance, decimals));
+    }
   };
 
   useEffect(() => {
-    getAssetStatus();
-  }, []);
+    getAssetDetails();
+  }, [activeAccount]);
 
   const {
     data: pointAssetInfoData,
@@ -220,10 +251,8 @@ const PointPage = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl pb-2">
-                  {pointAssetInfoData?.data.name}{" "}
-                  <span className="text-muted-foreground">
-                    ({pointAssetInfoData?.data.symbol})
-                  </span>
+                  {assetName}{" "}
+                  <span className="text-muted-foreground">({assetSymbol})</span>
                 </h2>
                 <Link
                   className="flex gap-2"
@@ -237,12 +266,8 @@ const PointPage = () => {
               </div>
 
               <div className="text-muted-foreground text-2xl">
-                <span className="font-bold mr-2">
-                  {pointAssetInfoData?.data.points}
-                </span>
-                <span className="font-light">
-                  {pointAssetInfoData?.data.symbol}
-                </span>
+                <span className="font-bold mr-2">{assetBalance}</span>
+                <span className="font-light">{assetSymbol}</span>
               </div>
             </div>
           )}
@@ -275,8 +300,8 @@ const PointPage = () => {
           <div className="sticky top-[100px] mt-8">
             <TradeDetails
               pointInfo={{
-                name: pointAssetInfoData?.data.name || "",
-                symbol: pointAssetInfoData?.data.symbol || "",
+                name: assetName || "",
+                symbol: assetSymbol || "",
                 assetStatus: assetStatus,
               }}
               assetListing={selectedListing}
