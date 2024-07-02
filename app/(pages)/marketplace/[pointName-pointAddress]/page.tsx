@@ -188,9 +188,12 @@ const PointPage = () => {
 
     const formattedListings =
       pointAssetInfoData.data.listings.assetListings.map((listing) => {
+        const _amount = BigInt(listing.amount);
+        const pricePerPoint = BigInt(listing.pricePerPoint);
         return {
           ...listing,
           amount: toTokens(BigInt(listing.amount), pointDecimals),
+          totalPrice: toTokens(_amount * pricePerPoint, 18),
           pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
         };
       });
