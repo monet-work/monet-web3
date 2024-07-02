@@ -73,17 +73,19 @@ const PointPage = () => {
       enabled: !!listingCount && !!decimalsData && hasMounted,
       staleTime: 0,
       select: (res) => {
-        const formattedData = res.map((listing) => {
-          const _amount = BigInt(listing.amount);
-          const pricePerPoint = BigInt(listing.pricePerPoint);
-          return {
-            ...listing,
-            Id: String(listing.Id),
-            amount: toTokens(BigInt(listing.amount), decimalsData!),
-            totalPrice: toTokens(_amount * pricePerPoint, 18),
-            pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
-          };
-        });
+        const formattedData = res
+          .filter((listing) => listing.asset === pointAddress)
+          .map((listing) => {
+            const _amount = BigInt(listing.amount);
+            const pricePerPoint = BigInt(listing.pricePerPoint);
+            return {
+              ...listing,
+              Id: String(listing.Id),
+              amount: toTokens(BigInt(listing.amount), decimalsData!),
+              totalPrice: toTokens(_amount * pricePerPoint, 18),
+              pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
+            };
+          });
         return formattedData;
       },
     });
