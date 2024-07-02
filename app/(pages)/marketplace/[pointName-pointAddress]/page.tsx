@@ -42,6 +42,7 @@ const PointPage = () => {
   const [selectedListing, setSelectedListing] = useState<
     AssetListing | undefined
   >(undefined);
+
   const marketplaceStore = useMarketPlaceStore();
 
   const { data: decimalsData, isLoading: isLoadingDecimalsData } =
@@ -50,6 +51,27 @@ const PointPage = () => {
       method: "decimals",
     });
 
+  const { data: nameData, isLoading: isLoadingNameData } = useReadContract({
+    contract: monetPointsContractFactory(pointAddress),
+    method: "name",
+  });
+
+  const { data: symbolData, isLoading: isLoadingSymbolData } = useReadContract({
+    contract: monetPointsContractFactory(pointAddress),
+    method: "symbol",
+  });
+
+  const { data: balanceData, isLoading: isLoadingBalanceData } =
+    useReadContract({
+      contract: monetPointsContractFactory(pointAddress),
+      method: "balanceOf",
+      params: [walletAddress as Address],
+      queryOptions: {
+        enabled: !!walletAddress,
+      },
+    });
+
+  console.log("balanceData: ", balanceData);
   const {
     data: listingCountData,
     isLoading: isLoadingListingCountData,
@@ -184,7 +206,7 @@ const PointPage = () => {
 
   useEffect(() => {
     if (!pointAssetInfoData?.data) return;
-    const pointDecimals = pointAssetInfoData.data.decimals;
+    const pointDecimals = decimalsData!;
 
     const formattedListings =
       pointAssetInfoData.data.listings.assetListings.map((listing) => {
@@ -200,7 +222,7 @@ const PointPage = () => {
     if (formattedAssetListings.length > 0) return;
     console.log("setting data from api", formattedListings);
     setFormattedAssetListings(formattedListings);
-  }, [pointAssetInfoData]);
+  }, [pointAssetInfoData, decimalsData]);
 
   const publicListings = formattedAssetListings.filter(
     (listing) => listing.owner !== walletAddress,
@@ -228,10 +250,8 @@ const PointPage = () => {
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-2xl pb-2">
-                  {pointAssetInfoData?.data.name}{" "}
-                  <span className="text-muted-foreground">
-                    ({pointAssetInfoData?.data.symbol})
-                  </span>
+                  {nameData}{" "}
+                  <span className="text-muted-foreground">({symbolData})</span>
                 </h2>
                 <Link
                   className="flex gap-2"
@@ -246,11 +266,11 @@ const PointPage = () => {
 
               <div className="text-muted-foreground text-2xl">
                 <span className="font-bold mr-2">
-                  {pointAssetInfoData?.data.points}
+                  {balanceData
+                    ? toTokens(balanceData, decimalsData ? decimalsData : 0)
+                    : "0"}
                 </span>
-                <span className="font-light">
-                  {pointAssetInfoData?.data.symbol}
-                </span>
+                <span className="font-light">{symbolData}</span>
               </div>
             </div>
           )}
@@ -283,8 +303,8 @@ const PointPage = () => {
           <div className="sticky top-[100px] mt-8">
             <TradeDetails
               pointInfo={{
-                name: pointAssetInfoData?.data.name || "",
-                symbol: pointAssetInfoData?.data.symbol || "",
+                name: nameData || "",
+                symbol: symbolData || "",
                 assetStatus: assetData?.status || AssetStatus.LIVE,
               }}
               assetListing={selectedListing}
