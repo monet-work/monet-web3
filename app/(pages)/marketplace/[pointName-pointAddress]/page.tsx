@@ -206,9 +206,8 @@ const PointPage = () => {
           pricePerPoint: toTokens(BigInt(listing.pricePerPoint), 18),
         };
       });
-
-    if (formattedListings.length) return;
-    console.log("setting api data", formattedListings);
+    if (formattedAssetListings.length > 0) return;
+    console.log("setting data from api", formattedListings);
     setFormattedAssetListings(formattedListings);
   }, [pointAssetInfoData]);
 
