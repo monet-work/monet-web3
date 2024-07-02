@@ -240,7 +240,6 @@ const PointPage = () => {
     (listing) => listing.owner === walletAddress,
   );
 
-  console.log("assetData: ", assetData);
   return (
     <main className="pt-16">
       <div className="flex flex-col md:flex-row gap-8 w-full container">
@@ -267,7 +266,9 @@ const PointPage = () => {
 
               <div className="text-muted-foreground text-2xl">
                 <span className="font-bold mr-2">
-                  {balanceData ? toTokens(balanceData, decimalsData!) : "0"}
+                  {balanceData
+                    ? toTokens(balanceData, decimalsData ? decimalsData : 0)
+                    : "0"}
                 </span>
                 <span className="font-light">{symbolData}</span>
               </div>
