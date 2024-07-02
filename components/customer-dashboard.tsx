@@ -24,10 +24,12 @@ import { realisticConfetti } from "@/lib/confetti-helper";
 import OverlayMessageBox from "./overlay-message-box";
 import { useRouter } from "next/navigation";
 import PointCard from "./point-card";
+import { useUserStore } from "@/store/userStore";
 
 const CustomerDashboard = () => {
   const router = useRouter();
   const customerStore = useCustomerStore();
+  const userStore = useUserStore();
   const [showRedeemForm, setShowRedeemForm] = useState(false);
   const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
     shouldShowRedeemCompletionOverlay: false,
@@ -49,16 +51,18 @@ const CustomerDashboard = () => {
   } = useQuery({
     queryKey: [
       "customer/onChainPoints",
-      { customerId: customerStore?.customer?.id },
+      {
+        customerId: customerStore?.customer?.id || userStore.user?.customer?.id,
+      },
     ],
     queryFn: () => {
       return apiService.getCustomerOnChainPoints(
-        customerStore?.customer?.id!,
+        customerStore?.customer?.id! || userStore.user?.customer?.id!,
         activePointToRedeem?.company?.point_contract_address!,
       );
     },
     enabled:
-      !!customerStore?.customer?.id &&
+      (!!customerStore?.customer?.id || !!userStore.user?.customer.id) &&
       !!activePointToRedeem?.company?.point_contract_address,
   });
 
@@ -71,11 +75,18 @@ const CustomerDashboard = () => {
     isLoading: isLoadingCustomerPoints,
     isError: isErrorCustomerPoints,
   } = useQuery({
-    queryKey: ["customer/points", { customerId: customerStore?.customer?.id }],
+    queryKey: [
+      "customer/points",
+      {
+        customerId: customerStore?.customer?.id || userStore.user?.customer?.id,
+      },
+    ],
     queryFn: () => {
-      return apiService.fetchCustomerPoints(customerStore?.customer?.id!);
+      return apiService.fetchCustomerPoints(
+        customerStore?.customer?.id! || userStore.user?.customer?.id!,
+      );
     },
-    enabled: !!customerStore?.customer?.id,
+    enabled: !!customerStore?.customer?.id || !!userStore.user?.customer?.id,
   });
 
   const getMintStatus = async (address: Address) => {
@@ -101,7 +112,7 @@ const CustomerDashboard = () => {
       const dataWithOnChainPoints = await Promise.all(
         points.map(async (point) => {
           const onChainPoints = await apiService.getCustomerOnChainPoints(
-            customerStore?.customer?.id!,
+            customerStore?.customer?.id! || userStore.user?.customer?.id!,
             point.company!.point_contract_address!,
           );
           const mintStatus = await getMintStatus(
@@ -145,8 +156,6 @@ const CustomerDashboard = () => {
             onchainPoints,
           } = response.data.data;
 
-          console.log(response.data.data, "response.data.data");
-
           //prepare transaction
 
           if (canRedeem) {
@@ -158,8 +167,7 @@ const CustomerDashboard = () => {
               });
 
               await sendTransaction(transaction as PreparedTransaction, {
-                onSuccess: (result) => {
-                  console.log(result);
+                onSuccess: async (result) => {
                   toast.success(points + " points redeemed successfully");
                   realisticConfetti();
                   setShowRedeemForm(false);
@@ -206,6 +214,7 @@ const CustomerDashboard = () => {
                   });
                   //refetch points
                   refetchCustomerPoints();
+                  await fetchOnChainPointsForAllTokens();
                 },
 
                 onError: (error) => {
@@ -327,7 +336,7 @@ const CustomerDashboard = () => {
               totalPoints={activePointToRedeem ? activePointToRedeem.points : 0}
               onChainPoints={onChainPoints}
               isLoading={isLoadingCustomerOnChainPoints}
-              isButtonLoading={isPending}
+              isButtonLoading={isPending || redeemPointsMutation.isPending}
               onSubmitForm={(values) => {
                 const { amount } = values;
 

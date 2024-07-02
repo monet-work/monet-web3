@@ -9,19 +9,20 @@ import Link from "next/link";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
 import CreateOfferForm from "./forms/create-offer-form";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import OverlayMessageBox from "./overlay-message-box";
+import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 
 const MarketplaceHeader = () => {
   const activeAccount = useActiveAccount();
-  const router = useRouter();
   const [showOfferDialog, setShowOfferDialog] = useState(false);
   const pathname = usePathname();
   const [redeemCompletionOverlay, setRedeemCompletionOverlay] = useState({
     shouldShowOfferCompletionOverlay: false,
     children: <></>,
   });
+  const marketplaceStore = useMarketPlaceStore();
 
   const isRouteActive = (route: string) => {
     return pathname.includes(route);
@@ -90,6 +91,7 @@ const MarketplaceHeader = () => {
                 onCanceled={() => setShowOfferDialog(false)}
                 onSuccess={(show, children) => {
                   handleCreateOfferCallback(show, children);
+                  marketplaceStore.setOfferCreated(true);
                 }}
               />
             </DialogContent>
