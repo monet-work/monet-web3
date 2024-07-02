@@ -65,6 +65,7 @@ const PointPage = () => {
     });
     setDecimals(Number(decimals));
   };
+
   const ListingCount = async () => {
     if (!activeAccount?.address) return;
     const data = await readContract({
@@ -197,7 +198,7 @@ const PointPage = () => {
 
   useEffect(() => {
     if (!pointAssetInfoData?.data) return;
-    const pointDecimals = pointAssetInfoData.data.decimals;
+    const pointDecimals = decimals;
 
     const formattedListings =
       pointAssetInfoData.data.listings.assetListings.map((listing) => {
@@ -212,7 +213,7 @@ const PointPage = () => {
       });
 
     setFormattedAssetListings(formattedListings);
-  }, [pointAssetInfoData]);
+  }, [pointAssetInfoData, decimals]);
 
   const publicListings =
     formattedBlockchainListings.length > 0
