@@ -273,6 +273,15 @@ const PointPage = () => {
             />
           </div>
           <div className="mt-8">
+            <h3 className="mb-4 text-muted-foreground">
+              Recently completed listings
+            </h3>
+            <TradesView
+              assetListings={completedPublicListings || []}
+              loading={isLoadingPointAssetInfoData}
+            />
+          </div>
+          <div className="mt-8">
             <h3 className="mb-4 text-muted-foreground">Your listings</h3>
             <UserTradeView
               assetListings={ownerListings || []}
