@@ -10,6 +10,7 @@ import TradesView from "@/components/trades-view";
 import { Skeleton } from "@/components/ui/skeleton";
 import UserTradeView from "@/components/user-trade-view";
 import useHasMounted from "@/hooks/useHasMounted";
+import { fetchListingsFromBlockchain } from "@/lib/blockchain-data-helper";
 import {
   AssetListing,
   AssetStatus,
@@ -42,21 +43,6 @@ const PointPage = () => {
     AssetListing | undefined
   >(undefined);
   const marketplaceStore = useMarketPlaceStore();
-
-  const fetchListingData = async (id: number) => {
-    return await readContract({
-      contract: monetMarketplaceContract,
-      method: "getListing",
-      params: [BigInt(id)],
-    });
-  };
-
-  const fetchListingsFromBlockchain = async (count: number) => {
-    const results = await Promise.all(
-      Array.from({ length: count }, (_, i) => fetchListingData(i + 1)), // i + 1 because the listing starts at 1
-    );
-    return results;
-  };
 
   const { data: decimalsData, isLoading: isLoadingDecimalsData } =
     useReadContract({
