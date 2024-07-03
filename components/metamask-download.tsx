@@ -1,5 +1,6 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Siren } from "lucide-react";
 const MetaMaskDownloader = ({
   setLoginRequested,
 }: {
@@ -10,23 +11,30 @@ const MetaMaskDownloader = ({
       <Card className="backdrop-blur-sm bg-muted-foreground/20 relative">
         <div className="p-4">
           <div className="flex flex-col">
-            <h1 className="text-2xl font-bold">Metamask is not detected!</h1>
+            <h1 className="text-2xl flex font-bold">
+              Metamask wallet not detected
+            </h1>
             <p className="text-sm mt-2 max-w-sm text-muted-foreground">
-              Click on the download button below to install &nbsp;
-              <span className="font-semibold">Metamask</span> to keep going. 🚀
+              Please make sure your wallet is unlocked and available. If you do
+              not currently have a Web3 wallet, we suggest{" "}
+              <span className="font-semibold">
+                {" "}
+                <a href="https://metamask.io/"> Metamask</a>
+              </span>
             </p>
 
             <div>
               <div className="mt-8 flex flex-col justify-center gap-4">
                 <a href="https://metamask.io/download" target="_blank">
                   <Button className="bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-purple-600 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-full">
-                    Download &nbsp;
-                    <span className="font-semibold">Metamask!</span> 🌟
+                    Install&nbsp;
+                    <span className="font-semibold">Metamask Wallet</span>
                   </Button>
                 </a>
                 <Button
                   onClick={() => setLoginRequested(false)}
-                  className="bg-blue-600 px-12 py-3 text-sm font-medium text-white hover:bg-purple-600 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-full"
+                  variant={"outline"}
+                  className=" px-12 py-3 text-sm font-medium bg-neutral-500 text-white hover:bg-neutral-700 hover:text-white focus:outline-none focus:ring active:text-opacity-75 sm:w-full"
                 >
                   Cancel
                 </Button>
