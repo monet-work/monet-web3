@@ -22,19 +22,19 @@ const useIsWalletInstalled = ({
   useEffect(() => {
     if (
       typeof window === "undefined" ||
-      typeof window.ethereum === "undefined"
+      typeof (window as any).ethereum === "undefined"
     ) {
       return;
     }
 
     if (flag) {
-      setIsInstalled(window.ethereum[flag]);
+      setIsInstalled((window as any).ethereum[flag]);
       return;
     }
 
     if (wallet && WALLETS[wallet]) {
       const { flag: walletFlag } = WALLETS[wallet];
-      setIsInstalled(window.ethereum[walletFlag]);
+      setIsInstalled((window as any).ethereum[walletFlag]);
     }
   }, [wallet, flag]);
 
