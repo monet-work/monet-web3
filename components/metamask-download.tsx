@@ -20,7 +20,11 @@ const MetaMaskDownloader = ({
               not currently have a Web3 wallet, we suggest{" "}
               <span className="font-semibold">
                 {" "}
-                <a className="text-blue-500" href="https://metamask.io/">
+                <a
+                  className="text-blue-500"
+                  target="_blank"
+                  href="https://metamask.io/"
+                >
                   {" "}
                   Metamask
                 </a>
