@@ -2,6 +2,8 @@
 
 import { connectWallet } from "@/app/contract-utils";
 import LoginCompany from "@/components/login-company";
+import MetaMaskDownloader from "@/components/metamask-download";
+import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -15,6 +17,12 @@ const CompanyLoginPage = () => {
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
+  const isInstalled = useIsWalletInstalled({ flag: "isMetaMask" });
+  const [showModal, setShowModal] = useState(isInstalled === false);
+  useEffect(() => {
+    setShowModal(isInstalled === false);
+  }, [isInstalled]);
+
   const verifyAddressStep1Mutation = useMutation({
     mutationFn: apiService.companyVerifyWalletStep1,
   });
@@ -37,6 +45,9 @@ const CompanyLoginPage = () => {
 
   return (
     <main>
+      {loginRequested && showModal && (
+        <MetaMaskDownloader setLoginRequested={setLoginRequested} />
+      )}
       <LoginCompany
         onClickConnectWallet={handleLoginCompany}
         loading={verifyAddressStep1Mutation.isPending || isConnecting}
