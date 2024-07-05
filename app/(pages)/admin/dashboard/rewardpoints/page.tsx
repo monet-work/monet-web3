@@ -6,11 +6,17 @@ import {
 } from "@/app/contract-utils";
 import { DataTable } from "@/components/data-table/data-table";
 import { AdminListingColumns } from "@/components/table-columns/admin-listing-columns";
+import { AdminRewardPointColumns } from "@/components/table-columns/admin-reward-points-columns";
 import { CustomerColumns } from "@/components/table-columns/customers-columns";
 import { PointsListColumns } from "@/components/table-columns/points-list-columns";
 import { useRewardPointsStore } from "@/store/rewardPointsStore";
 import { useEffect, useState } from "react";
-import { readContract } from "thirdweb";
+import {
+  getContractEvents,
+  prepareEvent,
+  readContract,
+  toTokens,
+} from "thirdweb";
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 
 export default function RewardPoints() {
@@ -23,10 +29,11 @@ export default function RewardPoints() {
       name: string;
       address: string;
       status: number;
+      mintedPoints?: number;
     }[]
   >([]);
 
-  // console.log(rewardPointsData, "rewardPointsData");
+  console.log(rewardPointsData, "rewardPointsData");
 
   const { data, isLoading } = useReadContract({
     contract: monetMarketplaceContract,
@@ -40,7 +47,20 @@ export default function RewardPoints() {
   const FetchRewardPoints = async () => {
     if (isLoading) return;
     if (!data) return;
+    const mint = prepareEvent({
+      signature: "event Mint(address,uint256)",
+    });
     for (let i = 0; i < data.length; i++) {
+      const events = await getContractEvents({
+        contract: monetPointsContractFactory(data[i].toString()),
+        fromBlock: "earliest",
+        toBlock: "latest",
+        events: [mint],
+      });
+      const decimals = await readContract({
+        contract: monetPointsContractFactory(data[i]),
+        method: "decimals",
+      });
       const Symbol = async () => {
         const Symboldata = await readContract({
           contract: monetPointsContractFactory(data[i]),
@@ -63,10 +83,18 @@ export default function RewardPoints() {
         });
         return Assetdata;
       };
+      const mintedPointsCalculation = async () => {
+        let mintedPoints = 0;
+        events.forEach((event) => {
+          mintedPoints += Number(toTokens(BigInt(event.args[1]), decimals));
+        });
+        return mintedPoints;
+      };
 
       const asset = await AssetInfo();
       const symbol = await Symbol();
       const name = await Name();
+      const mintedPoints = await mintedPointsCalculation();
 
       setRewardPointsData((prev) => [
         ...prev,
@@ -75,6 +103,7 @@ export default function RewardPoints() {
           name: name,
           address: asset.asset,
           status: asset.status,
+          mintedPoints: mintedPoints,
         },
       ]);
     }
@@ -101,7 +130,7 @@ export default function RewardPoints() {
           <div>
             <h2 className="mb-4 font-semibold text-slate-600p">Customers</h2>
             <DataTable
-              columns={PointsListColumns}
+              columns={AdminRewardPointColumns}
               data={rewardPoints ? rewardPoints : rewardPointsData || []}
               loading={isLoading}
               enablePagination={true}

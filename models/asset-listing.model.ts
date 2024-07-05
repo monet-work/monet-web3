@@ -23,6 +23,10 @@ export enum ListingType {
   SELL = 1,
 }
 
+export enum AssetStatus {
+  LIVE = 0,
+  DOWN = 1,
+}
 export enum PaymentType {
   NATIVE_TOKEN = 0,
   CUSTOM_TOKEN = 1,

@@ -1,20 +1,12 @@
 "use client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { apiService } from "@/services/api.service";
-import {
-  prepareContractCall,
-  PreparedTransaction,
-  readContract,
-  sendTransaction,
-} from "thirdweb";
-import { client, monetMarketplaceContract } from "@/app/contract-utils";
+import { prepareContractCall, PreparedTransaction } from "thirdweb";
+import { monetMarketplaceContract } from "@/app/contract-utils";
 import { useSendAndConfirmTransaction } from "thirdweb/react";
-import { DeleteIcon, Trash2, X } from "lucide-react";
+import { X } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -24,8 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
-import { Dialog } from "../ui/dialog";
-import { Close } from "@radix-ui/react-dialog";
+import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 
 type Props = {
   Id: number;
@@ -38,6 +29,7 @@ const UserListingsAction: React.FC<Props> = ({ Id }) => {
     isPending,
     isError,
   } = useSendAndConfirmTransaction();
+  const marketplaceStore = useMarketPlaceStore();
   const handleCancel = async () => {
     const call = async () => {
       const transaction = await prepareContractCall({
@@ -51,6 +43,7 @@ const UserListingsAction: React.FC<Props> = ({ Id }) => {
           toast.success("Listing cancelled successfully.");
           console.log(result);
           setIsOpen(false);
+          marketplaceStore.setListingCancelled(true);
         },
 
         onError: (error) => {
@@ -87,7 +80,6 @@ const UserListingsAction: React.FC<Props> = ({ Id }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {/* <Button onClick={handleCancel}>Cancel</Button>   */}
     </div>
   );
 };

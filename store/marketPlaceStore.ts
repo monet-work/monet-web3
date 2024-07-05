@@ -9,6 +9,8 @@ type Store = {
   setMarketPlace(marketPlace: any): void;
   offerCreated: boolean;
   setOfferCreated(offerCreated: boolean): void;
+  listingCancelled: boolean;
+  setListingCancelled(listingCancelled: boolean): void;
 };
 
 export const useMarketPlaceStore = create<Store>()(
@@ -18,6 +20,8 @@ export const useMarketPlaceStore = create<Store>()(
       setMarketPlace: (data) => set({ marketPlace: data }),
       offerCreated: false,
       setOfferCreated: (offerCreated) => set({ offerCreated }),
+      listingCancelled: false,
+      setListingCancelled: (listingCancelled) => set({ listingCancelled }),
     }),
     {
       name: LOCALSTORAGE_KEYS.MARKETPLACE_POINTS,

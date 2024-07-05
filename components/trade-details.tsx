@@ -1,11 +1,14 @@
 "use client";
-/* global BigInt */
+
 import React, { useEffect, useState } from "react";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 
 type Props = {
   pointInfo?: {
     name: string;
     symbol: string;
+    assetStatus: AssetStatus;
   };
   decimals: number;
   assetListing?: AssetListing;
@@ -15,14 +18,14 @@ type Props = {
 import { Card, CardContent } from "@/components/ui/card";
 
 import { Button } from "./ui/button";
-import { ExternalLink, Pointer } from "lucide-react";
+import { Ban, ExternalLink, Pointer } from "lucide-react";
 import {
   AssetListing,
   ListingFillType,
+  AssetStatus,
   ListingStatus,
   ListingType,
 } from "@/models/asset-listing.model";
-import clsx from "clsx";
 import {
   Address,
   PreparedTransaction,
@@ -40,7 +43,15 @@ import { toast } from "sonner";
 import { useActiveAccount, useSendAndConfirmTransaction } from "thirdweb/react";
 import { usePathname } from "next/navigation";
 import { celebratoryConfetti } from "@/lib/confetti-helper";
-import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+
+const marks = {
+  0: "0%",
+  25: "25%",
+  50: "50%",
+  75: "75%",
+  100: "100%",
+};
 
 const TradeDetails: React.FC<Props> = ({
   assetListing,
@@ -59,6 +70,7 @@ const TradeDetails: React.FC<Props> = ({
     isError,
   } = useSendAndConfirmTransaction();
   const [totalPrice, setTotalPrice] = useState<string>("");
+  const [assetAmount, setAssetAmount] = useState<string>("");
 
   const isPartialFillType = assetListing?.fillType === ListingFillType.PARTIAL;
 
@@ -69,7 +81,24 @@ const TradeDetails: React.FC<Props> = ({
       assetListing?.amount,
       assetListing?.pricePerPoint,
     );
-  }, [totalPrice, assetListing]);
+  }, [assetListing]);
+
+  useEffect(() => {
+    if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
+    setAssetAmount(assetListing.amount);
+  }, [assetListing]);
+
+  const calculatePartialFill = (value: number) => {
+    if (!assetListing || !assetListing?.Id || !assetListing.amount) return;
+    const _amount = (Number(assetListing.amount) * value) / 100;
+    setAssetAmount(String(_amount));
+
+    calculateTotalPrice(
+      assetListing?.asset,
+      String(_amount),
+      assetListing?.pricePerPoint,
+    );
+  };
 
   const calculateTotalPrice = async (
     asset: string,
@@ -98,10 +127,7 @@ const TradeDetails: React.FC<Props> = ({
       const transaction = await prepareContractCall({
         contract: monetMarketplaceContract,
         method: "trade",
-        params: [
-          BigInt(assetListing.Id),
-          toUnits(assetListing.amount, decimals),
-        ],
+        params: [BigInt(assetListing.Id), toUnits(assetAmount, decimals)],
         value:
           assetListing.listingType === ListingType.SELL
             ? BigInt(totalPrice)
@@ -110,7 +136,6 @@ const TradeDetails: React.FC<Props> = ({
 
       await sendTransaction(transaction as PreparedTransaction, {
         onSuccess: (result) => {
-          console.log({ result }, "result");
           toast.success("Trade executed successfully");
           celebratoryConfetti();
           onTradeSuccess &&
@@ -123,7 +148,7 @@ const TradeDetails: React.FC<Props> = ({
                     (assetListing.listingType === ListingType.SELL
                       ? " bought "
                       : " sold ") +
-                    (assetListing.amount + " " + symbol) +
+                    (assetAmount + " " + symbol) +
                     " at a great price of " +
                     toTokens(BigInt(totalPrice), 18) +
                     " ETH 🤑🤑🤑"}
@@ -209,7 +234,7 @@ const TradeDetails: React.FC<Props> = ({
 
   return (
     <Card
-      className={clsx("w-full bg-muted", {
+      className={cn("w-full bg-muted", {
         "outline outline-2 outline-green-600":
           assetListing?.listingType === ListingType.BUY,
         "outline outline-2 outline-red-600":
@@ -225,8 +250,18 @@ const TradeDetails: React.FC<Props> = ({
             </div>
           </div>
         ) : null}
+        {assetListing && pointInfo?.assetStatus === AssetStatus.DOWN ? (
+          <div className="text-muted-foreground flex items-center justify-center h-full min-h-[400px]">
+            <div className="flex flex-col items-center gap-8">
+              <Ban className="h-12 w-12 text-red-500" />
+              <p className="text-lg text-center ">
+                Trading is temporarily disabled; please try again later.
+              </p>
+            </div>
+          </div>
+        ) : null}
 
-        {assetListing ? (
+        {assetListing && pointInfo?.assetStatus === AssetStatus.LIVE ? (
           <div className="flex flex-col flex-grow">
             <div className="flex-grow">
               <p className="text-2xl">
@@ -235,7 +270,7 @@ const TradeDetails: React.FC<Props> = ({
                   : "Buying"}
               </p>
               <h3 className="font-bold text-4xl mt-2">
-                {assetListing.amount}{" "}
+                {assetAmount}{" "}
                 <span className="font-thin">{symbol || "points"}</span>
               </h3>
               <p className="mt-2">for an offer price of</p>
@@ -252,14 +287,48 @@ const TradeDetails: React.FC<Props> = ({
               <p className="mt-2">from</p>
               <p className="text-xs mt-2">{assetListing.owner}</p>
 
-              <div className="mt-8">
+              <div
+                className={cn(
+                  {
+                    hidden: !isPartialFillType,
+                  },
+                  "mt-8",
+                )}
+              >
                 <Slider
-                  // value={[0]}
-                  // max={100}
+                  styles={{
+                    handle: {
+                      backgroundColor: "hsl(var(--primary))",
+                      borderColor: "hsl(var(--primary))",
+                    },
+                    rail: {
+                      backgroundColor: "hsl(var(--muted-foreground))",
+                    },
+                    track: {
+                      backgroundColor: "hsl(var(--primary))",
+                    },
+                  }}
+                  activeDotStyle={{
+                    backgroundColor: "hsl(var(--primary))",
+                    borderColor: "hsl(var(--primary))",
+                    outline: "none",
+                  }}
+                  dotStyle={{
+                    backgroundColor: "hsl(var(--muted))",
+                    borderColor: "hsl(var(--muted-foreground))",
+                    top: -6,
+                    height: 16,
+                    width: 16,
+                  }}
+                  min={0}
+                  max={100}
+                  marks={marks}
+                  defaultValue={isPartialFillType ? 0 : 100}
                   step={25}
-                  minStepsBetweenThumbs={25}
-                  defaultPlaceholders={[0, 25, 50, 75, 100]}
-                  className="w-full rounded-full"
+                  onChangeComplete={(value) => {
+                    console.log(value, "value");
+                    calculatePartialFill(value as number);
+                  }}
                 />
               </div>
             </div>
@@ -268,7 +337,10 @@ const TradeDetails: React.FC<Props> = ({
               <Button
                 className="mt-2 w-full"
                 size={"lg"}
-                disabled={assetListing.status !== ListingStatus.LIVE}
+                disabled={
+                  assetListing.status !== ListingStatus.LIVE ||
+                  assetAmount === "0"
+                }
                 onClick={handleListingTrade}
                 loading={isPending}
               >

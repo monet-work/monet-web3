@@ -1,6 +1,4 @@
-import { MONET_POINT_CONTRACT_ABI } from "@/models/abi";
 import { createThirdwebClient, getContract } from "thirdweb";
-import { baseSepolia } from "thirdweb/chains";
 
 export const CONTRACTS = {
   ELP_CONTRACT: process.env.NEXT_PUBLIC_EIGENLAYER_POINTS_CONTRACT || "",

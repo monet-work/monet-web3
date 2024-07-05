@@ -40,6 +40,7 @@ import {
 import { useMarketPlaceStore } from "@/store/marketPlaceStore";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 import {
+  AssetStatus,
   ListingFillType,
   ListingType,
   PaymentType,
@@ -90,7 +91,7 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
     isError,
   } = useSendAndConfirmTransaction();
 
-  const { marketPlace } = useMarketPlaceStore();
+  const { marketPlace, setMarketPlace } = useMarketPlaceStore();
   const account = useActiveAccount();
 
   const pathName = usePathname();
@@ -256,6 +257,22 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
       await call(); //directly call the function
     }
   };
+  const [selectedPointStatus, setSelectedPointStatus] = useState(0);
+
+  const getAssetStatus = async () => {
+    const assetStatus = await readContract({
+      contract: monetMarketplaceContract,
+      method: "getAsset",
+      params: [selectedPoint as Address],
+    });
+    setSelectedPointStatus(Number(assetStatus.status));
+  };
+
+  useEffect(() => {
+    if (isPointDetailPage && selectedPoint !== "") {
+      getAssetStatus();
+    }
+  }, [isPointDetailPage, selectedPoint]);
 
   const pointSymbol = marketPlace.find(
     (item: any) => item.address === selectedPoint,
@@ -267,6 +284,22 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
         <Spinner />
       </div>
     );
+
+  if (isPointDetailPage && selectedPointStatus === AssetStatus.DOWN) {
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <div className="text-center">
+          <div className="text-2xl font-light">
+            This point is currently down
+          </div>
+          <div className="text-xs text-muted-foreground">
+            You can&apos;t create an offer for this point
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-1">
@@ -379,11 +412,14 @@ const CreateOfferForm: React.FC<Props> = ({ onCanceled, onSuccess }) => {
                   </FormControl>
                   {!isPointDetailPage && (
                     <SelectContent>
-                      {marketPlace.map((item: any) => (
-                        <SelectItem key={item.address} value={item.address}>
-                          {item.symbol}
-                        </SelectItem>
-                      ))}
+                      {marketPlace.map(
+                        (item: any) =>
+                          item.status === 0 && (
+                            <SelectItem key={item.address} value={item.address}>
+                              {item.symbol}
+                            </SelectItem>
+                          ),
+                      )}
                     </SelectContent>
                   )}
                   {isPointDetailPage && selectedPoint !== "" && (
