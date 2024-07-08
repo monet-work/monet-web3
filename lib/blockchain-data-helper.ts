@@ -74,10 +74,11 @@ const fetchAssetDataFromContract = async (
   };
 
   const calculateMintedPoints = async () => {
-    let mintedPoints = 0;
+    let mintedPoints = BigInt(0);
     const userEvents = events.filter((event) => event.args[0] === userAddress);
     userEvents.forEach((event) => {
-      mintedPoints += Number(toTokens(BigInt(event.args[1]), decimals));
+      mintedPoints =
+        mintedPoints + BigInt(toTokens(BigInt(event.args[1]), decimals));
     });
     return mintedPoints;
   };
