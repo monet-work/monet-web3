@@ -39,6 +39,7 @@ const securedRoutes = [
   `${API_BASE_URL}/marketplace`,
   `${API_BASE_URL}/marketplace/:pointAddress`,
   `${API_BASE_URL}/customers/:customerId/points/:pointAddress`,
+  `${API_BASE_URL}/companies/:companyId/points/:pointsId`,
 ];
 
 // axios interceptors
@@ -261,6 +262,18 @@ const getCustomerOnChainPoints = async (
 const getAdminCustomerDetails = async () => {
   return axios.get(`${API_BASE_URL}/${API_ENDPOINTS.ADMIN_CUSTOMER_DETAILS}`);
 };
+
+const deleteUserPoints = async ({
+  pointsId,
+  companyId,
+}: {
+  pointsId: string;
+  companyId: string;
+}) => {
+  return axios.delete(
+    `${API_BASE_URL}/companies/${companyId}/points/${pointsId}`,
+  );
+};
 export const apiService = {
   authenticate,
   companyVerifyWalletStep1,
@@ -284,4 +297,5 @@ export const apiService = {
   syncPoints,
   syncListings,
   syncCustomerPoints,
+  deleteUserPoints,
 };

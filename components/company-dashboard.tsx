@@ -50,6 +50,8 @@ const CompanyDashboard: React.FC<Props> = ({
   const [customerData, setCustomerData] = useState<CustomerPoint[] | null>(
     null,
   );
+  console.log("customerData", dashboardData);
+  const [isEditing, setIsEditing] = useState(false);
 
   const activeAccount = useActiveAccount();
   const companyWalletAddress = activeAccount?.address;
@@ -230,9 +232,12 @@ const CompanyDashboard: React.FC<Props> = ({
                             points
                           </CardDescription>
                         </div>
-                        <div>
+                        <div className="flex gap-4">
                           <Button onClick={() => setShowUploadDialog(true)}>
                             Upload Points
+                          </Button>
+                          <Button onClick={() => setIsEditing(true)}>
+                            Edit Points
                           </Button>
                         </div>
                       </div>
@@ -241,6 +246,7 @@ const CompanyDashboard: React.FC<Props> = ({
                       <UserPointsTable
                         data={dashboardData.map((item) => ({
                           name: item.name || "-",
+                          id: item.id,
                           wallet_address: item.wallet_address || "",
                           points: item.points.toString(),
                         }))}
