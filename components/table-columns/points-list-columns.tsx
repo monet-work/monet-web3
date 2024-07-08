@@ -10,7 +10,7 @@ export const PointsListColumns: ColumnDef<{
   symbol: string;
   address: string;
   status: number;
-  mintedPoints?: number;
+  mintedPoints?: BigInt;
   userPoints?: number;
 }>[] = [
   {
