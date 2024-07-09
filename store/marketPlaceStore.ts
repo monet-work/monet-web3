@@ -13,6 +13,21 @@ type Store = {
   setListingCancelled(listingCancelled: boolean): void;
 };
 
+// Custom serialize and deserialize functions for BigInt
+const serialize = (state: any) => {
+  return JSON.stringify(state, (key, value) =>
+    typeof value === "bigint" ? value.toString() : value,
+  );
+};
+
+const deserialize = (str: string) => {
+  return JSON.parse(str, (key, value) =>
+    typeof value === "string" && /^\d+n$/.test(value)
+      ? BigInt(value.slice(0, -1))
+      : value,
+  );
+};
+
 export const useMarketPlaceStore = create<Store>()(
   persist(
     (set, get) => ({
@@ -26,6 +41,8 @@ export const useMarketPlaceStore = create<Store>()(
     {
       name: LOCALSTORAGE_KEYS.MARKETPLACE_POINTS,
       storage: createJSONStorage(() => localStorage),
+      serialize,
+      deserialize,
     },
   ),
 );
