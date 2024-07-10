@@ -53,16 +53,18 @@ export const PointsListColumns: ColumnDef<{
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Minted Points" />
     ),
-    cell: ({ row }) => (
-      <div className="text-muted-foreground text-xs">
-        {row.getValue("mintedPoints") ||
-          (row.getValue("mintedPoints") === 0 ? (
-            "0"
+    cell: ({ row }) => {
+      const mintedPointsData = String(row.getValue("mintedPoints"));
+      return (
+        <div className="text-muted-foreground text-xs">
+          {mintedPointsData || mintedPointsData === String(0) ? (
+            mintedPointsData.toString()
           ) : (
             <Skeleton className="w-full h-5" />
-          ))}
-      </div>
-    ),
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "userPoints",

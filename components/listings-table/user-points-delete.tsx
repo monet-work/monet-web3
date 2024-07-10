@@ -1,9 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { prepareContractCall, PreparedTransaction } from "thirdweb";
-import { monetMarketplaceContract } from "@/app/contract-utils";
-import { useSendAndConfirmTransaction } from "thirdweb/react";
 import { X } from "lucide-react";
 import {
   AlertDialog,
@@ -15,10 +12,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useEffect, useState } from "react";
-import { useMarketPlaceStore } from "@/store/marketPlaceStore";
+import { useState } from "react";
 import { apiService } from "@/services/api.service";
 import { useMutation } from "@tanstack/react-query";
+import { useCompanyStore } from "@/store/companyStore";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   name: string;
@@ -37,21 +35,21 @@ const UserPointsDelete: React.FC<Props> = ({
   const deletePoints = useMutation({
     mutationFn: apiService.deleteUserPoints,
   });
-  const [companyId, setCompanyId] = useState<string>("");
-  console.log(companyId, "companyId");
-  const getCompanyId = async () => {
-    const company = JSON.parse(localStorage.getItem("company")!);
-    setCompanyId(company.state.company.id);
-  };
+  const companyStore = useCompanyStore();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    getCompanyId();
-  }, []);
   const handleDeletePoints = async () => {
+    if (!companyStore.company) return;
     deletePoints.mutate(
-      { pointsId: id.toString(), companyId: companyId.toString() },
+      { pointsId: id.toString(), companyId: String(companyStore?.company?.id) },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: [
+              `company-dashboard-${companyStore.company?.id}`,
+              { companyId: companyStore.company?.id },
+            ],
+          });
           toast.success("Points deleted successfully.");
           setIsOpen(false);
         },
