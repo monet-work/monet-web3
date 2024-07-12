@@ -169,30 +169,6 @@ const CompanyDashboard: React.FC<Props> = ({
                   contract={companyContract}
                   isApproved={isCompanyApproved}
                 />
-                {/* <DisableBlockIfNoContract disabled={!isCompanyApproved}>
-                  <Card className="h-full">
-                    <CardHeader className="pb-2">
-                      <CardDescription>Points On Chain</CardDescription>
-                      <CardTitle className="text-4xl">
-                        0
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-xs text-muted-foreground">
-                        <div className="flex flex-col">
-                          <span>
-                            <span className="font-semibold">NA</span> points
-                            available
-                          </span>
-                          <span>
-                            <span className="font-semibold">NA</span> points
-                            distributed
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </DisableBlockIfNoContract> */}
 
                 <DisableBlockIfNoContract disabled={!isCompanyApproved}>
                   <Card className="h-full">
@@ -230,7 +206,7 @@ const CompanyDashboard: React.FC<Props> = ({
                             points
                           </CardDescription>
                         </div>
-                        <div>
+                        <div className="flex gap-4">
                           <Button onClick={() => setShowUploadDialog(true)}>
                             Upload Points
                           </Button>
@@ -241,6 +217,7 @@ const CompanyDashboard: React.FC<Props> = ({
                       <UserPointsTable
                         data={dashboardData.map((item) => ({
                           name: item.name || "-",
+                          id: item.id,
                           wallet_address: item.wallet_address || "",
                           points: item.points.toString(),
                         }))}

@@ -6,6 +6,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 type Store = {
   company: Company | null;
   setCompany(customer: Company | null): void;
+  pointsDeleted: boolean;
+  setPointsDeleted(pointsDeleted: boolean): void;
 };
 
 export const useCompanyStore = create<Store>()(
@@ -13,6 +15,8 @@ export const useCompanyStore = create<Store>()(
     (set) => ({
       company: null,
       setCompany: (company) => set({ company }),
+      pointsDeleted: false,
+      setPointsDeleted: (pointsDeleted) => set({ pointsDeleted }),
     }),
     {
       name: LOCALSTORAGE_KEYS.COMPANY,

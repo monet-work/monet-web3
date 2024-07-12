@@ -3,6 +3,7 @@ import {
   monetPointsContractFactory,
 } from "@/app/contract-utils";
 import {
+  Address,
   getContractEvents,
   prepareEvent,
   readContract,
@@ -59,7 +60,7 @@ const fetchAssetDataFromContract = async (
     const Assetdata = await readContract({
       contract: monetMarketplaceContract,
       method: "getAsset",
-      params: [address],
+      params: [address as Address],
     });
     return Assetdata;
   };
@@ -68,7 +69,7 @@ const fetchAssetDataFromContract = async (
     const points = await readContract({
       contract: monetPointsContractFactory(address),
       method: "balanceOf",
-      params: [userAddress],
+      params: [userAddress as Address],
     });
     return points;
   };
