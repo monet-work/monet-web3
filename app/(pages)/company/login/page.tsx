@@ -37,7 +37,7 @@ const CompanyLoginPage = () => {
   };
 
   useEffect(() => {
-    if (activeAccount && loginRequested) {
+    if (activeAccount) {
       redirectToVerification();
       return;
     }

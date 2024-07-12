@@ -2,25 +2,28 @@
 
 import FloatingConnect from "@/components/floating-connect";
 import VerifyWallet from "@/components/verify-wallet";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
 const VerifyCustomerWalletPage = () => {
   const activeAccount = useActiveAccount();
-  const [verificationMessage, setVerificationMessage] = useState<string[]>([]);
 
   useEffect(() => {
     if (!activeAccount) {
       router.push("/customer/login");
     }
   }, []);
+
+  useEffect(() => {
+    if (activeAccount) {
+      handleRequestVerification();
+    }
+  }, [activeAccount]);
 
   const userStore = useUserStore();
   const router = useRouter();

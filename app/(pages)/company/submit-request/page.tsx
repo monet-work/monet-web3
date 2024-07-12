@@ -30,9 +30,67 @@ const SubmitRequestPage: React.FC = () => {
     { token: "", expires: 0 },
   );
 
+  const handleWalletSignatureVerification = async (values?: {
+    name: string;
+    email: string;
+    pointName: string;
+    pointSymbol: string;
+    description: string;
+    decimal: number;
+  }) => {
+    const { name, email, pointName, pointSymbol, description, decimal } =
+      values || {};
+    if (!userStore.verificationWords) return;
+
+    if (!activeAccount) return;
+    setLoader(true);
+    const walletSignature = await activeAccount?.signMessage({
+      message: userStore.verificationWords!,
+    });
+
+    walletSignatureVerficationMutation.mutate(
+      {
+        words: userStore.verificationWords,
+        signature: walletSignature,
+        walletAddress: activeAccount.address,
+      },
+      {
+        onSuccess: (res) => {
+          const { company, tokens } = res.data;
+          toast.success("Wallet verified successfully");
+          setAccessTokenData({
+            token: tokens.access.token,
+            expires: tokens.access.expires,
+          });
+          setRefreshTokenData({
+            token: tokens.refresh.token,
+            expires: tokens.refresh.expires,
+          });
+          companyStore.setCompany(company);
+
+          setLoader(false);
+
+          if (company) {
+            router.push("/company/dashboard");
+          }
+        },
+        onError: (error) => {
+          setLoader(false);
+          toast.error(error.message);
+        },
+      },
+    );
+  };
+
   const walletSignatureVerficationMutation = useMutation({
     mutationFn: apiService.companyVerifyWalletStep2,
   });
+
+  useEffect(() => {
+    if (userStore.isRegistered) {
+      handleWalletSignatureVerification();
+    }
+  }, [userStore]);
 
   useEffect(() => {
     if (!userStore.verificationWords) {

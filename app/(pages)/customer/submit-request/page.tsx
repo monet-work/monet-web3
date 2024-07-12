@@ -34,11 +34,65 @@ const SubmitRequestPage: React.FC = () => {
   });
 
   useEffect(() => {
+    if (userStore.isRegistered) {
+      handleWalletSignatureVerification();
+    }
+  }, [userStore]);
+
+  useEffect(() => {
     if (!userStore.verificationWords) {
       // Redirect to verify page
       router.push("/customer/verify");
     }
   }, [userStore.verificationWords]);
+
+  const handleWalletSignatureVerification = async (
+    email?: string,
+    name?: string,
+  ) => {
+    if (!userStore.verificationWords) return;
+
+    if (!activeAccount) return;
+    setLoader(true);
+    const walletSignature = await activeAccount?.signMessage({
+      message: userStore.verificationWords!,
+    });
+
+    walletSignatureVerficationMutation.mutate(
+      {
+        email,
+        name,
+        words: userStore.verificationWords,
+        signature: walletSignature,
+        walletAddress: activeAccount.address,
+      },
+      {
+        onSuccess: (res) => {
+          const { customer, tokens } = res.data;
+          toast.success("Wallet verified successfully");
+          setAccessTokenData({
+            token: tokens.access.token,
+            expires: tokens.access.expires,
+          });
+          setRefreshTokenData({
+            token: tokens.refresh.token,
+            expires: tokens.refresh.expires,
+          });
+          customerStore.setCustomer(customer);
+          setLoader(false);
+
+          if (customer) {
+            router.push("/customer/dashboard");
+          }
+        },
+        onError: (error) => {
+          toast.error(error.message);
+          setLoader(false);
+        },
+      },
+    );
+  };
+
   return (
     <main>
       <FloatingConnect />
@@ -48,47 +102,7 @@ const SubmitRequestPage: React.FC = () => {
           verificationMessage={userStore.verificationWords}
           onClickSubmitRequest={async (values) => {
             const { email, name } = values;
-            if (!userStore.verificationWords) return;
-
-            if (!activeAccount) return;
-            setLoader(true);
-            const walletSignature = await activeAccount?.signMessage({
-              message: userStore.verificationWords!,
-            });
-
-            walletSignatureVerficationMutation.mutate(
-              {
-                email,
-                name,
-                words: userStore.verificationWords,
-                signature: walletSignature,
-                walletAddress: activeAccount.address,
-              },
-              {
-                onSuccess: (res) => {
-                  const { customer, tokens } = res.data;
-                  toast.success("Wallet verified successfully");
-                  setAccessTokenData({
-                    token: tokens.access.token,
-                    expires: tokens.access.expires,
-                  });
-                  setRefreshTokenData({
-                    token: tokens.refresh.token,
-                    expires: tokens.refresh.expires,
-                  });
-                  customerStore.setCustomer(customer);
-                  setLoader(false);
-
-                  if (customer) {
-                    router.push("/customer/dashboard");
-                  }
-                },
-                onError: (error) => {
-                  toast.error(error.message);
-                  setLoader(false);
-                },
-              },
-            );
+            handleWalletSignatureVerification(email, name);
           }}
         />
       ) : (

@@ -21,7 +21,6 @@ import {
   useActiveWalletConnectionStatus,
   useDisconnect,
   useActiveWalletChain,
-  useSwitchActiveWalletChain,
 } from "thirdweb/react";
 import { client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";

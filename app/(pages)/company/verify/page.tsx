@@ -8,7 +8,7 @@ import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { act, useEffect } from "react";
 import { toast } from "sonner";
 import { useActiveAccount } from "thirdweb/react";
 
@@ -22,6 +22,12 @@ const VerifyConpanyWalletPage = () => {
       router.push("/company/login");
     }
   }, []);
+
+  useEffect(() => {
+    if (activeAccount) {
+      handleRequestVerification();
+    }
+  }, [activeAccount]);
 
   const handleRequestVerification = () => {
     if (!activeAccount) return;

@@ -6,6 +6,7 @@ export const LOCALSTORAGE_KEYS = {
   ACCESS_TOKEN: "access_token",
   REFRESH_TOKEN: "refresh_token",
   REWARD_POINTS: "reward_points",
+  USER: "user",
 };
 
 export type LOCALSTORAGE_KEYS =
