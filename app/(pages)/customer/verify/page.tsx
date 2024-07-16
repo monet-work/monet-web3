@@ -21,7 +21,11 @@ const VerifyCustomerWalletPage = () => {
 
   useEffect(() => {
     if (activeAccount) {
-      handleRequestVerification();
+      if (userStore.isRegistered) {
+        router.push("/customer/submit-request");
+      } else {
+        handleRequestVerification();
+      }
     }
   }, [activeAccount]);
 

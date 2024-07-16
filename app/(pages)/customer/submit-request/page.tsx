@@ -2,11 +2,12 @@
 import CustomerSubmitRequest from "@/components/customer-submit-request";
 import FloatingConnect from "@/components/floating-connect";
 import LoadingMessage from "@/components/loading-message";
+import useHasMounted from "@/hooks/useHasMounted";
+import { apiService } from "@/services/api.service";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
-import { apiService } from "@/services/api.service";
-import useCustomerStore from "@/store/customerStore";
 import { useUserStore } from "@/store/userStore";
+import useCustomerStore from "@/store/customerStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ const SubmitRequestPage: React.FC = () => {
   const router = useRouter();
   const activeAccount = useActiveAccount();
   const [loader, setLoader] = useState(false);
+  const hasMounted = useHasMounted();
   const [accessTokenData, setAccessTokenData] = useLocalStorage(
     LOCALSTORAGE_KEYS.ACCESS_TOKEN,
     { token: "", expires: 0 },
@@ -34,10 +36,10 @@ const SubmitRequestPage: React.FC = () => {
   });
 
   useEffect(() => {
-    if (userStore.isRegistered) {
+    if (userStore.isRegistered && hasMounted) {
       handleWalletSignatureVerification();
     }
-  }, [userStore]);
+  }, [userStore.isRegistered, hasMounted]);
 
   useEffect(() => {
     if (!userStore.verificationWords) {
@@ -50,13 +52,22 @@ const SubmitRequestPage: React.FC = () => {
     email?: string,
     name?: string,
   ) => {
-    if (!userStore.verificationWords) return;
-
-    if (!activeAccount) return;
+    if (!userStore.verificationWords || !activeAccount) return;
     setLoader(true);
-    const walletSignature = await activeAccount?.signMessage({
-      message: userStore.verificationWords!,
-    });
+
+    let walletSignature = "";
+
+    try {
+      walletSignature = await activeAccount?.signMessage({
+        message: userStore.verificationWords!,
+      });
+    } catch (error) {
+      toast.error("You need to sign the message to verify your wallet.");
+      setLoader(false);
+      console.error(error);
+    }
+
+    if (!walletSignature) return;
 
     walletSignatureVerficationMutation.mutate(
       {
@@ -86,7 +97,7 @@ const SubmitRequestPage: React.FC = () => {
           }
         },
         onError: (error) => {
-          toast.error(error.message);
+          console.error(error);
           setLoader(false);
         },
       },
