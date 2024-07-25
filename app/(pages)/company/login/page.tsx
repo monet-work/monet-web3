@@ -4,6 +4,7 @@ import { connectWallet } from "@/app/contract-utils";
 import LoginCompany from "@/components/login-company";
 import MetaMaskDownloader from "@/components/metamask-download";
 import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
+import useWindowSize from "@/hooks/useWindowSize";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -43,9 +44,11 @@ const CompanyLoginPage = () => {
     }
   }, [activeAccount]);
 
+  const { isMobile } = useWindowSize();
+
   return (
     <main>
-      {loginRequested && showModal && (
+      {!isMobile && loginRequested && showModal && (
         <MetaMaskDownloader setLoginRequested={setLoginRequested} />
       )}
       <LoginCompany
