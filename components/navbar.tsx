@@ -4,6 +4,7 @@ import { ConnectButton, client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import Link from "next/link";
+import MetaMaskProvider from "@/providers/metamaskProvider";
 
 const Navbar = () => {
   return (
@@ -30,15 +31,17 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center gap-8">
-          <ConnectButton
-            client={client}
-            connectButton={{
-              style: {
-                padding: "0.5rem 1rem",
-              },
-            }}
-            wallets={[createWallet("io.metamask")]}
-          />
+          <MetaMaskProvider>
+            <ConnectButton
+              client={client}
+              connectButton={{
+                style: {
+                  padding: "0.5rem 1rem",
+                },
+              }}
+              wallets={[createWallet("io.metamask")]}
+            />
+          </MetaMaskProvider>
         </div>
       </div>
     </nav>
