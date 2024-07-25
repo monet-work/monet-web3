@@ -18,18 +18,18 @@ const Navbar = () => {
           </Link>
           <Link
             href="/marketplace"
-            className="relative text-typography-white64 hover:text-typography-white"
+            className="relative hidden lg:flex text-typography-white64 hover:text-typography-white"
           >
             Dashboard
           </Link>
           <Link
             href="/marketplace"
-            className="relative text-typography-white64 hover:text-typography-white"
+            className="relative hidden lg:flex text-typography-white64 hover:text-typography-white"
           >
             Marketplace
           </Link>
         </div>
-        <div className="flex items-center gap-8">
+        <div className="flex items-center pl-8 lg:pl-0 gap-8">
           <ConnectButton
             client={client}
             connectButton={{
