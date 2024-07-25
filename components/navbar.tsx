@@ -4,6 +4,7 @@ import { ConnectButton, client } from "@/app/contract-utils";
 import { createWallet } from "thirdweb/wallets";
 import { MonetWorkLogo } from "./icons/monet-work-logo";
 import Link from "next/link";
+import MetaMaskProvider from "@/providers/metamaskProvider";
 
 const Navbar = () => {
   return (
