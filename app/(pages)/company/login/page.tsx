@@ -10,11 +10,14 @@ import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useActiveAccount, useConnect } from "thirdweb/react";
+import { ConnectButton, useActiveAccount, useConnect } from "thirdweb/react";
 
 const CompanyLoginPage = () => {
   const { connect, isConnecting } = useConnect();
+
   const activeAccount = useActiveAccount();
+  console.log("activeAccount", activeAccount);
+
   const [loginRequested, setLoginRequested] = useState(false);
   const router = useRouter();
   const userStore = useUserStore();
@@ -27,6 +30,8 @@ const CompanyLoginPage = () => {
   const verifyAddressStep1Mutation = useMutation({
     mutationFn: apiService.companyVerifyWalletStep1,
   });
+
+  const { isMobile } = useWindowSize();
 
   const handleLoginCompany = async () => {
     setLoginRequested(true);
@@ -42,15 +47,14 @@ const CompanyLoginPage = () => {
       redirectToVerification();
       return;
     }
-  }, [activeAccount]);
-
-  const { isMobile } = useWindowSize();
+  }, [activeAccount, loginRequested]);
 
   return (
     <main>
       {!isMobile && loginRequested && showModal && (
         <MetaMaskDownloader setLoginRequested={setLoginRequested} />
       )}
+
       <LoginCompany
         onClickConnectWallet={handleLoginCompany}
         loading={verifyAddressStep1Mutation.isPending || isConnecting}
