@@ -47,6 +47,11 @@ const CompanyLoginPage = () => {
       redirectToVerification();
       return;
     }
+
+    if (activeAccount && isMobile) {
+      redirectToVerification();
+      return;
+    }
   }, [activeAccount, loginRequested]);
 
   return (
