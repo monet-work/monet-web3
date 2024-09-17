@@ -17,11 +17,11 @@ const VerifyConpanyWalletPage = () => {
   const userStore = useUserStore();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!activeAccount) {
-      router.push("/company/login");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!activeAccount ) {
+  //     router.push("/company/login");
+  //   }
+  // }, []);
 
   const handleRequestVerification = () => {
     if (!activeAccount) return;
