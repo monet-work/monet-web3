@@ -7,7 +7,6 @@ import ReactQueryProvider from "@/providers/reactQueryProvider";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/context/auth-context";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { MetaMaskUIProvider } from "@metamask/sdk-react-ui";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
