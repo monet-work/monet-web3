@@ -5,6 +5,7 @@ import LoginCustomer from "@/components/login-customer";
 import MetaMaskDownloader from "@/components/metamask-download";
 import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import useWindowSize from "@/hooks/useWindowSize";
 import { LOCALSTORAGE_KEYS } from "@/models/browser-storage-keys";
 import { useUserStore } from "@/store/userStore";
 import { useRouter } from "next/navigation";
@@ -42,9 +43,11 @@ const CustomerLoginPage = () => {
     }
   }, [activeAccount]);
 
+  const { isMobile } = useWindowSize();
+
   return (
     <main>
-      {loginRequested && showModal && (
+      {!isMobile && loginRequested && showModal && (
         <MetaMaskDownloader setLoginRequested={setLoginRequested} />
       )}
       <LoginCustomer
