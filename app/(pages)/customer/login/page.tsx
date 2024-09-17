@@ -4,6 +4,7 @@ import { connectWallet } from "@/app/contract-utils";
 import LoginCustomer from "@/components/login-customer";
 import MetaMaskDownloader from "@/components/metamask-download";
 import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
+import useWindowSize from "@/hooks/useWindowSize";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useActiveAccount, useConnect } from "thirdweb/react";
@@ -40,9 +41,11 @@ const CustomerLoginPage = () => {
     }
   }, [activeAccount]);
 
+  const { isMobile } = useWindowSize();
+
   return (
     <main>
-      {loginRequested && showModal && (
+      {!isMobile && loginRequested && showModal && (
         <MetaMaskDownloader setLoginRequested={setLoginRequested} />
       )}
       <LoginCustomer

@@ -5,6 +5,7 @@ import LoginAdmin from "@/components/login-admin";
 import MetaMaskDownloader from "@/components/metamask-download";
 import useIsWalletInstalled from "@/hooks/useIsWalletInstalled";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import useWindowSize from "@/hooks/useWindowSize";
 import { apiService } from "@/services/api.service";
 import { useUserStore } from "@/store/userStore";
 import { useMutation } from "@tanstack/react-query";
@@ -45,9 +46,11 @@ const AdminLoginPage = () => {
     }
   }, [activeAccount]);
 
+  const { isMobile } = useWindowSize();
+
   return (
     <main>
-      {loginRequested && showModal && (
+      {!isMobile && loginRequested && showModal && (
         <MetaMaskDownloader setLoginRequested={setLoginRequested} />
       )}
       <LoginAdmin

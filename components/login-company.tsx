@@ -3,6 +3,17 @@ import { MonetWorkLogo } from "./icons/monet-work-logo";
 import { Button } from "./ui/button";
 import FloatingConnect from "./floating-connect";
 import Spline from "@splinetool/react-spline";
+import useWindowSize from "@/hooks/useWindowSize";
+import { createWallet } from "thirdweb/wallets";
+import { client, ConnectButton } from "@/app/contract-utils";
+import { darkTheme } from "thirdweb/react";
+const wallets = [createWallet("io.metamask")];
+const theme = darkTheme({
+  colors: {
+    primaryButtonBg: "hsl(47.9 95.8% 53.1%)",
+  },
+  fontFamily: "Inter",
+});
 
 type Props = {
   onClickConnectWallet: () => void;
@@ -13,6 +24,7 @@ const LoginCompany: React.FC<Props> = ({
   onClickConnectWallet,
   loading = false,
 }) => {
+  const { isMobile } = useWindowSize();
   return (
     <section className="bg-background">
       <FloatingConnect />
@@ -46,13 +58,26 @@ const LoginCompany: React.FC<Props> = ({
             </div>
 
             <div className="col-span-6 flex flex-col items-center justify-center sm:justify-start sm:flex-row sm:items-center sm:gap-4 mt-12">
-              <Button
-                loading={loading}
-                onClick={onClickConnectWallet}
-                className="border-primary px-12 py-3 text-sm font-medium transition focus:outline-none focus:ring active:text-blue-500"
-              >
-                Connect your wallet
-              </Button>
+              {!isMobile ? (
+                <Button
+                  loading={loading}
+                  onClick={onClickConnectWallet}
+                  className="border-primary px-12 py-3 text-sm font-medium transition focus:outline-none focus:ring active:text-blue-500"
+                >
+                  Connect your wallet
+                </Button>
+              ) : (
+                <ConnectButton
+                  client={client}
+                  wallets={wallets}
+                  theme={theme}
+                  connectModal={{
+                    size: "compact",
+                    title: "Login To Monet",
+                  }}
+                />
+              )}
+
               <span className="text-gray-500 py-2 sm:py-0">or</span>
 
               <Link href={"/customer/login"}>
